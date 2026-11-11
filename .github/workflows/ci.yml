@@ -1,0 +1,54 @@
+name: Repository checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Repository checks (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Fetch and verify event revision
+        env:
+          BOOTSTRAP_TOKEN: ${{ github.token }}
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}.git
+          EVENT_REF: ${{ github.ref }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git init --quiet .
+          if ($LASTEXITCODE -ne 0) { throw 'Repository initialization failed' }
+          git remote add origin $env:REPOSITORY_URL
+          if ($LASTEXITCODE -ne 0) { throw 'Origin setup failed' }
+          try {
+            $env:GIT_CONFIG_COUNT = '1'
+            $env:GIT_CONFIG_KEY_0 = 'http.extraHeader'
+            $env:GIT_CONFIG_VALUE_0 = 'AUTHORIZATION: basic ' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('x-access-token:' + $env:BOOTSTRAP_TOKEN))
+            git fetch --quiet --no-tags --depth=1 origin $env:EVENT_REF
+            $fetchCode = $LASTEXITCODE
+          } finally {
+            Remove-Item Env:GIT_CONFIG_COUNT, Env:GIT_CONFIG_KEY_0, Env:GIT_CONFIG_VALUE_0, Env:BOOTSTRAP_TOKEN -ErrorAction SilentlyContinue
+          }
+          if ($fetchCode -ne 0) { throw 'Event revision fetch failed' }
+          git checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Event revision checkout failed' }
+          $actual = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0 -or $actual -cne $env:EVENT_SHA) { throw 'Fetched revision does not match the event SHA' }
+      - name: Check repository
+        run: pwsh -NoProfile -File scripts/check.ps1
+      - name: Test repository checks and push guard
+        run: pwsh -NoProfile -File scripts/test-checks.ps1
