@@ -23,6 +23,8 @@
 ## B01. Каркас репозитория, контракты, CI, Docker-заготовка
 
 - **Владелец:** А. Ревью контрактов — Гланда до конца пятницы.
+- **Исполнитель:** `prolgrammer`, ветка `feature/b01-app-foundation`.
+- **Статус:** `in_progress`. Границы: пакет и контракты из раздела 5.3 ТЗ, детерминированная заглушка на переданном каталоге, health endpoint, проверки Python и Docker-заготовка. Ранжирование, загрузка дампа и интерфейс остаются в следующих задачах. Приёмка контрактов Гландой обязательна до использования в зависимых задачах.
 - **Цель:** оба участника пишут код параллельно против одних интерфейсов.
 - **Работа:** пакет `alfarec/` по структуре раздела 4 ТЗ; Pydantic-схемы `Profile`, `Event`, `Recommendation`, `Reason`, `NextStep`, `RecommendationResponse` из раздела 5.3; протокол `Recommender.recommend(profile, history, mode, limit) -> RecommendationResponse`; заглушка, отдающая случайные материалы из каталога; список кодов причин; `requirements.txt` с точными версиями и `requirements-ml.txt`; `ruff` и `pytest` в CI вместе с существующими проверками репозитория; черновые `Dockerfile` и `compose.yaml`, запускающие пустой FastAPI; `data/` в `.gitignore`.
 - **Приёмка:** `pytest` и `ruff check` проходят локально и в CI; `uvicorn alfarec.api.main:app` отдаёт `/api/health`; контракты согласованы обоими.
