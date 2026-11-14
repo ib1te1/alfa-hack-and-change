@@ -140,6 +140,7 @@ def test_quick_block_and_time_budget(client: TestClient) -> None:
         "code": "short_format",
         "weight": 0.0,
         "params": {"minutes": 3},
+        "text": "Займёт 3 мин",
     }
     assert ids(result["more"]) == ["promo-quick"]
     course_first = recommend(client, profile={"tasks": ["marketing"], "time_budget": "course"})
