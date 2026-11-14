@@ -1,10 +1,10 @@
 # Общая очередь задач
 
-Статус: выбран трек 1 — персональные рекомендации. ТЗ — [`docs/specs/2026-11-13-recommender-tz.md`](../specs/2026-11-13-recommender-tz.md), карточки — [`CORE.md`](CORE.md) и [`IMPROVEMENTS.md`](IMPROVEMENTS.md). B01, B03 и B11 слиты в `main` ([PR #4](https://github.com/ib1te1/alfa-hack-and-change/pull/4), [PR #5](https://github.com/ib1te1/alfa-hack-and-change/pull/5), [PR #6](https://github.com/ib1te1/alfa-hack-and-change/pull/6)). Критический путь продолжает B02: нужен дамп у исполнителя.
+Статус: выбран трек 1 — персональные рекомендации. ТЗ — [`docs/specs/2026-11-13-recommender-tz.md`](../specs/2026-11-13-recommender-tz.md), карточки — [`CORE.md`](CORE.md) и [`IMPROVEMENTS.md`](IMPROVEMENTS.md). B01, B03 и B11 слиты в `main` ([PR #4](https://github.com/ib1te1/alfa-hack-and-change/pull/4), [PR #5](https://github.com/ib1te1/alfa-hack-and-change/pull/5), [PR #6](https://github.com/ib1te1/alfa-hack-and-change/pull/6)). B02 (каталог из дампа) — на ревью в ветке `feature/b02-catalog`; после его приёмки открываются B04, B07 и B09.
 
 До слияния B01 зависимые ветки создаются поверх неё, а их PR направляются в ветку зависимости для отдельного просмотра diff. CI выполняется на всех PR. После слияния родительского PR базу дочернего нужно перенести на `main`, обновить ветку и повторно проверить CI. Статус `done` ставится после слияния; техническая приёмка результата и публикация PR фиксируются отдельно.
 
-Связи таксономии с исходными справочниками сверены с дампом вручную; воспроизводимый отчёт о покрытии — в B02. Дамп `data/alfa_course_hackathon.backup` передаётся исполнителю вне репозитория.
+Связи таксономии с исходными справочниками проверены воспроизводимым [отчётом о покрытии](../../reports/taxonomy_coverage.md) на каталоге B02. Дамп `data/alfa_course_hackathon.backup` передаётся исполнителю вне репозитория.
 
 ## Как выбираем следующую задачу
 

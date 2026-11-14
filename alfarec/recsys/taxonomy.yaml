@@ -1,5 +1,5 @@
 version: 1
-source_links_status: pending_catalog_audit
+source_links_status: audited
 stages:
   idea:
     label: Думаю открыть

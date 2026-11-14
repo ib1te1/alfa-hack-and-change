@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     && useradd --create-home --uid 10001 app
 
 COPY alfarec/ ./alfarec/
+COPY artifacts/ ./artifacts/
 USER app
 EXPOSE 8000
 
