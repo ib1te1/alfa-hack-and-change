@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "pairs": [
+    {"pair_id": "K01", "profile_id": "P06", "item_id": "1de3d795-d405-4c56-9fd4-5f36ba9917e0"},
+    {"pair_id": "K02", "profile_id": "P18", "item_id": "b9045d6e-07ad-407f-a305-472e82fef797"},
+    {"pair_id": "K03", "profile_id": "P09", "item_id": "a25c8282-94c7-458e-abf6-9fbd7b996ef7"},
+    {"pair_id": "K04", "profile_id": "P03", "item_id": "0828e7e3-84da-4ff7-a4af-1011118edde4"},
+    {"pair_id": "K05", "profile_id": "P15", "item_id": "c16abf76-1996-4191-b6ba-e8abb8d8b138"}
+  ]
+}
