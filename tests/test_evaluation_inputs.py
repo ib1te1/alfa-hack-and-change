@@ -6,7 +6,7 @@ import yaml
 
 from alfarec.config import ConfigurationError
 from alfarec.eval.profiles import load_profiles
-from alfarec.recsys.taxonomy import load_taxonomy
+from alfarec.recsys.taxonomy import load_taxonomy, match_key
 
 
 def write_yaml(tmp_path: Path, payload: dict) -> Path:
@@ -36,6 +36,25 @@ def test_bundled_profiles_cover_required_scenarios_and_taxonomy() -> None:
         part = [p for p in suite.profiles if p.split == split]
         assert {p.case for p in part} == {"standard", "history", "minimal", "out_of_scope"}
         assert len({p.audience for p in part}) == 3
+
+
+@pytest.mark.parametrize(
+    ("taxonomy_value", "source_value"),
+    [
+        ("Маркетплейсы", "Маркeтплейсы"),
+        ("HoReCa", "HoReСa"),
+        ("Финансы и учёт", "Финансы и учет"),
+        ("Управление командой", "Управление командой\t"),
+        ("ECom", "ecom"),
+    ],
+)
+def test_source_spellings_share_a_match_key(taxonomy_value: str, source_value: str) -> None:
+    assert match_key(taxonomy_value) == match_key(source_value)
+
+
+def test_match_key_keeps_distinct_titles_apart() -> None:
+    assert match_key("Продажи") != match_key("Продажи и переговоры")
+    assert match_key("Финансы") != match_key("Финансы и учёт")
 
 
 def test_default_configuration_paths_are_independent_of_working_directory(

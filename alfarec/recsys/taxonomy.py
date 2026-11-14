@@ -1,3 +1,4 @@
+import unicodedata
 from pathlib import Path
 from typing import Annotated, Literal, Self, get_args
 
@@ -8,6 +9,15 @@ from alfarec.recsys.contracts import Contract, ItemFormat, Level, Stage
 
 TaxonId = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$")]
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+
+# Source dictionaries mix Latin look-alikes into Cyrillic titles ("Маркeтплейсы", "HoReСa").
+# Both sides of a comparison are folded to Cyrillic, so either spelling yields the same key.
+_HOMOGLYPHS = str.maketrans("aceopxyk", "асеорхук")
+
+
+def match_key(value: str) -> str:
+    text = unicodedata.normalize("NFKC", value).casefold().replace("ё", "е")
+    return " ".join(text.translate(_HOMOGLYPHS).split())
 
 
 class Taxon(Contract):
