@@ -76,8 +76,22 @@ def test_ranker_puts_the_followed_course_first_and_explains_it(courses):
     cards = [c for c in answer.more if not c.next_step.label == "Продолжить курс"]
     shown_courses = [c for c in cards if c.item.format == "course"]
     assert shown_courses[0].item.item_id == rare.item_id
-    reasons = {r.code: r for r in shown_courses[0].reasons}
-    assert reasons[ReasonCode.CONTINUES_HISTORY].params["title"] == source.title
+    # "Taken after X" is not "continues X": the reason says similar people chose it.
+    assert ReasonCode.POPULAR_WITH_SIMILAR in {r.code for r in shown_courses[0].reasons}
+
+
+def test_stated_tasks_keep_unrelated_follow_up_courses_down(courses):
+    source, rare = courses[-1], courses[0]
+    ranker = load_ranker(transitions=CourseTransitions({source.item_id: {rare.item_id: 50}}))
+    facts = ranker._facts  # noqa: SLF001
+    task = next(
+        t for c in reversed(courses[1:-1]) for t, s in facts[c.item_id].tasks.items()
+        if s >= 0.8 and t not in facts[rare.item_id].tasks
+    )  # fmt: skip
+    history = [Event(user_id="u", item_id=source.item_id, type="enroll", ts=NOW)]
+    answer = ranker.recommend(Profile(tasks=[task]), history, limit=10)
+    top = [c.item.item_id for c in answer.route + answer.more[:3]]
+    assert rare.item_id not in top
 
 
 def test_ranker_without_transitions_ignores_the_feature(courses):

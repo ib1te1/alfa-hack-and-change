@@ -263,6 +263,7 @@ class _Context:
     neighbours: dict[str, tuple[float, str]]
     empty: bool
     sequence: dict[str, tuple[float, str]] = field(default_factory=dict)
+    stated_tasks: bool = False
 
 
 class Ranker:
@@ -353,6 +354,7 @@ class Ranker:
         self, profile: Profile, history: Sequence[Event], understanding: Understanding
     ) -> _Context:
         tasks = list(dict.fromkeys([*profile.tasks, *understanding.tasks]))
+        stated_tasks = bool(tasks)
         weights: dict[str, float] = {}
         titles: dict[str, str] = {}
         excluded: set[str] = set()
@@ -419,6 +421,7 @@ class Ranker:
             neighbours=neighbours,
             empty=empty,
             sequence=sequence,
+            stated_tasks=stated_tasks,
         )
 
     def _query_text(self, profile: Profile, tasks: list[str]) -> str:
@@ -524,10 +527,10 @@ class Ranker:
         if title:
             params["history"] = {"title": title}
         if item.item_id in context.sequence:
-            value, source = context.sequence[item.item_id]
-            features["sequence"] = value
-            if source:
-                params["sequence"] = {"title": self._items[source].title}
+            # With tasks stated by the user, behaviour only ranks courses within those tasks;
+            # otherwise a popular follow-up course would push the user's own task aside.
+            value = context.sequence[item.item_id][0]
+            features["sequence"] = value * strength if context.stated_tasks else value
         quality = []
         if item.completion_rate is not None:
             # Smoothed toward the catalog-wide mean of about 0.12 for courses.
@@ -867,10 +870,6 @@ class Ranker:
         if name == "industry" and params:
             return Reason(code=ReasonCode.INDUSTRY_MATCH, weight=weight, params=params)
         if name == "history" and params.get("title"):
-            return Reason(
-                code=ReasonCode.CONTINUES_HISTORY, weight=weight, params={"title": params["title"]}
-            )
-        if name == "sequence" and params.get("title"):
             return Reason(
                 code=ReasonCode.CONTINUES_HISTORY, weight=weight, params={"title": params["title"]}
             )
