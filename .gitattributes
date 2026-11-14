@@ -3,3 +3,4 @@ tests/fixtures/*.backup binary
 *.ps1 text eol=lf
 *.yml text eol=lf
 *.parquet binary
+artifacts/*.json text eol=lf

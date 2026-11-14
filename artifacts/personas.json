@@ -1,0 +1,287 @@
+[
+  {
+    "id": "novice",
+    "legend": "Первый вход, профиль пуст, истории нет — показываем стартовый набор.",
+    "title": "Новичок без данных",
+    "user_id": "persona-novice"
+  },
+  {
+    "id": "coffee",
+    "legend": "Думает открыть кофейню, опыта нет; нужен порядок запуска и выбор налогового режима.",
+    "profile": {
+      "experience": "beginner",
+      "free_text": "Хочу открыть кофейню",
+      "industries": [
+        "horeca"
+      ],
+      "stage": "idea",
+      "tasks": [
+        "business_start",
+        "tax_regime"
+      ],
+      "time_budget": "hour"
+    },
+    "title": "Открываю кофейню",
+    "user_id": "persona-coffee"
+  },
+  {
+    "history": [
+      {
+        "item_id": "d0aa4598-3da2-478b-bbf8-bda81b231b58",
+        "ts": "2026-10-02T09:00:00+03:00",
+        "type": "complete",
+        "user_id": "persona-seller"
+      },
+      {
+        "item_id": "b239cb65-a49f-4af7-8f2d-8b7c22bfdb71",
+        "ts": "2026-10-13T08:59:00+03:00",
+        "type": "view",
+        "user_id": "persona-seller"
+      },
+      {
+        "item_id": "a5530eb4-e157-447d-b74c-2d58da34f357",
+        "ts": "2026-10-19T08:58:00+03:00",
+        "type": "view",
+        "user_id": "persona-seller"
+      },
+      {
+        "item_id": "ce9e4b30-5716-4188-a1de-dffd3a24be87",
+        "ts": "2026-10-23T09:00:00+03:00",
+        "type": "view",
+        "user_id": "persona-seller"
+      },
+      {
+        "item_id": "2a06c82d-e2f4-4e6d-bf8c-54775eb7c474",
+        "ts": "2026-10-30T08:56:00+03:00",
+        "type": "view",
+        "user_id": "persona-seller"
+      },
+      {
+        "item_id": "8b319671-3d39-4a1d-b135-8d74e601e0a1",
+        "ts": "2026-10-31T08:55:00+03:00",
+        "type": "view",
+        "user_id": "persona-seller"
+      },
+      {
+        "item_id": "e4308091-7879-406d-9f89-5ce8e7f37eb7",
+        "ts": "2026-11-01T08:57:00+03:00",
+        "type": "view",
+        "user_id": "persona-seller"
+      }
+    ],
+    "id": "seller",
+    "legend": "Продаёт на маркетплейсах, прошёл вводный курс о маркетплейсах; дальше — налоги и рост продаж.",
+    "profile": {
+      "experience": "intermediate",
+      "industries": [
+        "ecom"
+      ],
+      "stage": "operating",
+      "tasks": [
+        "marketplaces",
+        "taxes_reporting"
+      ],
+      "time_budget": "course"
+    },
+    "title": "ИП на маркетплейсах",
+    "user_id": "persona-seller"
+  },
+  {
+    "history": [
+      {
+        "item_id": "1be29dd4-be13-4d09-baca-69c3901d6dda",
+        "ts": "2026-10-22T09:00:00+03:00",
+        "type": "view",
+        "user_id": "persona-services"
+      },
+      {
+        "item_id": "2bdc079f-061e-4136-863e-c20987a53f9e",
+        "ts": "2026-10-23T08:57:00+03:00",
+        "type": "view",
+        "user_id": "persona-services"
+      },
+      {
+        "item_id": "f637a0ae-bd11-4e0d-8441-cda97e4fe048",
+        "ts": "2026-10-27T08:59:00+03:00",
+        "type": "view",
+        "user_id": "persona-services"
+      },
+      {
+        "item_id": "b6aa0384-1619-4638-8f00-bd1f3dfc25b2",
+        "ts": "2026-10-28T08:58:00+03:00",
+        "type": "view",
+        "user_id": "persona-services"
+      },
+      {
+        "item_id": "6dc02745-9109-4a2a-a1fe-e080e568d552",
+        "ts": "2026-10-31T08:56:00+03:00",
+        "type": "view",
+        "user_id": "persona-services"
+      }
+    ],
+    "id": "services",
+    "legend": "Владелец салона услуг ищет, как привлекать клиентов; читал несколько статей о маркетинге.",
+    "profile": {
+      "experience": "intermediate",
+      "industries": [
+        "services"
+      ],
+      "stage": "operating",
+      "tasks": [
+        "marketing",
+        "sales_customers"
+      ],
+      "time_budget": "hour"
+    },
+    "title": "Сфера услуг про продвижение",
+    "user_id": "persona-services"
+  },
+  {
+    "history": [
+      {
+        "item_id": "26ae5eeb-9d81-4bfc-85d6-1086d9ab5a44",
+        "ts": "2026-10-25T09:00:00+03:00",
+        "type": "enroll",
+        "user_id": "persona-hiring"
+      },
+      {
+        "item_id": "b8bc01f7-3ebb-4503-8133-f252a891ef5b",
+        "ts": "2026-10-26T08:59:00+03:00",
+        "type": "view",
+        "user_id": "persona-hiring"
+      },
+      {
+        "item_id": "ee68d746-9158-4df9-952f-07a25d7a873e",
+        "ts": "2026-10-29T08:58:00+03:00",
+        "type": "view",
+        "user_id": "persona-hiring"
+      },
+      {
+        "item_id": "e0990cf1-d906-4bb1-bcd6-b3d535809a4b",
+        "ts": "2026-10-29T09:00:00+03:00",
+        "type": "view",
+        "user_id": "persona-hiring"
+      },
+      {
+        "item_id": "a6d015e1-c011-429e-83a9-e216f0c7111f",
+        "ts": "2026-11-01T08:57:00+03:00",
+        "type": "view",
+        "user_id": "persona-hiring"
+      }
+    ],
+    "id": "hiring",
+    "legend": "Расширяет розничную сеть и начал курс о команде продаж; нужен следующий шаг по найму.",
+    "profile": {
+      "experience": "advanced",
+      "industries": [
+        "retail"
+      ],
+      "stage": "growth",
+      "tasks": [
+        "team_hiring"
+      ],
+      "time_budget": "course"
+    },
+    "title": "Растущий бизнес про найм",
+    "user_id": "persona-hiring"
+  },
+  {
+    "id": "outside",
+    "legend": "Хочет открыть автосервис в Казахстане — точного материала нет, нужно честное уточнение.",
+    "profile": {
+      "experience": "beginner",
+      "free_text": "Открыть автосервис в Казахстане",
+      "stage": "idea"
+    },
+    "title": "Запрос вне каталога",
+    "user_id": "persona-outside"
+  },
+  {
+    "history": [
+      {
+        "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-1"
+      },
+      {
+        "item_id": "3d17b03e-0e69-44cf-aa04-110e92437016",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-1"
+      },
+      {
+        "item_id": "72b09272-9cce-40e7-b500-92e5d8f4aff7",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-1"
+      },
+      {
+        "item_id": "a26fad9d-4380-4ba2-a8b9-27e495eeb721",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-1"
+      },
+      {
+        "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "complete",
+        "user_id": "real-1"
+      },
+      {
+        "item_id": "3d17b03e-0e69-44cf-aa04-110e92437016",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "complete",
+        "user_id": "real-1"
+      },
+      {
+        "item_id": "a26fad9d-4380-4ba2-a8b9-27e495eeb721",
+        "ts": "2026-08-01T12:00:00Z",
+        "type": "complete",
+        "user_id": "real-1"
+      }
+    ],
+    "id": "real-1",
+    "legend": "Обезличенная история платформы, курсов: 4 — Азбука приёма платежей; Просто о сложном: первые шаги в бизнесе; Путь серийного предпринимателя: проходим с экспертами; Самое важное о 115-ФЗ. Профиль не заполнен: в данных его нет.",
+    "title": "Реальный пользователь 1",
+    "user_id": "real-1"
+  },
+  {
+    "history": [
+      {
+        "item_id": "448dce68-b2ab-4544-a27e-a9826486dcad",
+        "ts": "2025-10-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-2"
+      },
+      {
+        "item_id": "4a6deac5-46e2-4d47-9388-73df6874bc6e",
+        "ts": "2025-10-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-2"
+      },
+      {
+        "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+        "ts": "2025-10-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-2"
+      },
+      {
+        "item_id": "d0aa4598-3da2-478b-bbf8-bda81b231b58",
+        "ts": "2025-10-01T12:00:00Z",
+        "type": "enroll",
+        "user_id": "real-2"
+      },
+      {
+        "item_id": "4a6deac5-46e2-4d47-9388-73df6874bc6e",
+        "ts": "2025-10-01T12:00:00Z",
+        "type": "complete",
+        "user_id": "real-2"
+      }
+    ],
+    "id": "real-2",
+    "legend": "Обезличенная история платформы, курсов: 4 — Бизнес на Авито: лёгкая продажа товаров; Генеративный ИИ: курс по промптингу; Маркетплейсы: с чего начать и как преуспеть; эксперт-вызов. Профиль не заполнен: в данных его нет.",
+    "title": "Реальный пользователь 2",
+    "user_id": "real-2"
+  }
+]

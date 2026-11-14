@@ -71,16 +71,23 @@ jobs:
         run: '& $env:PROJECT_PYTHON -m pytest'
       - name: Validate taxonomy and evaluation inputs
         run: '& $env:PROJECT_PYTHON -m alfarec.eval.validate_inputs'
-      - name: Verify Docker scaffold
+      - name: Verify Docker service
         if: runner.os == 'Linux'
         run: |
           try {
             docker compose up --build --detach --wait --wait-timeout 90
             if ($LASTEXITCODE -ne 0) { throw 'Docker startup failed' }
             $health = Invoke-RestMethod http://127.0.0.1:8000/api/health
-            if ($health.status -ne 'scaffold' -or $health.ready -ne $false -or $health.artifacts_loaded -ne $false) {
-              throw 'Unexpected scaffold health response'
+            if ($health.status -ne 'ok' -or $health.ready -ne $true -or $health.catalog_items -lt 1000) {
+              throw 'Unexpected health response'
             }
+            $page = Invoke-WebRequest http://127.0.0.1:8000/
+            if ($page.StatusCode -ne 200 -or $page.Content -notmatch '/static/app.js') { throw 'Page is not served' }
+            $body = '{"profile":{"tasks":["marketing"]},"user_id":"ci","limit":3}'
+            $answer = Invoke-RestMethod -Method Post -ContentType 'application/json' -Body $body http://127.0.0.1:8000/api/recommendations
+            if ($answer.more.Count -ne 3) { throw 'Recommendations are not served' }
+            $feedback = '{"user_id":"ci","item_id":"' + $answer.more[0].item.item_id + '","type":"known","ts":"2026-11-14T10:00:00Z"}'
+            Invoke-RestMethod -Method Post -ContentType 'application/json' -Body $feedback http://127.0.0.1:8000/api/events | Out-Null
           } finally {
             docker compose logs
             docker compose down

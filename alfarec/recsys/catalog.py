@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -48,3 +49,15 @@ def load_catalog(path: Path = DEFAULT_CATALOG_PATH) -> list[Item]:
     """Read the public catalog artifact and validate every row against the contract."""
     table = pq.read_table(path, schema=CATALOG_SCHEMA)
     return [Item.model_validate(row) for row in table.to_pylist()]
+
+
+def with_base_url(items: Sequence[Item], base_url: str) -> list[Item]:
+    """Point material links to another platform host, keeping each page path."""
+    base = base_url.rstrip("/")
+    parts = urlsplit(base)
+    if parts.scheme not in {"http", "https"} or not parts.netloc:
+        raise ValueError(f"PLATFORM_BASE_URL must look like https://host, got {base_url!r}")
+    return [
+        Item.model_validate({**item.model_dump(), "url": base + urlsplit(str(item.url)).path})
+        for item in items
+    ]
