@@ -103,3 +103,16 @@ def test_rebuild_from_dump_matches_committed_personas(tmp_path: Path):
     output = tmp_path / "personas.json"
     assert main(["--output", str(output)]) == 0
     assert output.read_bytes() == DEFAULT_PERSONAS_PATH.read_bytes()
+
+
+def test_event_store_skips_a_truncated_line(tmp_path: Path):
+    path = tmp_path / "events.jsonl"
+    good = Event(user_id="u", item_id="a", type="view", ts="2026-11-01T00:00:00Z")
+    path.write_text(good.model_dump_json() + '\n{"user_id": "u", "item', encoding="utf-8")
+    assert EventStore(path).history("u") == [good]
+
+
+def test_invalid_platform_base_url_is_reported(monkeypatch):
+    monkeypatch.setenv("PLATFORM_BASE_URL", "kurs.alfabank.ru")
+    with pytest.raises(ValueError, match="PLATFORM_BASE_URL"):
+        build_services(DEFAULT_CATALOG_PATH, None, DEFAULT_PERSONAS_PATH)

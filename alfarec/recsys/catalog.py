@@ -54,6 +54,9 @@ def load_catalog(path: Path = DEFAULT_CATALOG_PATH) -> list[Item]:
 def with_base_url(items: Sequence[Item], base_url: str) -> list[Item]:
     """Point material links to another platform host, keeping each page path."""
     base = base_url.rstrip("/")
+    parts = urlsplit(base)
+    if parts.scheme not in {"http", "https"} or not parts.netloc:
+        raise ValueError(f"PLATFORM_BASE_URL must look like https://host, got {base_url!r}")
     return [
         Item.model_validate({**item.model_dump(), "url": base + urlsplit(str(item.url)).path})
         for item in items

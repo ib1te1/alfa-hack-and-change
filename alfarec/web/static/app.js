@@ -24,6 +24,7 @@ const state = {
   profile: emptyProfile(),
   userId: null,
   compare: false,
+  requestSeq: 0,
 };
 
 function emptyProfile() {
@@ -234,11 +235,14 @@ function requestBody(mode) {
 async function refresh() {
   const columns = document.getElementById("columns");
   columns.setAttribute("aria-busy", "true");
+  const seq = ++state.requestSeq;
   try {
     const modes = state.compare ? ["ours", "baseline"] : ["ours"];
     const responses = await Promise.all(
       modes.map((mode) => api("/api/recommendations", { method: "POST", body: requestBody(mode) })),
     );
+    // A slower earlier request must not overwrite the answer to a newer one.
+    if (seq !== state.requestSeq) return;
     columns.className = state.compare ? "columns columns--compare" : "columns";
     columns.replaceChildren(
       ...responses.map((response, index) => renderColumn(
@@ -301,6 +305,7 @@ function setupOnboarding() {
   document.getElementById("onboarding-start").addEventListener("click", () => {
     card.hidden = true;
     const first = document.querySelector(".panel .chip");
+    if (!first) return;
     first.scrollIntoView({ behavior: "smooth", block: "center" });
     first.focus({ preventScroll: true });
   });
