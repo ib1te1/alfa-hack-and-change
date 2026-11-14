@@ -29,8 +29,6 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = ROOT / "data" / "handoff"
 DEFAULT_REPORT = ROOT / "reports" / "b02_handoff.md"
 VERSION = 1
-# Platform user ids are replaced by stable pseudonyms; the original ids never leave the dump.
-USER_SALT = "alfarec-handoff-v1:"
 SOURCE_TABLES = ("Articles", "Documents", "Courses", "Webinars", "Podcasts", "Glossary")
 EXTRA_TABLES = (
     "RecommendedItems", "DocumentBindings", "CourseUserBindings", "Landings", "Lessons",
@@ -76,8 +74,14 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def user_key(user_id: str) -> str:
-    return hashlib.sha256((USER_SALT + user_id).encode()).hexdigest()[:16]
+def user_keys(user_ids: set[str]) -> dict[str, str]:
+    """Sequential pseudonyms ordered by a hash of the platform id.
+
+    Unlike a salted hash with the salt in the code, a number cannot be computed from one known
+    platform id: mapping it back requires the full list of users, which only the dump holds.
+    """
+    ordered = sorted(user_ids, key=lambda user: hashlib.sha256(user.encode()).hexdigest())
+    return {user: f"u{index:05d}" for index, user in enumerate(ordered, start=1)}
 
 
 def editorial_pairs(tables: Tables, catalog_ids: set[str]) -> list[dict]:
@@ -109,13 +113,17 @@ def editorial_pairs(tables: Tables, catalog_ids: set[str]) -> list[dict]:
 
 
 def enrolments(tables: Tables, catalog_ids: set[str]) -> list[dict]:
+    live = [
+        row
+        for row in tables["CourseUserBindings"]
+        if row["IsDeleted"] != "t" and row["CourseId"] in catalog_ids
+    ]
+    keys = user_keys({row["UserId"] for row in live})
     rows = []
-    for row in tables["CourseUserBindings"]:
-        if row["IsDeleted"] == "t" or row["CourseId"] not in catalog_ids:
-            continue
+    for row in live:
         rows.append(
             {
-                "user_key": user_key(row["UserId"]),
+                "user_key": keys[row["UserId"]],
                 "course_id": row["CourseId"],
                 "status": int(row["Status"]),
                 "enrolled_at": _parse_timestamp(row["Created"]),
@@ -205,8 +213,8 @@ def render_report(manifest: dict) -> str:
         " сопоставлены с курсом по слагу. Связи для проверки моделей, не признак ранжирования.",
         f"- Записи на курсы: {manifest['enrolment_users']} пользователей, статусы {statuses}"
         " (0 — не начат, 1 — в процессе, 2 — завершён). Неудалённые записи на курсы каталога."
-        " ID платформы заменены на `user_key` — первые 16 знаков SHA-256 с фиксированной солью;"
-        " даты в данных точны до месяца.",
+        " ID платформы заменены порядковыми `user_key` (`u00001`…); соответствие восстанавливается"
+        " только по полному списку пользователей из дампа. Даты в данных точны до месяца.",
         "- ID материалов во всех файлах совпадают с `item_id` каталога этой версии.",
         "",
         "## Публичность полей текста индекса",

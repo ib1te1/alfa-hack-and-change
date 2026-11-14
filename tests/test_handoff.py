@@ -9,7 +9,6 @@ from alfarec.pipeline.export_handoff import (
     editorial_pairs,
     enrolments,
     main,
-    user_key,
 )
 
 
@@ -52,8 +51,7 @@ def test_editorial_pairs_keep_catalog_links_and_map_landings():
 def test_enrolments_hide_platform_ids():
     rows = enrolments(tables(), CATALOG)
     assert len(rows) == 1
-    assert rows[0]["user_key"] == user_key("platform-user-1") != "platform-user-1"
-    assert len(rows[0]["user_key"]) == 16
+    assert rows[0]["user_key"] == "u00001"
     assert (rows[0]["status"], rows[0]["is_paid"]) == (2, False)
 
 
