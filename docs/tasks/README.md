@@ -1,10 +1,25 @@
 # Общая очередь задач
 
-Статус: выбран трек 1 — персональные рекомендации. ТЗ — [`docs/specs/2026-11-13-recommender-tz.md`](../specs/2026-11-13-recommender-tz.md), карточки — [`CORE.md`](CORE.md) и [`IMPROVEMENTS.md`](IMPROVEMENTS.md). B01, B03 и B11 слиты в `main` ([PR #4](https://github.com/ib1te1/alfa-hack-and-change/pull/4), [PR #5](https://github.com/ib1te1/alfa-hack-and-change/pull/5), [PR #6](https://github.com/ib1te1/alfa-hack-and-change/pull/6)). B02 (каталог из дампа) — на ревью в ветке `feature/b02-catalog`; B07 (API и страница) — на ревью в `feature/b07-api-page` поверх неё, B09 (персоны) — в `feature/b09-personas` поверх B07. B10 — подготовка в `feature/b10-run-readme`; B08 (объяснения) — в `feature/b08-explain`, ждёт согласования новых необязательных полей контракта.
+Выбран трек 1 — персональные рекомендации. ТЗ — [`docs/specs/2026-11-13-recommender-tz.md`](../specs/2026-11-13-recommender-tz.md), карточки — [`CORE.md`](CORE.md) и [`IMPROVEMENTS.md`](IMPROVEMENTS.md).
 
-Стопка PR сливается по порядку: [#7](https://github.com/ib1te1/alfa-hack-and-change/pull/7) (B02) → [#8](https://github.com/ib1te1/alfa-hack-and-change/pull/8) (B07) → [#9](https://github.com/ib1te1/alfa-hack-and-change/pull/9) (B09) → [#10](https://github.com/ib1te1/alfa-hack-and-change/pull/10) (B10, черновик) → [#11](https://github.com/ib1te1/alfa-hack-and-change/pull/11) (B08, черновик) → [#12](https://github.com/ib1te1/alfa-hack-and-change/pull/12) → [#13](https://github.com/ib1te1/alfa-hack-and-change/pull/13) → PR этой записи. Каждый PR направлен в ветку предыдущего; после слияния родителя базу следующего переносят на `main`, обновляют ветку и ждут зелёный CI. После приёмки B02 открываются B04 и B09.
+Снимок на 15 ноября 2026 года, `main` `ebfe16e`: PR #4–#14 и #19 уже слиты. Повторять старую стопку B02 → B07 → B09 → B10 → B08 не нужно. Слитый код и полная приёмка задачи различаются: например, ручная калибровка B03 и запуск B10 на второй машине ещё не подтверждены.
 
-До слияния B01 зависимые ветки создаются поверх неё, а их PR направляются в ветку зависимости для отдельного просмотра diff. CI выполняется на всех PR. После слияния родительского PR базу дочернего нужно перенести на `main`, обновить ветку и повторно проверить CI. Статус `done` ставится после слияния; техническая приёмка результата и публикация PR фиксируются отдельно.
+| Задача | Где находится результат | Что остаётся |
+|---|---|---|
+| B01, B11 | Слиты [#4](https://github.com/ib1te1/alfa-hack-and-change/pull/4), [#6](https://github.com/ib1te1/alfa-hack-and-change/pull/6); приняты по карточкам | Не дублировать |
+| B02 | Слиты каталог [#7](https://github.com/ib1te1/alfa-hack-and-change/pull/7), нормализация [#13](https://github.com/ib1te1/alfa-hack-and-change/pull/13) и экспорт передачи [#19](https://github.com/ib1te1/alfa-hack-and-change/pull/19) | Передать исполнителю B04 файлы `data/handoff` вне Git и проверить соответствие версии каталога |
+| B03 | Основа слита [#5](https://github.com/ib1te1/alfa-hack-and-change/pull/5); калибровка — черновик [#18](https://github.com/ib1te1/alfa-hack-and-change/pull/18), `prolgrammer` | Две независимые человеческие оценки пяти пар и разбор расхождений |
+| B04 | Индекс и TF-IDF — черновик [#16](https://github.com/ib1te1/alfa-hack-and-change/pull/16), `prolgrammer` | Сравнение кодировщиков, ML-метки и их ручная проверка, граф; индекс метаданных не закрывает всю B04 |
+| B05 | Ранжирование [#20](https://github.com/ib1te1/alfa-hack-and-change/pull/20), подключение к API [#21](https://github.com/ib1te1/alfa-hack-and-change/pull/21), `enioZz95` | Приёмка, зависимости и окончательная интеграция; веса пока ручные |
+| B06 | Черновик [#22](https://github.com/ib1te1/alfa-hack-and-change/pull/22), `enioZz95` | Пересчёт с файлами передачи, ручная релевантность, согласованность, holdout, абляции и подбор весов |
+| B07, B09 | Основа слита [#8](https://github.com/ib1te1/alfa-hack-and-change/pull/8), [#9](https://github.com/ib1te1/alfa-hack-and-change/pull/9), [#12](https://github.com/ib1te1/alfa-hack-and-change/pull/12) | Сквозная приёмка с окончательным B05 в #21 |
+| B08 | Основа слита [#11](https://github.com/ib1te1/alfa-hack-and-change/pull/11); уточнение объяснений [#23](https://github.com/ib1te1/alfa-hack-and-change/pull/23), `prolgrammer` | A06/A07 с B05: две–три обоснованные причины на карточке, проверка уроков на исходном дампе |
+| B10 | Начальные Docker и README слиты [#10](https://github.com/ib1te1/alfa-hack-and-change/pull/10); интеграция — #21 | Чистый запуск на второй физической машине и окончательный выбор режима кодировщика |
+| B12, B13 | Карточки в CORE.md | Итоговые метрики, презентация и приёмка сдаваемого SHA; не заявлять сдачу по наличию черновиков |
+
+Дополнительно открыты схема данных [#15](https://github.com/ib1te1/alfa-hack-and-change/pull/15) и исправление Windows-фикстуры [#17](https://github.com/ib1te1/alfa-hack-and-change/pull/17). Перед выбором работы проверять текущий GitHub: эта таблица — снимок, а не автоматический реестр. Исполнитель открытого PR закрепляет указанный объём; новую реализацию той же задачи не начинать.
+
+Текущая цепочка интеграции: #16 → #20 → #21 → #22. После squash-слияния зависимости перенести базу следующего PR на `main`, обновить ветку, проверить окончательный diff и CI текущего HEAD. Наличие отдельного принятого этапа не заменяет приёмку всей задачи. `done` ставится только после слияния и подтверждения всех критериев карточки.
 
 Связи таксономии с исходными справочниками проверены воспроизводимым [отчётом о покрытии](../../reports/taxonomy_coverage.md) на каталоге B02. Дамп `data/alfa_course_hackathon.backup` передаётся исполнителю вне репозитория.
 
