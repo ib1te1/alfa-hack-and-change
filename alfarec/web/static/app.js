@@ -96,6 +96,7 @@ function renderChips() {
             : [...values, option.id];
         }
         renderChips();
+        scheduleRefresh();
       });
       box.append(chip);
     }
@@ -232,6 +233,17 @@ function requestBody(mode) {
     if (profile[key] === null || (Array.isArray(profile[key]) && !profile[key].length)) delete profile[key];
   }
   return JSON.stringify({ profile, user_id: state.userId, mode, limit: 10 });
+}
+
+let refreshTimer = null;
+
+// Every answer updates the results at once; a short pause folds a burst of clicks into one request.
+function scheduleRefresh() {
+  window.clearTimeout(refreshTimer);
+  refreshTimer = window.setTimeout(() => {
+    document.getElementById("onboarding").hidden = true;
+    refresh();
+  }, 250);
 }
 
 async function refresh() {
