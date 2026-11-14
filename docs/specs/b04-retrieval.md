@@ -25,3 +25,55 @@
 - Поведенческие тесты поиска, пустого ввода, исключений, устойчивого порядка и повреждённых файлов.
 - Воспроизводимый замер времени кодирования/поиска на CPU; отдельно от оценки релевантности.
 - Независимое ревью, тесты и CI. Слияние выполняется отдельно.
+
+## Использование этапа
+
+Зависимости вынесены в отдельный зафиксированный набор, чтобы не менять окружение API до интеграции в B05:
+
+```sh
+python -m pip install -r requirements-retrieval.txt
+python -m pytest tests retrieval_tests
+python -m ruff check alfarec tests retrieval_tests
+```
+
+`artifacts/retrieval_tfidf/` содержит резервный индекс по заголовкам и кратким описаниям каталога B02. Манифест фиксирует `text_source: metadata`; это не индекс полного текста. Для новой сборки нужен ещё не существующий каталог:
+
+```sh
+python -m alfarec.pipeline.build_index --source metadata --output data/processed/retrieval
+python -m alfarec.eval.benchmark_retrieval --source metadata --index data/processed/retrieval
+```
+
+После передачи разрешённого текста B02:
+
+```sh
+python -m alfarec.pipeline.build_index --source index_text --index-text data/processed/index_text.parquet --output data/processed/retrieval-full
+```
+
+`index_text` — источник по умолчанию; без явного пути команда завершится понятной ошибкой. Проверяются точное покрытие ID, отсутствие дублей, совпадение item_type/access и непустой текст. Строки упорядочиваются по ID. Выход создаётся во временном каталоге, проверяется и переносится в назначение; существующие данные не перезаписываются.
+
+Для загрузки передаются ожидаемые ID **в порядке индекса**, SHA-256 каталога, требуемый источник и хеш подготовленных текстов. `prepare_texts` и `texts_digest` вычисляют те же ID и хеш, что использованы при сборке:
+
+```python
+from pathlib import Path
+
+from alfarec.pipeline.build_index import prepare_texts
+from alfarec.recsys.catalog import load_catalog
+from alfarec.recsys.retrieval import TfidfIndex, digest, texts_digest
+
+catalog_path = Path("artifacts/catalog.parquet")
+ids, texts = prepare_texts(load_catalog(catalog_path), source="metadata")
+index = TfidfIndex.load(
+    Path("artifacts/retrieval_tfidf"),
+    expected_item_ids=ids,
+    expected_catalog_sha256=digest(catalog_path),
+    expected_text_source="metadata",
+    expected_texts_sha256=texts_digest(ids, texts),
+)
+hits = index.search("Как привлечь клиентов", limit=200, excluded=set())
+```
+
+`provenance` загруженного индекса возвращает отдельную копию манифеста для отчёта о фактическом режиме. Необязательные expected-параметры можно опустить только при диагностическом чтении; при интеграции нужна полная проверка соответствия источникам. Изменение текста каталога в PR #13 потребует пересобрать индекс на той же версии артефакта.
+
+`DenseIndex` принимает уже подготовленные векторы и объект с методом `encode(texts)`. Он не загружает модель и не обращается к сети. `choose_index(preferred, fallback)` выбирает TF-IDF только при явно отсутствующем preferred; ошибки загрузки данных не перехватываются этим выбором. Фактический режим доступен через `mode`. Загрузка конкретной нейросетевой модели и подключение индекса к сервису остаются в следующих этапах B04/B05.
+
+Формат сохранения — JSON, NumPy NPY и SciPy NPZ с контрольными суммами. Pickle/joblib для загрузки артефактов не используются; точные версии библиотек проверяются при чтении. Это соответствует ограничениям совместимости, описанным в [документации scikit-learn](https://scikit-learn.org/stable/model_persistence.html). Параметры символьного TF-IDF основаны на [TfidfVectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html).
