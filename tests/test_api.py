@@ -195,3 +195,13 @@ def test_page_static_files_and_docs(client: TestClient) -> None:
     paths = client.get("/openapi.json").json()["paths"]
     for path in ("/api/recommendations", "/api/events", "/api/meta", "/api/items/{item_id}"):
         assert path in paths
+
+
+def test_platform_base_url_rewrites_links(paths: dict[str, Path], monkeypatch) -> None:
+    monkeypatch.setenv("PLATFORM_BASE_URL", "https://stage.example.test/")
+    services = build_services(paths["catalog"], paths["events"], paths["personas"])
+    with TestClient(create_app(services)) as client:
+        card = client.get("/api/items/plus-course").json()
+        assert card["url"] == "https://stage.example.test/courses/plus"
+        result = recommend(client, profile={"tasks": ["marketing"]}, limit=1)
+        assert result["more"][0]["next_step"]["url"].startswith("https://stage.example.test/")

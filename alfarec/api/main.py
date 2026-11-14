@@ -18,7 +18,7 @@ from alfarec.api.schemas import (
     RecommendationRequest,
 )
 from alfarec.recsys.baseline import InterimRecommender
-from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog
+from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog, with_base_url
 from alfarec.recsys.contracts import Event, Item, RecommendationResponse, Recommender
 from alfarec.recsys.taxonomy import Taxonomy, load_taxonomy
 
@@ -69,6 +69,8 @@ def build_services(
     items: list[Item] = []
     if catalog_path.is_file():
         items = load_catalog(catalog_path)
+        if base_url := os.environ.get("PLATFORM_BASE_URL"):
+            items = with_base_url(items, base_url)
     else:
         logger.warning("Catalog artifact is missing: %s", catalog_path)
     personas = load_personas(personas_path or _env_path("PERSONAS_PATH", DEFAULT_PERSONAS_PATH))
