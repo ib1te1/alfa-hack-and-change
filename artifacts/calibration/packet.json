@@ -1,7 +1,7 @@
 {
   "version": 1,
   "sources": {
-    "catalog": "c63265dacd9d9ccf54765a9b6157d491d17223c2d7bacc860735091c0af881ee",
+    "catalog": "d75b5586a07025ba32401b78e5d670eac1bc93d00b02727a36d6d180f247ac29",
     "profiles": "b3541685d9117629a327a9f753a36d062be9bd472fbbca0ff0e0e6c3f967cce3",
     "taxonomy": "99105e96b9620893377460fb033818d24a2705335846dba1ebd3b8e88042be5a",
     "instructions": "9ed72cf952118c40d6ff52b18e99c0572a998b442e7fe33023a5b67b53b121a7",
@@ -276,5 +276,5 @@
       "format_label": "Курс"
     }
   ],
-  "packet_sha256": "65525fcc61942373e067cd138fe858802554343bb20b18891667af2bd34cac18"
+  "packet_sha256": "b7d1230829b8e9a6a6a7fffbff37ca1dd0ef0eb2e931fa45550c0331e583fd14"
 }
