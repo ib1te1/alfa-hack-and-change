@@ -3,5 +3,7 @@
 !requirements.txt
 !alfarec/
 !alfarec/**
+!artifacts/
+!artifacts/**
 **/__pycache__/
 **/*.pyc
