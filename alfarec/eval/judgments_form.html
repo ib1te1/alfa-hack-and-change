@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Разметка релевантности B06</title>
+<style>
+  :root { --ink: #1d1f24; --muted: #5d6370; --line: #dfe2e7; --soft: #f5f6f8; --accent: #c8202a; --ok: #1b7f3b; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 "Segoe UI", Arial, sans-serif; color: var(--ink); background: #fff; }
+  header { position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 16px;
+    display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; z-index: 2; }
+  header h1 { font-size: 17px; margin: 0; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .scale { background: var(--soft); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; }
+  .scale b { display: inline-block; min-width: 28px; }
+  .profile { border: 1px solid var(--line); border-radius: 12px; margin: 0 0 22px; }
+  .profile > .head { background: var(--soft); border-radius: 12px 12px 0 0; padding: 12px 16px; }
+  .profile h2 { margin: 0 0 6px; font-size: 16px; }
+  .fields { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 0; }
+  .fields dt { color: var(--muted); }
+  .fields dd { margin: 0; }
+  .history { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
+  .pair { padding: 12px 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 300px; gap: 14px; }
+  .pair.done { background: #fbfdfb; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .title { font-weight: 600; margin: 2px 0 4px; }
+  .summary { font-size: 14px; }
+  fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+  fieldset label { border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 14px; }
+  fieldset input { margin-right: 4px; }
+  textarea { width: 100%; min-height: 34px; font: inherit; font-size: 13px; margin-top: 6px; border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+  .bad { color: var(--accent); }
+  .good { color: var(--ok); }
+  button { font: inherit; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .finish { border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 40px; }
+  @media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Разметка B06</h1>
+  <div role="radiogroup" aria-label="Код разметчика">Я — <label><input type="radio" name="labeler" value="A"> A</label>
+    <label><input type="radio" name="labeler" value="B"> B</label></div>
+  <div id="progress" aria-live="polite"></div>
+</header>
+<main>
+  <div class="scale">
+    Оценивайте пользу материала для <b>этого профиля</b> по публичной карточке, как в <code>docs/labeling.md</code>.
+    Источник карточки, позиция и объяснение системы скрыты.<br>
+    <b>2</b> прямо полезно: помогает следующему шагу по задаче, подходит по стадии, уровню и времени.<br>
+    <b>1</b> частично: по теме, но слишком общее, вводное вместо практического или не по времени.<br>
+    <b>0</b> не подходит: другая задача, чужая отрасль, недоступный уровень, уже пройдено.<br>
+    <b>?</b> нельзя оценить по публичным данным — обязательно напишите причину.
+    Ответы сохраняются в этом браузере; итоговый файл скачайте кнопкой внизу.
+  </div>
+  <div id="pick" class="bad">Выберите свой код A или B вверху — появятся ваши профили.</div>
+  <div id="profiles"></div>
+  <div class="finish" id="finish" hidden>
+    <label><input type="checkbox" id="independent"> Я оценивал(а) самостоятельно и не видел(а) оценок коллеги</label>
+    <p id="missing" class="bad"></p>
+    <button id="download" disabled>Скачать мои оценки · JSON</button>
+  </div>
+</main>
+<script>
+const POOL = /*POOL*/null;
+const FORMATS = { quick_answer: "Короткий ответ", guide: "Руководство", template: "Шаблон", tool: "Калькулятор",
+  course: "Курс", recording: "Запись вебинара", podcast: "Подкаст" };
+const ACCESS = { free: "бесплатно", subscription: "по подписке «Курс+»", paid: "платно" };
+let labeler = null;
+let answers = {};
+
+function storageKey() { return "b06-judgments:" + POOL.pool_sha256 + ":" + labeler; }
+function save() { try { localStorage.setItem(storageKey(), JSON.stringify(answers)); } catch (e) { /* private mode */ } }
+function restore() { try { return JSON.parse(localStorage.getItem(storageKey()) || "{}") || {}; } catch (e) { return {}; } }
+function key(p, i) { return p + "|" + i; }
+function el(tag, attrs, text) {
+  const node = document.createElement(tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => node.setAttribute(k, v));
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+function assignedPairs() {
+  const ids = new Set(POOL.assigned[labeler]);
+  return POOL.profiles.filter(p => ids.has(p.id)).flatMap(p => p.items.map(i => [p.id, i]));
+}
+function complete(answer) {
+  if (!answer || !answer.status) return false;
+  return answer.status === "judged" ? [0, 1, 2].includes(answer.grade) : (answer.note || "").trim().length > 0;
+}
+function update() {
+  const pairs = assignedPairs();
+  const done = pairs.filter(([p, i]) => complete(answers[key(p, i)])).length;
+  document.getElementById("progress").textContent = "Оценено " + done + " из " + pairs.length;
+  const independent = document.getElementById("independent").checked;
+  const missing = pairs.length - done;
+  document.getElementById("missing").textContent = missing ? "Осталось пар: " + missing + " (у «?» нужна причина)" : (independent ? "" : "Подтвердите самостоятельность");
+  document.getElementById("download").disabled = !!missing || !independent;
+}
+function renderPair(profile, itemId) {
+  const card = POOL.cards[itemId];
+  const k = key(profile.id, itemId);
+  const row = el("div", { class: "pair" });
+  const info = el("div");
+  const meta = [card.type, FORMATS[card.format] || card.format];
+  if (card.duration_min) meta.push(card.duration_min + " мин");
+  meta.push(ACCESS[card.access] || card.access);
+  if (card.price_rub) meta.push(card.price_rub + " ₽");
+  info.append(el("div", { class: "meta" }, meta.join(" · ")), el("div", { class: "title" }, card.title),
+    el("div", { class: "summary" }, card.summary || "Описания нет"));
+  const control = el("div");
+  const group = el("fieldset", { "aria-label": "Оценка: " + card.title });
+  const note = el("textarea", { placeholder: "Пояснение (обязательно для «?»)", "aria-label": "Пояснение" });
+  const current = answers[k] || {};
+  note.value = current.note || "";
+  [["2", 2], ["1", 1], ["0", 0], ["?", null]].forEach(([label, grade]) => {
+    const option = el("label");
+    const input = el("input", { type: "radio", name: k, value: label });
+    if (current.status && ((grade === null && current.status === "unjudgeable") || current.grade === grade && current.status === "judged")) input.checked = true;
+    input.addEventListener("change", () => {
+      answers[k] = { status: grade === null ? "unjudgeable" : "judged", grade: grade, note: note.value };
+      row.classList.toggle("done", complete(answers[k]));
+      save(); update();
+    });
+    option.append(input, document.createTextNode(label));
+    group.append(option);
+  });
+  note.addEventListener("input", () => {
+    if (answers[k]) { answers[k].note = note.value; row.classList.toggle("done", complete(answers[k])); save(); update(); }
+  });
+  control.append(group, note);
+  row.classList.toggle("done", complete(current));
+  row.append(info, control);
+  return row;
+}
+function render() {
+  const box = document.getElementById("profiles");
+  box.textContent = "";
+  const ids = new Set(POOL.assigned[labeler]);
+  POOL.profiles.filter(p => ids.has(p.id)).forEach(profile => {
+    const section = el("section", { class: "profile" });
+    const head = el("div", { class: "head" });
+    head.append(el("h2", {}, "Профиль " + profile.id));
+    const fields = el("dl", { class: "fields" });
+    if (!profile.fields.length) fields.append(el("dt", {}, "Профиль"), el("dd", {}, "ничего не указано"));
+    profile.fields.forEach(([name, value]) => fields.append(el("dt", {}, name), el("dd", {}, value)));
+    head.append(fields);
+    if (profile.history.length) {
+      const list = el("ul", { class: "history" });
+      profile.history.forEach(text => list.append(el("li", {}, text)));
+      head.append(el("div", { class: "meta" }, "История:"), list);
+    }
+    section.append(head);
+    profile.items.forEach(itemId => section.append(renderPair(profile, itemId)));
+    box.append(section);
+  });
+  document.getElementById("pick").hidden = true;
+  document.getElementById("finish").hidden = false;
+  update();
+}
+document.querySelectorAll("input[name=labeler]").forEach(input => input.addEventListener("change", () => {
+  labeler = input.value; answers = restore(); render();
+}));
+document.getElementById("independent").addEventListener("change", update);
+document.getElementById("download").addEventListener("click", () => {
+  const list = assignedPairs().map(([p, i]) => {
+    const a = answers[key(p, i)];
+    return { profile_id: p, item_id: i, status: a.status, grade: a.status === "judged" ? a.grade : null, note: (a.note || "").trim() };
+  });
+  const payload = { version: 1, pool_sha256: POOL.pool_sha256, labeler: labeler, independent: true, answers: list };
+  const blob = new Blob([JSON.stringify(payload, null, 1)], { type: "application/json" });
+  const link = el("a", { href: URL.createObjectURL(blob), download: "b06-judgments-" + labeler + ".json" });
+  document.body.append(link); link.click(); link.remove();
+});
+</script>
+</body>
+</html>

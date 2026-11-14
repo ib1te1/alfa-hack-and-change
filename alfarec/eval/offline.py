@@ -9,6 +9,7 @@ Relevance judgments, ablations and weight tuning are later stages and are not re
 """
 
 import argparse
+import json
 import math
 import statistics
 import sys
@@ -202,7 +203,21 @@ def evaluate_profiles(ranker: Ranker) -> dict:
     return result
 
 
-def render(next_course: dict, editorial: dict, profiles: dict) -> str:
+def evaluate_judged() -> dict | None:
+    """Metrics on the human judgments over the judged lists, or None before they exist."""
+    from alfarec.eval import judgments
+
+    if not (judgments.JUDGMENTS_PATH.exists() and judgments.LISTS_PATH.exists()):
+        return None
+    lists = json.loads(judgments.LISTS_PATH.read_text(encoding="utf-8"))
+    pool = json.loads(judgments.POOL_PATH.read_text(encoding="utf-8"))
+    if lists["pool_sha256"] != pool["pool_sha256"]:
+        raise ValueError("Judged lists do not belong to the current pool")
+    splits = {p["id"]: p["split"] for p in pool["profiles"]}
+    return judgments.evaluate_judgments(lists["lists"], judgments.final_grades(), splits)
+
+
+def render(next_course: dict, editorial: dict, profiles: dict, judged: dict | None = None) -> str:
     f = lambda value: f"{value:.3f}"  # noqa: E731
     lines = [
         "# Офлайн-оценка: этап 1",
@@ -288,13 +303,49 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
         "Цифры описывают форму выдачи, а не её релевантность: качество подтверждается только"
         " ручной разметкой. Задержка зависит от машины и в git меняется при каждом прогоне.",
         "",
-        "## Не сделано на этом этапе",
-        "",
-        "- Пул выдач для ручной разметки, оценки 0/1/2, каппа Коэна, nDCG@10, Precision@5 и MRR"
-        " на профилях `holdout`.",
-        "- Абляции (стадия и уровень, история, переранжирование) и подбор весов на `tune`.",
+        *render_judgments(judged),
     ]
     return "\n".join(lines) + "\n"
+
+
+def render_judgments(judged: dict | None) -> list[str]:
+    from alfarec.eval.judgments import VARIANT_LABELS, VARIANTS
+
+    lines = ["## Релевантность по ручной разметке", ""]
+    if not judged:
+        return lines + [
+            "Пул выдач для разметки готов (`python -m alfarec.eval.judgments pool`, форма —"
+            " `artifacts/judgments/form.html`), оценок двух участников ещё нет. nDCG@10,"
+            " Precision@5, MRR и абляции появятся здесь после `python -m alfarec.eval.judgments"
+            " merge`. Веса, кроме переходов между курсами, не подбирались.",
+        ]
+    lines += [
+        "nDCG@10 с выигрышем 2^оценка − 1; Precision@5 и MRR считают релевантной оценку 2."
+        " Неоценённые карточки пропускаются и показаны отдельно, нулём не считаются. Пул —"
+        " наша система, бейзлайн и вариант без истории; остальные абляции оцениваются по"
+        " пересечению с пулом.",
+        "",
+    ]
+    for split, title in (("holdout", "`holdout` — основное сравнение"), ("tune", "`tune`")):
+        rows = judged.get(split, {})
+        if not rows:
+            continue
+        profiles = next(iter(rows.values()))["profiles"]
+        lines += [
+            f"### {title}, профилей: {profiles:.0f}",
+            "",
+            "| Вариант | nDCG@10 | Precision@5 | MRR | Неоценённых в списке |",
+            "|---|---|---|---|---|",
+        ]
+        for variant in VARIANTS:
+            if variant in rows:
+                m = rows[variant]
+                lines.append(
+                    f"| {VARIANT_LABELS[variant]} | {m['ndcg10']:.3f} | {m['p5']:.3f} |"
+                    f" {m['mrr']:.3f} | {m['unjudged']:.1f} |"
+                )
+        lines.append("")
+    return lines
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -318,6 +369,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     editorial = evaluate_editorial(ranker, pq.read_table(needed[1]).to_pylist())
     profiles = evaluate_profiles(ranker)
-    args.output.write_text(render(next_course, editorial, profiles), encoding="utf-8", newline="\n")
+    report = render(next_course, editorial, profiles, evaluate_judged())
+    args.output.write_text(report, encoding="utf-8", newline="\n")
     print(f"Report: {args.output}")
     return 0

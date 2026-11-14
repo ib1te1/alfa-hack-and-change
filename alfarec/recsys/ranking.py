@@ -278,6 +278,7 @@ class Ranker:
         lexicon: IntentLexicon | None = None,
         now: datetime | None = None,
         transitions: CourseTransitions | None = None,
+        rerank: bool = True,
     ) -> None:
         if len({item.item_id for item in catalog}) != len(catalog):
             raise ValueError("Catalog item IDs must be unique")
@@ -291,6 +292,8 @@ class Ranker:
         self._weights = {**DEFAULT_WEIGHTS, **(weights or {})}
         self._lexicon = lexicon or load_intents()
         self._transitions = transitions
+        # Off only for the B06 ablation: the list then keeps the plain score order.
+        self._rerank_enabled = rerank
         self._baseline = TopicBaseline(catalog, taxonomy)
         self._facts = {
             item_id: _item_facts(item, taxonomy) for item_id, item in self._items.items()
@@ -339,7 +342,8 @@ class Ranker:
         # Quotas apply to the list the user actually sees first.
         rest = [entry for entry in scored if entry.item.item_id not in used]
         size = limit - (continuing is not None)
-        more = ([continuing] if continuing else []) + self._rerank(rest, size)
+        ranked = self._rerank(rest, size) if self._rerank_enabled else rest[:size]
+        more = ([continuing] if continuing else []) + ranked
         return RecommendationResponse(
             route=[self._to_recommendation(entry, context) for entry in route],
             more=[self._to_recommendation(entry, context) for entry in more],
@@ -897,6 +901,7 @@ def load_ranker(
     base_url: str | None = None,
     transitions_path: Path | None = DEFAULT_TRANSITIONS_PATH,
     transitions: CourseTransitions | None = None,
+    rerank: bool = True,
 ) -> Ranker:
     """Ranker over the committed catalog and the B04 fallback index, with full index checks."""
     from alfarec.pipeline.build_index import prepare_texts
@@ -919,4 +924,6 @@ def load_ranker(
     if transitions is None and transitions_path is not None and transitions_path.exists():
         # Without the file the ranker still works, on content and popularity alone.
         transitions = CourseTransitions.load(transitions_path)
-    return Ranker(catalog, load_taxonomy(), index, weights=weights, transitions=transitions)
+    return Ranker(
+        catalog, load_taxonomy(), index, weights=weights, transitions=transitions, rerank=rerank
+    )
