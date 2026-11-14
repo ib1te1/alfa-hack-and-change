@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Подбор материалов</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__title">
+      <span class="topbar__mark" aria-hidden="true"></span>
+      <h1>Подбор материалов для бизнеса</h1>
+    </div>
+    <div class="topbar__controls">
+      <label class="persona" id="persona-wrap" hidden>
+        <span>Демо-персона</span>
+        <select id="persona"></select>
+      </label>
+      <label class="switch">
+        <input type="checkbox" id="compare">
+        <span>Сравнить с бейзлайном</span>
+      </label>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel" aria-label="Профиль">
+      <form id="profile-form">
+        <h2 class="panel__title">Ваш профиль</h2>
+        <p class="panel__hint">Все поля необязательны. Выдача обновляется после каждого ответа; описание задачи — по кнопке.</p>
+
+        <fieldset><legend>На каком вы этапе?</legend><div class="chips" data-field="stage" data-single></div></fieldset>
+        <fieldset><legend>Что нужно сейчас?</legend><div class="chips" data-field="tasks"></div></fieldset>
+        <fieldset><legend>Сфера</legend><div class="chips" data-field="industries"></div></fieldset>
+        <fieldset><legend>Опыт</legend><div class="chips" data-field="experience" data-single></div></fieldset>
+        <fieldset><legend>Сколько есть времени?</legend><div class="chips" data-field="time_budget" data-single></div></fieldset>
+
+        <label class="freetext">
+          <span>Опишите задачу своими словами</span>
+          <textarea id="free-text" rows="3" maxlength="2000" placeholder="Например: хочу открыть кофейню и не запутаться в налогах"></textarea>
+        </label>
+
+        <div class="panel__actions">
+          <button type="submit" class="btn btn--primary">Подобрать</button>
+          <button type="button" class="btn btn--ghost" id="reset">Сбросить</button>
+        </div>
+      </form>
+    </aside>
+
+    <main class="results" id="results-root">
+      <section class="onboarding" id="onboarding" hidden>
+        <div>
+          <h2>Подберём точнее за 3 вопроса</h2>
+          <p>Этап, задача и время — и маршрут станет вашим. Пока показываем стартовый набор.</p>
+        </div>
+        <div class="onboarding__actions">
+          <button type="button" class="btn btn--primary" id="onboarding-start">Ответить</button>
+          <button type="button" class="btn btn--ghost" id="onboarding-skip">Пропустить</button>
+        </div>
+      </section>
+
+      <p class="legend" id="legend" hidden></p>
+      <div class="notice" id="notice" role="status" hidden></div>
+      <div class="columns" id="columns"></div>
+    </main>
+  </div>
+
+  <template id="card-template">
+    <article class="card">
+      <div class="card__meta">
+        <span class="card__kind"></span>
+        <span class="card__access"></span>
+      </div>
+      <h3 class="card__title"></h3>
+      <p class="card__summary"></p>
+      <div class="card__why" hidden>
+        <span class="card__why-title">Почему вам</span>
+        <ul class="card__reasons"></ul>
+      </div>
+      <div class="card__actions">
+        <a class="btn btn--primary card__next" target="_blank" rel="noopener"></a>
+        <button type="button" class="btn btn--small card__known">Уже знаю</button>
+        <button type="button" class="btn btn--small card__dislike">Не то</button>
+      </div>
+    </article>
+  </template>
+</body>
+</html>

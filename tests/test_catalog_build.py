@@ -236,3 +236,14 @@ def test_text_helpers():
     assert len(truncate("слово " * 100, 30)) <= 30
     assert normalize_label("💥 NEW") == "NEW"
     assert normalize_label("Прoдажи") == "Продажи"
+
+
+def test_mixed_script_text_is_fixed_per_letter_run():
+    from alfarec.pipeline.text import fix_mixed_script
+
+    assert fix_mixed_script("Маркетплейсы: с чего начать и как преуспeть") == (
+        "Маркетплейсы: с чего начать и как преуспеть"
+    )
+    assert fix_mixed_script("CRM-системах и B2B-рынок") == "CRM-системах и B2B-рынок"
+    assert fix_mixed_script("Самое важное o 115-ФЗ") == "Самое важное о 115-ФЗ"
+    assert fix_mixed_script("план A") == "план A"

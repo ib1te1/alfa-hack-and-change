@@ -748,7 +748,7 @@ class Ranker:
         quick = [
             Scored(i, 0.5, {"format": 0.5}, {})
             for i in sorted(self._items.values(), key=lambda i: (-(i.popularity or 0), i.item_id))
-            if i.item_id not in used and self._is_quick(i)
+            if i.item_id not in used | context.excluded and self._is_quick(i)
         ][:QUICK_LIMIT]
         return RecommendationResponse(
             route=[self._to_recommendation(entry, context) for entry in plan],
@@ -795,12 +795,16 @@ class Ranker:
             matched = [topics[k] for k in map(match_key, item.topics) if k in topics]
             if topics and not matched:
                 continue
-            reasons = [Reason(code=ReasonCode.TASK_MATCH, weight=1.0, params={"task": matched[0]})]
+            reasons = (
+                [Reason(code=ReasonCode.TASK_MATCH, weight=1.0, params={"task": matched[0]})]
+                if matched
+                else []
+            )
             result.append(
                 Recommendation(
                     item=item.model_copy(deep=True),
                     score=0.0,
-                    reasons=reasons if matched else [],
+                    reasons=reasons,
                     next_step=next_step_for(item),
                 )
             )
