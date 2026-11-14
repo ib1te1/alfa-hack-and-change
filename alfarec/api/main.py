@@ -20,6 +20,7 @@ from alfarec.api.schemas import (
 from alfarec.recsys.baseline import InterimRecommender
 from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog, with_base_url
 from alfarec.recsys.contracts import Event, Item, RecommendationResponse, Recommender
+from alfarec.recsys.explain import explain_response
 from alfarec.recsys.taxonomy import Taxonomy, load_taxonomy
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -163,7 +164,10 @@ def create_app(services: Services | None = None) -> FastAPI:
         if unknown:
             raise HTTPException(422, f"Неизвестные значения профиля: {', '.join(unknown)}")
         history = state.events.history(request.user_id)
-        return state.recommender.recommend(request.profile, history, request.mode, request.limit)
+        response = state.recommender.recommend(
+            request.profile, history, request.mode, request.limit
+        )
+        return explain_response(response, state.taxonomy)
 
     @application.post("/api/events", response_model=EventAccepted, status_code=201)
     def events(event: Event) -> EventAccepted:

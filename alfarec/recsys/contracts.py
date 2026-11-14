@@ -119,6 +119,8 @@ class Reason(Contract):
     code: ReasonCode
     weight: Number
     params: dict[str, str | Number | bool | None] = Field(default_factory=dict)
+    # Filled by explain.py from code and params; rankers leave it empty.
+    text: Label | None = None
 
 
 class NextStep(Contract):
@@ -144,6 +146,8 @@ class RecommendationResponse(Contract):
     more: list[Recommendation] = Field(default_factory=list)
     quick: list[Recommendation] = Field(default_factory=list)
     clarification: Clarification | None = None
+    # One line above the route on why the steps go in this order; set by explain.py.
+    route_note: Annotated[str, StringConstraints(max_length=300)] | None = None
     mode: Mode
     profile_used: Profile
 

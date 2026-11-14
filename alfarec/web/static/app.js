@@ -128,7 +128,7 @@ function renderCard(recommendation, interactive) {
   node.querySelector(".card__summary").textContent = item.summary;
 
   const reasons = recommendation.reasons.slice(0, 3)
-    .map((reason) => (REASON_TEXTS[reason.code] || (() => null))(reason.params || {}))
+    .map((reason) => reason.text || (REASON_TEXTS[reason.code] || (() => null))(reason.params || {}))
     .filter(Boolean);
   if (reasons.length) {
     const list = node.querySelector(".card__reasons");
@@ -210,7 +210,9 @@ function renderColumn(title, response, interactive) {
     column.append(heading);
   }
   if (response.clarification) column.append(clarification(response.clarification));
-  if (response.route.length) column.append(block("Ваш маршрут", response.route, { route: true, interactive }));
+  if (response.route.length) {
+    column.append(block("Ваш маршрут", response.route, { route: true, interactive, note: response.route_note }));
+  }
   if (response.more.length) column.append(block("Ещё по теме", response.more, { interactive }));
   if (response.quick.length) {
     column.append(block("Быстро, за 5 минут", response.quick, { interactive, note: "Короткие материалы, чтобы вернуться завтра" }));
