@@ -1,0 +1,270 @@
+version: 1
+profiles:
+  - id: P01
+    audience: beginner_entrepreneur
+    case: standard
+    split: tune
+    legend: Планирует открыть мастерскую бытовых услуг; нужен порядок регистрации без сложных терминов.
+    profile: {stage: idea, industries: [services], tasks: [business_start], experience: beginner, time_budget: hour}
+    expected_behavior: recommend
+  - id: P02
+    audience: beginner_entrepreneur
+    case: standard
+    split: holdout
+    legend: Только открыл небольшой магазин и хочет сравнить налоговые режимы под свою модель работы.
+    profile: {stage: launch, industries: [retail], tasks: [tax_regime], experience: beginner, time_budget: quick}
+    expected_behavior: recommend
+  - id: P03
+    audience: small_business_owner
+    case: standard
+    split: tune
+    legend: Владелец кафе с опытом ищет практическую инструкцию по налоговой отчётности.
+    profile: {stage: operating, industries: [horeca], tasks: [taxes_reporting], experience: intermediate, time_budget: hour}
+    expected_behavior: recommend
+  - id: P04
+    audience: solo_founder
+    case: standard
+    split: holdout
+    legend: Продаёт услуги компаниям и хочет выстроить учёт платежей без отдельного финансового сотрудника.
+    profile: {stage: operating, industries: [b2b], tasks: [accounting_payments], experience: intermediate, time_budget: quick}
+    expected_behavior: recommend
+  - id: P05
+    audience: small_business_owner
+    case: standard
+    split: tune
+    legend: У перевозчика запрос документов от банка; нужен понятный порядок действий и список документов.
+    profile: {stage: operating, industries: [transport_logistics], tasks: [banking_compliance], experience: intermediate, time_budget: hour}
+    expected_behavior: recommend
+  - id: P06
+    audience: beginner_entrepreneur
+    case: standard
+    split: tune
+    legend: Открыл ремонтную мастерскую; хочет привлечь первых клиентов, готов потратить час.
+    profile: {stage: launch, industries: [services], tasks: [marketing], experience: beginner, time_budget: hour}
+    expected_behavior: recommend
+  - id: P07
+    audience: small_business_owner
+    case: standard
+    split: holdout
+    legend: Оптовик расширяет клиентскую базу и ищет системное обучение продажам компаниям.
+    profile: {stage: growth, industries: [wholesale], tasks: [sales_customers], experience: advanced, time_budget: course}
+    expected_behavior: recommend
+  - id: P08
+    audience: beginner_entrepreneur
+    case: standard
+    split: tune
+    legend: Готовится к первому запуску на маркетплейсе; нужен вводный маршрут и расчёт экономики продаж.
+    profile: {stage: idea, industries: [ecom], tasks: [marketplaces], experience: beginner, time_budget: hour}
+    expected_behavior: recommend
+  - id: P09
+    audience: small_business_owner
+    case: standard
+    split: tune
+    legend: Расширяет небольшое производство и впервые формализует найм и передачу задач сотрудникам.
+    profile: {stage: growth, industries: [manufacturing], tasks: [team_hiring], experience: intermediate, time_budget: course}
+    expected_behavior: recommend
+  - id: P10
+    audience: solo_founder
+    case: standard
+    split: holdout
+    legend: Работает со строительными заказами; нужен практический шаблон договора и пояснение его применения.
+    profile: {stage: operating, industries: [construction_real_estate], tasks: [legal_contracts], experience: intermediate, time_budget: quick, free_text: 'Нужен шаблон договора строительных работ с пояснением, как его заполнить.'}
+    expected_behavior: recommend
+  - id: P11
+    audience: small_business_owner
+    case: standard
+    split: tune
+    legend: Владелец финансового сервиса планирует расширение и хочет разобраться в вариантах финансирования.
+    profile: {stage: growth, industries: [finance_insurance], tasks: [financing], experience: advanced, time_budget: hour}
+    expected_behavior: recommend
+  - id: P12
+    audience: solo_founder
+    case: standard
+    split: holdout
+    legend: Один выполняет повторяющиеся операции B2B-сервиса; ищет практические применения автоматизации и ИИ.
+    profile: {stage: operating, industries: [b2b], tasks: [ai_automation], experience: intermediate, time_budget: hour}
+    expected_behavior: recommend
+  - id: P13
+    audience: small_business_owner
+    case: standard
+    split: tune
+    legend: Оптовая компания рассматривает внешнюю торговлю; нужен общий обзор процессов, без предположений о конкретной стране.
+    profile: {stage: growth, industries: [wholesale], tasks: [international], experience: intermediate, time_budget: course}
+    expected_behavior: recommend
+  - id: P14
+    audience: beginner_entrepreneur
+    case: standard
+    split: holdout
+    legend: Рассматривает покупку франшизы кафе и хочет понять, какие вопросы задать до сделки.
+    profile: {stage: idea, industries: [horeca], tasks: [franchising], experience: beginner, time_budget: hour}
+    expected_behavior: recommend
+  - id: P15
+    audience: solo_founder
+    case: standard
+    split: tune
+    legend: Только начал работать с государственными заказчиками; нужны базовые договорные документы.
+    profile: {stage: launch, industries: [b2g], tasks: [legal_contracts], experience: beginner, time_budget: hour}
+    expected_behavior: recommend
+  - id: P16
+    audience: solo_founder
+    case: standard
+    split: tune
+    legend: Интернет-магазин растёт; владелец хочет системно разобраться с продвижением и удержанием покупателей.
+    profile: {stage: growth, industries: [ecom], tasks: [marketing, sales_customers], experience: advanced, time_budget: course}
+    expected_behavior: recommend
+  - id: P17
+    audience: small_business_owner
+    case: standard
+    split: holdout
+    legend: Небольшое производство работает стабильно; нужно быстро оценить денежные поступления и расходы.
+    profile: {stage: operating, industries: [manufacturing], tasks: [accounting_payments], experience: intermediate, time_budget: quick}
+    expected_behavior: recommend
+  - id: P18
+    audience: solo_founder
+    case: standard
+    split: tune
+    legend: Планирует частную практику в сфере услуг; нужен первый обзор регистрации и подходящего налогового режима.
+    profile: {stage: idea, industries: [services], tasks: [business_start, tax_regime], experience: beginner, time_budget: hour}
+    expected_behavior: recommend
+  - id: P19
+    audience: solo_founder
+    case: history
+    split: tune
+    legend: Продавец уже завершил вводный курс о маркетплейсах; теперь нужны следующие шаги и вопросы налогообложения.
+    profile: {stage: operating, industries: [ecom], tasks: [marketplaces, taxes_reporting], experience: intermediate, time_budget: course}
+    history:
+      - {event: complete, selector: {task: marketplaces, item_type: course, level: beginner}, days_ago: 30}
+    expected_behavior: recommend
+  - id: P20
+    audience: beginner_entrepreneur
+    case: history
+    split: holdout
+    legend: Уже сохранил шаблон для старта бизнеса и хочет понять дальнейшую последовательность открытия магазина.
+    profile: {stage: idea, industries: [retail], tasks: [business_start], experience: beginner, time_budget: hour}
+    history:
+      - {event: save, selector: {task: business_start, item_type: document}, days_ago: 2}
+    expected_behavior: recommend
+  - id: P21
+    audience: small_business_owner
+    case: history
+    split: tune
+    legend: Начал курс по управлению командой; должен получить возможность продолжить его, а не начать заново.
+    profile: {stage: growth, industries: [horeca], tasks: [team_hiring], experience: intermediate, time_budget: course}
+    history:
+      - {event: enroll, selector: {task: team_hiring, item_type: course}, days_ago: 7}
+    expected_behavior: recommend
+  - id: P22
+    audience: solo_founder
+    case: history
+    split: tune
+    legend: Отметил базовую статью о продвижении как известную; хочет более глубокий следующий материал по теме.
+    profile: {stage: operating, industries: [services], tasks: [marketing], experience: intermediate, time_budget: hour}
+    history:
+      - {event: known, selector: {task: marketing, item_type: article, level: beginner}, days_ago: 1}
+    expected_behavior: recommend
+  - id: P23
+    audience: beginner_entrepreneur
+    case: history
+    split: holdout
+    legend: Выбирает налоговый режим; отверг общий материал о продажах как не относящийся к текущей задаче.
+    profile: {stage: launch, industries: [services], tasks: [tax_regime], experience: beginner, time_budget: quick}
+    history:
+      - {event: dislike, selector: {task: sales_customers, item_type: article}, days_ago: 1}
+    expected_behavior: recommend
+  - id: P24
+    audience: small_business_owner
+    case: history
+    split: tune
+    legend: Пользовался финансовым калькулятором и высоко его оценил; ищет другие инструменты для планирования денег.
+    profile: {stage: operating, industries: [wholesale], tasks: [financing], experience: intermediate, time_budget: quick}
+    history:
+      - {event: rate, selector: {task: financing, item_type: calculator}, value: 5, days_ago: 3}
+    expected_behavior: recommend
+  - id: P25
+    audience: solo_founder
+    case: history
+    split: holdout
+    legend: Читал про банковские ограничения; хочет подготовить документы и продолжить изучение этой задачи.
+    profile: {stage: operating, industries: [transport_logistics], tasks: [banking_compliance], experience: intermediate, time_budget: hour}
+    history:
+      - {event: view, selector: {task: banking_compliance, item_type: article}, days_ago: 4}
+    expected_behavior: recommend
+  - id: P26
+    audience: small_business_owner
+    case: history
+    split: tune
+    legend: Уже завершил базовый курс по налогам и отчётности; повторять его не нужно, нужна следующая ступень.
+    profile: {stage: operating, industries: [retail], tasks: [taxes_reporting], experience: intermediate, time_budget: course}
+    history:
+      - {event: complete, selector: {task: taxes_reporting, item_type: course, level: beginner}, days_ago: 60}
+    expected_behavior: recommend
+  - id: P27
+    audience: beginner_entrepreneur
+    case: minimal
+    split: tune
+    legend: Первый вход, пользователь ничего о себе не сообщил.
+    profile: {}
+    expected_behavior: cold_start
+  - id: P28
+    audience: solo_founder
+    case: minimal
+    split: holdout
+    legend: Назвал проблему разговорными словами, без сферы, стадии и профессиональных терминов.
+    profile: {free_text: 'Клиентов мало, как сделать так, чтобы обо мне узнали?'}
+    expected_behavior: recommend
+  - id: P29
+    audience: small_business_owner
+    case: minimal
+    split: tune
+    legend: Есть только короткое описание затруднения с платежами; известные поля не нужно выдумывать.
+    profile: {free_text: 'Постоянно не хватает денег к дню выплат, хочу разобраться с поступлениями и расходами.'}
+    expected_behavior: recommend
+  - id: P30
+    audience: beginner_entrepreneur
+    case: minimal
+    split: holdout
+    legend: Ничего не знает о регистрации и описывает желание начать дело своими словами.
+    profile: {free_text: 'Хочу открыть своё дело, с чего начать?'}
+    expected_behavior: recommend
+  - id: P31
+    audience: solo_founder
+    case: minimal
+    split: tune
+    legend: Запрос многозначен; сначала нужно помочь выбрать задачу, сохранив полезную общую подборку.
+    profile: {free_text: 'Хочу развиваться, что посоветуете?'}
+    expected_behavior: clarify
+  - id: P32
+    audience: small_business_owner
+    case: minimal
+    split: tune
+    legend: Не хочет проходить анкету; пока сформулировал только желание делегировать часть работы.
+    profile: {free_text: 'Всё делаю сам, пора кого-нибудь нанять.'}
+    expected_behavior: recommend
+  - id: P33
+    audience: beginner_entrepreneur
+    case: out_of_scope
+    split: tune
+    legend: Нужен точный зарубежный порядок открытия; общий материал нельзя выдавать за ответ по местному праву.
+    profile: {free_text: 'Дайте точный порядок регистрации автосервиса в Казахстане с местными формами документов.'}
+    expected_behavior: clarify
+  - id: P34
+    audience: small_business_owner
+    case: out_of_scope
+    split: holdout
+    legend: Запрос о личном здоровье не относится к образовательному каталогу для бизнеса.
+    profile: {free_text: 'Как лечить сильную зубную боль дома?'}
+    expected_behavior: clarify
+  - id: P35
+    audience: solo_founder
+    case: out_of_scope
+    split: holdout
+    legend: Просит недоступный индивидуальный прогноз; система должна обозначить границы и уточнить бизнес-задачу.
+    profile: {free_text: 'Скажите точную выручку моего бизнеса через год, никаких данных у меня нет.'}
+    expected_behavior: clarify
+  - id: P36
+    audience: beginner_entrepreneur
+    case: out_of_scope
+    split: tune
+    legend: Развлекательный запрос не должен превращаться в выдуманное совпадение с каталогом.
+    profile: {free_text: 'Подберите прохождение последнего уровня космической игры.'}
+    expected_behavior: clarify
