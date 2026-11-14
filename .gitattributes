@@ -2,4 +2,7 @@
 *.ps1 text eol=lf
 *.yml text eol=lf
 *.parquet binary
+*.npy binary
+*.npz binary
 artifacts/*.json text eol=lf
+artifacts/retrieval_tfidf/*.json text eol=lf
