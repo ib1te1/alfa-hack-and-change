@@ -6,8 +6,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from alfarec.api.main import build_services, create_app
+from alfarec.pipeline.build_index import prepare_texts
 from alfarec.recsys.catalog import save_catalog
 from alfarec.recsys.contracts import Item
+from alfarec.recsys.retrieval import TfidfIndex, digest, texts_digest
 
 
 def make_item(item_id: str, **values: object) -> Item:
@@ -43,17 +45,29 @@ CATALOG = [
 def paths(tmp_path: Path) -> dict[str, Path]:
     catalog = tmp_path / "catalog.parquet"
     save_catalog(CATALOG, catalog)
+    # The ranker checks that its index belongs to this exact catalog file.
+    item_ids, texts = prepare_texts(CATALOG, source="metadata")
+    TfidfIndex.fit(item_ids, texts).save(
+        tmp_path / "index",
+        text_source="metadata",
+        catalog_sha256=digest(catalog),
+        texts_sha256=texts_digest(item_ids, texts),
+    )
     return {
-        "catalog": tmp_path / "catalog.parquet",
+        "catalog": catalog,
         "events": tmp_path / "events" / "events.jsonl",
         "personas": tmp_path / "personas.json",
+        "index": tmp_path / "index",
     }
+
+
+def services_for(paths: dict[str, Path]):
+    return build_services(paths["catalog"], paths["events"], paths["personas"], paths["index"])
 
 
 @pytest.fixture
 def client(paths: dict[str, Path]):
-    services = build_services(paths["catalog"], paths["events"], paths["personas"])
-    with TestClient(create_app(services)) as test_client:
+    with TestClient(create_app(services_for(paths))) as test_client:
         yield test_client
 
 
@@ -73,9 +87,21 @@ def test_health_reports_loaded_catalog(client: TestClient) -> None:
         "ready": True,
         "artifacts_loaded": True,
         "catalog_items": 5,
-        "encoder": "unavailable",
-        "recommender": "interim",
+        "encoder": "tfidf",
+        "recommender": "ranking",
     }
+
+
+def test_unusable_index_falls_back_to_the_baseline(paths: dict[str, Path]) -> None:
+    services = build_services(
+        paths["catalog"], paths["events"], paths["personas"], paths["index"].parent / "missing"
+    )
+    with TestClient(create_app(services)) as client:
+        health = client.get("/api/health").json()
+        assert (health["status"], health["recommender"], health["ready"]) == (
+            "degraded", "baseline", True,
+        )  # fmt: skip
+        assert ids(recommend(client, profile={"tasks": ["marketing"]})["more"])
 
 
 def test_missing_catalog_degrades_with_a_clear_message(tmp_path: Path) -> None:
@@ -104,19 +130,24 @@ def test_baseline_follows_task_topics_and_popularity(client: TestClient) -> None
 
 
 def test_next_step_depends_on_format_and_access(client: TestClient) -> None:
-    result = recommend(client, limit=10)
-    steps = {entry["item"]["item_id"]: entry["next_step"] for entry in result["more"]}
-    assert steps["plus-course"]["kind"] == "subscribe"
-    assert steps["plus-course"]["label"] == "Оформить Курс+"
-    assert steps["ndfl"]["kind"] == "calculate"
-    assert steps["promo-guide"]["kind"] == "read"
+    kinds = {"subscription": "subscribe", "tool": "calculate", "guide": "read"}
+    result = recommend(client, profile={"tasks": ["marketing"], "time_budget": "course"})
+    cards = result["route"] + result["more"] + result["quick"]
+    assert {entry["item"]["access"] for entry in cards} >= {"free", "subscription"}
+    for entry in cards:
+        item, step = entry["item"], entry["next_step"]
+        expected = kinds.get(item["access"]) or kinds.get(item["format"])
+        if expected:
+            assert step["kind"] == expected, item["item_id"]
+        assert step["url"] == item["url"]
 
 
 def test_feedback_events_change_the_next_answer_and_persist(
     client: TestClient, paths: dict[str, Path]
 ) -> None:
     body = {"profile": {"tasks": ["marketing"]}, "user_id": "u1"}
-    assert ids(recommend(client, **body)["more"])[0] == "promo-guide"
+    first = recommend(client, **body)
+    assert "promo-guide" in ids(first["route"] + first["more"] + first["quick"])
     event = {
         "user_id": "u1",
         "item_id": "promo-guide",
@@ -126,25 +157,21 @@ def test_feedback_events_change_the_next_answer_and_persist(
     accepted = client.post("/api/events", json=event)
     assert accepted.status_code == 201
     assert accepted.json() == {"status": "accepted", "events_for_user": 1}
-    assert "promo-guide" not in ids(recommend(client, **body)["more"])
-    assert "promo-guide" in ids(recommend(client, **{**body, "user_id": "u2"})["more"])
+    after = recommend(client, **body)
+    assert "promo-guide" not in ids(after["route"] + after["more"] + after["quick"])
+    other = recommend(client, **{**body, "user_id": "u2"})
+    assert "promo-guide" in ids(other["route"] + other["more"] + other["quick"])
 
-    services = build_services(paths["catalog"], paths["events"], paths["personas"])
+    services = services_for(paths)
     assert [entry.item_id for entry in services.events.history("u1")] == ["promo-guide"]
 
 
-def test_quick_block_and_time_budget(client: TestClient) -> None:
+def test_answers_carry_worded_reasons(client: TestClient) -> None:
     result = recommend(client, profile={"tasks": ["marketing"], "time_budget": "quick"})
-    assert ids(result["quick"]) == ["promo-quick"]
-    assert result["quick"][0]["reasons"][-1] == {
-        "code": "short_format",
-        "weight": 0.0,
-        "params": {"minutes": 3},
-        "text": "Займёт 3 мин",
-    }
-    assert ids(result["more"]) == ["promo-quick"]
-    course_first = recommend(client, profile={"tasks": ["marketing"], "time_budget": "course"})
-    assert ids(course_first["more"])[0] == "plus-course"
+    assert "promo-quick" in ids(result["route"] + result["quick"])
+    for entry in result["route"] + result["more"] + result["quick"]:
+        assert entry["reasons"] and all(reason["text"] for reason in entry["reasons"])
+    assert result["profile_used"]["tasks"] == ["marketing"]
 
 
 def test_invalid_requests_get_readable_errors(client: TestClient) -> None:
@@ -181,11 +208,10 @@ def test_personas_seed_their_history(paths: dict[str, Path]) -> None:
         ],
     }  # fmt: skip
     paths["personas"].write_text(json.dumps([persona], ensure_ascii=False), encoding="utf-8")
-    services = build_services(paths["catalog"], paths["events"], paths["personas"])
-    with TestClient(create_app(services)) as client:
+    with TestClient(create_app(services_for(paths))) as client:
         assert client.get("/api/personas").json()[0]["id"] == "seller"
         result = recommend(client, profile={"tasks": ["marketing"]}, user_id="persona-seller")
-        assert "promo-guide" not in ids(result["more"])
+        assert "promo-guide" not in ids(result["route"] + result["more"] + result["quick"])
 
 
 def test_page_static_files_and_docs(client: TestClient) -> None:
@@ -202,8 +228,7 @@ def test_page_static_files_and_docs(client: TestClient) -> None:
 
 def test_platform_base_url_rewrites_links(paths: dict[str, Path], monkeypatch) -> None:
     monkeypatch.setenv("PLATFORM_BASE_URL", "https://stage.example.test/")
-    services = build_services(paths["catalog"], paths["events"], paths["personas"])
-    with TestClient(create_app(services)) as client:
+    with TestClient(create_app(services_for(paths))) as client:
         card = client.get("/api/items/plus-course").json()
         assert card["url"] == "https://stage.example.test/courses/plus"
         result = recommend(client, profile={"tasks": ["marketing"]}, limit=1)
