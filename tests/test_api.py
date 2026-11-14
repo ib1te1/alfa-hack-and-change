@@ -79,7 +79,9 @@ def test_health_reports_loaded_catalog(client: TestClient) -> None:
 
 
 def test_missing_catalog_degrades_with_a_clear_message(tmp_path: Path) -> None:
-    services = build_services(tmp_path / "none.parquet", None, tmp_path / "none.json")
+    services = build_services(
+        tmp_path / "none.parquet", tmp_path / "e.jsonl", tmp_path / "none.json"
+    )
     with TestClient(create_app(services)) as client:
         health = client.get("/api/health").json()
         assert (health["status"], health["ready"], health["catalog_items"]) == (
@@ -178,7 +180,7 @@ def test_personas_seed_their_history(paths: dict[str, Path]) -> None:
         ],
     }  # fmt: skip
     paths["personas"].write_text(json.dumps([persona], ensure_ascii=False), encoding="utf-8")
-    services = build_services(paths["catalog"], None, paths["personas"])
+    services = build_services(paths["catalog"], paths["events"], paths["personas"])
     with TestClient(create_app(services)) as client:
         assert client.get("/api/personas").json()[0]["id"] == "seller"
         result = recommend(client, profile={"tasks": ["marketing"]}, user_id="persona-seller")
@@ -195,3 +197,13 @@ def test_page_static_files_and_docs(client: TestClient) -> None:
     paths = client.get("/openapi.json").json()["paths"]
     for path in ("/api/recommendations", "/api/events", "/api/meta", "/api/items/{item_id}"):
         assert path in paths
+
+
+def test_platform_base_url_rewrites_links(paths: dict[str, Path], monkeypatch) -> None:
+    monkeypatch.setenv("PLATFORM_BASE_URL", "https://stage.example.test/")
+    services = build_services(paths["catalog"], paths["events"], paths["personas"])
+    with TestClient(create_app(services)) as client:
+        card = client.get("/api/items/plus-course").json()
+        assert card["url"] == "https://stage.example.test/courses/plus"
+        result = recommend(client, profile={"tasks": ["marketing"]}, limit=1)
+        assert result["more"][0]["next_step"]["url"].startswith("https://stage.example.test/")
