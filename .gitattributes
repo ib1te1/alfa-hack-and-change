@@ -1,4 +1,5 @@
 .githooks/* text eol=lf
+tests/fixtures/*.backup binary
 *.ps1 text eol=lf
 *.yml text eol=lf
 *.parquet binary
