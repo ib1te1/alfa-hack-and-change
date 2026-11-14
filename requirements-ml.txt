@@ -1,0 +1,2 @@
+# Offline ML dependencies will be pinned after model selection in B04.
+-r requirements.txt

@@ -1,6 +1,6 @@
 # Общая очередь задач
 
-Статус: условия кейса разобраны, выбран трек 1 — персональные рекомендации. ТЗ — [`docs/specs/2026-11-13-recommender-tz.md`](../specs/2026-11-13-recommender-tz.md), карточки — [`CORE.md`](CORE.md) и [`IMPROVEMENTS.md`](IMPROVEMENTS.md). Первая доступная задача — B01; реализация не начата.
+Статус: выбран трек 1 — персональные рекомендации. ТЗ — [`docs/specs/2026-11-13-recommender-tz.md`](../specs/2026-11-13-recommender-tz.md), карточки — [`CORE.md`](CORE.md) и [`IMPROVEMENTS.md`](IMPROVEMENTS.md). B01 реализована и передана на ревью в [PR #4](https://github.com/ib1te1/alfa-hack-and-change/pull/4); зависимые задачи ожидают приёмки контрактов.
 
 ## Как выбираем следующую задачу
 

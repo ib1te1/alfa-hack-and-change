@@ -6,3 +6,6 @@ node_modules/
 .env.*
 !.env.example
 .claude/settings.local.json
+data/
+.pytest_cache/
+.ruff_cache/
