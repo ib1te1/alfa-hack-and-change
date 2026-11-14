@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import pgdumplib
 import pytest
 
 from alfarec.pipeline.build_catalog import TABLES, build_catalog, write_index_text
@@ -195,19 +194,14 @@ def test_rebuild_is_byte_identical_and_round_trips(tmp_path: Path):
     assert load_catalog(tmp_path / "catalog-0.parquet") == items
 
 
-def test_dump_reader_maps_copy_columns(tmp_path: Path):
-    dump = pgdumplib.new("test")
-    entry = dump.add_entry(
-        "TABLE", namespace="public", tag="Topics",
-        defn='CREATE TABLE public."Topics" ("Id" uuid, "Title" text);',
-    )  # fmt: skip
-    with dump.table_data_writer(entry, ['"Id"', '"Title"']) as writer:
-        writer.append("top-1", "Финансы")
-        writer.append("top-2", None)
-    path = tmp_path / "test.backup"
-    dump.save(path)
+@pytest.mark.filterwarnings("error::pytest.PytestUnraisableExceptionWarning")
+def test_dump_reader_maps_copy_columns():
+    path = Path(__file__).parent / "fixtures" / "minimal_topics.backup"
     assert read_tables(path, ["Topics"]) == {
-        "Topics": [{"Id": "top-1", "Title": "Финансы"}, {"Id": "top-2", "Title": None}]
+        "Topics": [
+            {"Id": "00000000-0000-4000-8000-000000000001", "Title": "Финансы"},
+            {"Id": "00000000-0000-4000-8000-000000000002", "Title": None},
+        ]
     }
     with pytest.raises(KeyError):
         read_tables(path, ["Missing"])

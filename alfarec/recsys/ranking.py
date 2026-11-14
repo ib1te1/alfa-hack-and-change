@@ -734,7 +734,7 @@ class Ranker:
         quick = [
             Scored(i, 0.5, {"format": 0.5}, {})
             for i in sorted(self._items.values(), key=lambda i: (-(i.popularity or 0), i.item_id))
-            if i.item_id not in used and self._is_quick(i)
+            if i.item_id not in used | context.excluded and self._is_quick(i)
         ][:QUICK_LIMIT]
         return RecommendationResponse(
             route=[self._to_recommendation(entry, context) for entry in plan],

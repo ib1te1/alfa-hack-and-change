@@ -15,6 +15,8 @@ import sys
 import time
 from collections import defaultdict
 from collections.abc import Sequence
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -49,21 +51,56 @@ def ndcg(ranked: Sequence[str], relevant: set[str], k: int) -> float:
     return gain / ideal if ideal else 0.0
 
 
-def next_course_cases(rows: Sequence[dict]) -> list[tuple[list[dict], str]]:
-    """(history rows, hidden course) for users whose latest course is unambiguous."""
+@dataclass(frozen=True)
+class NextCourseCase:
+    history: list[Event]
+    hidden: str
+    cutoff: datetime
+
+
+def _month(value: datetime) -> datetime:
+    return value.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+
+def next_course_cases(rows: Sequence[dict]) -> list[NextCourseCase]:
+    """Predict at the start of the hidden enrolment month, using only earlier events."""
     by_user: dict[str, list[dict]] = defaultdict(list)
     for row in rows:
         by_user[row["user_key"]].append(row)
     cases = []
     for user in sorted(by_user):
+        if any(row["enrolled_at"] is None for row in by_user[user]):
+            # A missing date could be the user's latest enrolment; do not invent a split.
+            continue
         entries = sorted(by_user[user], key=lambda r: (r["enrolled_at"], r["course_id"]))
         if len({r["course_id"] for r in entries}) < 2:
             continue
         last = entries[-1]
         # Dates are precise to a month: a tie for the latest course has no true answer.
-        if sum(r["enrolled_at"] == last["enrolled_at"] for r in entries) > 1:
+        cutoff = _month(last["enrolled_at"])
+        if sum(_month(r["enrolled_at"]) == cutoff for r in entries) > 1:
             continue
-        cases.append((entries[:-1], last["course_id"]))
+        previous = entries[:-1]
+        if any(row["course_id"] == last["course_id"] for row in previous):
+            # The target must be a new course, rather than a repeated enrolment.
+            continue
+        history = []
+        for row in previous:
+            history.append(
+                Event(user_id="u", item_id=row["course_id"], type="enroll", ts=row["enrolled_at"])
+            )
+            completed_at = row.get("completed_at")
+            if (
+                row["status"] == 2
+                and completed_at is not None
+                and row["enrolled_at"] <= completed_at
+                and _month(completed_at) < cutoff
+            ):
+                history.append(
+                    Event(user_id="u", item_id=row["course_id"], type="complete", ts=completed_at)
+                )
+        history.sort(key=lambda event: (event.ts, event.item_id, event.type))
+        cases.append(NextCourseCase(history, last["course_id"], cutoff))
     return cases
 
 
@@ -74,14 +111,10 @@ def evaluate_next_course(ranker: Ranker, rows: Sequence[dict]) -> dict:
         i.item_id for i in sorted(courses, key=lambda i: (-(i.popularity or 0), i.item_id))
     ]
     scores: dict[str, list[float]] = defaultdict(list)
-    for history_rows, hidden in next_course_cases(rows):
-        seen = {r["course_id"] for r in history_rows}
-        history = [
-            Event(user_id="u", item_id=r["course_id"],
-                  type="complete" if r["status"] == 2 else "enroll", ts=r["enrolled_at"])
-            for r in history_rows
-        ]  # fmt: skip
-        answer = ranker.recommend(Profile(), history, limit=50)
+    for case in next_course_cases(rows):
+        seen = {event.item_id for event in case.history}
+        hidden = case.hidden
+        answer = ranker.recommend(Profile(), case.history, limit=50)
         shown = [e.item.item_id for e in answer.route + answer.more + answer.quick]
         ours = [i for i in dict.fromkeys(shown) if i in items and items[i].format == "course"]
         ours = [i for i in ours if i not in seen]
@@ -174,22 +207,27 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
     if next_course.get("users"):
         lines += [
             f"Пользователей с однозначным последним курсом: {next_course['users']}. Последний по"
-            " дате курс скрыт, остальные переданы как история; даты точны до месяца, поэтому"
-            " пользователи с несколькими курсами в последнем месяце исключены.",
+            " дате курс скрыт. Прогноз строится на начало месяца его записи. История содержит"
+            " enroll по дате записи и complete по фактической дате завершения только из более"
+            " ранних месяцев. При неизвестной дате завершения complete не создаётся."
+            " Неоднозначный последний месяц, неизвестные даты записей и повторный целевой курс"
+            " исключены.",
             "",
             "| Метод | HitRate@5 | MRR |",
             "|---|---|---|",
             f"| Наша система (курсы из выдачи, остаток — по популярности) | {f(next_course['ours_hit5'])} | {f(next_course['ours_mrr'])} |",  # noqa: E501
             f"| Популярность | {f(next_course['popularity_hit5'])} | {f(next_course['popularity_mrr'])} |",  # noqa: E501
             "",
-            "Популярность посчитана по всем записям каталога, включая скрытые; это даёт ей"
-            " небольшое преимущество, которое не исправлялось.",
+            "Это snapshot-диагностика с историей as-of, а не полный временной backtest."
+            " Популярность, качество и доступность материалов взяты из полного снимка каталога,"
+            " включая период после прогноза. Величина влияния этой утечки агрегатов неизвестна;"
+            " для временной оценки нужны исторические снимки всех признаков.",
             "",
-            "Наша система здесь проигрывает популярности. При пустом профиле курсы в выдаче"
-            " подбираются по текстовой близости к пройденным, а популярность весит мало; для"
-            " следующего курса этого недостаточно. Это задача подбора весов и графа совместных"
-            " записей (B04, B06), а не исправление под эту метрику.",
+            "Таблица описывает только этот протокол. Вывод о преимуществе метода требует"
+            " отдельной проверки без будущих агрегатов; веса на этих случаях не подбирались.",
         ]
+    else:
+        lines += ["Нет подходящих случаев следующего курса; метрики не рассчитаны."]
     lines += [
         "",
         "## Редакторские подборки",

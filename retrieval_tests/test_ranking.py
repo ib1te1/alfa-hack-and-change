@@ -177,6 +177,22 @@ def test_baseline_mode_uses_topics_and_popularity(ranker):
     assert popularity == sorted(popularity, reverse=True)
 
 
+@pytest.mark.parametrize("profile", [Profile(), Profile(free_text="How to start?")])
+def test_baseline_accepts_profiles_without_selected_tasks(ranker, profile):
+    answer = ranker.recommend(profile, [], mode="baseline", limit=5)
+    assert len(answer.more) == 5
+    assert answer.mode == "baseline"
+    assert all(not entry.reasons for entry in answer.more)
+
+
+@pytest.mark.parametrize("kind", ["known", "dislike", "complete"])
+def test_cold_start_feedback_excludes_quick_cards(ranker, kind):
+    first = ranker.recommend(Profile(), [])
+    item_id = first.quick[0].item.item_id
+    answer = ranker.recommend(Profile(), [event(item_id, kind)])
+    assert item_id not in ids(answer.route + answer.more + answer.quick)
+
+
 @pytest.mark.parametrize(
     ("text", "tasks", "boundary"),
     [
