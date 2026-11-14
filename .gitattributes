@@ -2,6 +2,7 @@
 *.ps1 text eol=lf
 *.yml text eol=lf
 *.parquet binary
+tests/fixtures/*.backup binary
 artifacts/*.json text eol=lf
 *.npy binary
 *.npz binary
