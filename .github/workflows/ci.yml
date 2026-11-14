@@ -69,6 +69,8 @@ jobs:
         run: '& $env:PROJECT_PYTHON -m ruff check alfarec tests'
       - name: Test application contracts
         run: '& $env:PROJECT_PYTHON -m pytest'
+      - name: Validate taxonomy and evaluation inputs
+        run: '& $env:PROJECT_PYTHON -m alfarec.eval.validate_inputs'
       - name: Verify Docker scaffold
         if: runner.os == 'Linux'
         run: |
