@@ -282,7 +282,9 @@ function renderPersonas() {
     const persona = state.personas.find((entry) => entry.id === select.value);
     state.profile = persona ? { ...emptyProfile(), ...structuredClone(persona.profile) } : emptyProfile();
     state.userId = persona ? persona.user_id : anonymousUser();
-    if (persona && persona.legend) notice(persona.legend);
+    const legend = document.getElementById("legend");
+    legend.textContent = persona ? `${persona.title}. ${persona.legend}` : "";
+    legend.hidden = !persona;
     renderChips();
     refresh();
   });

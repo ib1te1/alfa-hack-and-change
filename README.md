@@ -18,12 +18,14 @@ docker compose up --build
 |---|---|
 | `GET /api/health` | `status: ok`, число материалов каталога, `recommender: interim` до подключения B05 |
 | `GET /api/meta` | Стадии, уровни, задачи, сферы, форматы и бюджеты времени для онбординга |
-| `GET /api/personas` | Демо-персоны из `artifacts/personas.json`; до B09 — пустой список |
+| `GET /api/personas` | Демо-персоны из `artifacts/personas.json` с профилем и историей |
 | `POST /api/recommendations` | Профиль, необязательный `user_id`, `mode` (`ours` / `baseline`), `limit` → подборки и следующий шаг |
 | `POST /api/events` | Событие (`view`, `known`, `dislike` и др.); следующий запрос того же `user_id` его учитывает |
 | `GET /api/items/{item_id}` | Публичная карточка материала |
 
 События хранятся в памяти и дописываются в `data/events/events.jsonl` (путь — `EVENTS_PATH`); каталог и персоны можно переопределить через `CATALOG_PATH` и `PERSONAS_PATH`. Если каталога нет, health отвечает `status: degraded`, а рекомендации — понятной ошибкой 503.
+
+Аккаунтов и аутентификации нет: `user_id` — анонимный идентификатор, который страница создаёт в браузере, поэтому сервис рассчитан на локальный показ, а не на публичный доступ. События демо-персон хранятся только в памяти и сбрасываются перезапуском.
 
 Ключи, дамп и GPU для запуска не нужны; переменные окружения необязательны. Сборка загружает образ Python и пакеты; запущенный сервис внешних API не вызывает. Docker-контекст допускает только код приложения, `artifacts/`, Dockerfile и runtime-зависимости, исключая локальные данные и настройки.
 
@@ -79,9 +81,10 @@ pwsh -NoProfile -File scripts/test-checks.ps1
 ```sh
 python -m alfarec.pipeline.build_catalog
 python -m alfarec.pipeline.coverage
+python -m alfarec.pipeline.build_personas
 ```
 
-Первая команда пишет `artifacts/catalog.parquet` (в git) и `data/processed/index_text.parquet` с текстом для эмбеддингов (вне git). Адрес платформы в ссылках задаёт `PLATFORM_BASE_URL` или `--base-url`; по умолчанию `https://kurs.alfabank.ru`. Вторая команда обновляет `reports/taxonomy_coverage.md`. Тесты сверяют закоммиченный каталог с ожидаемым составом, а при наличии дампа — побайтную воспроизводимость и отсутствие текста уроков.
+Первая команда пишет `artifacts/catalog.parquet` (в git) и `data/processed/index_text.parquet` с текстом для эмбеддингов (вне git). Адрес платформы в ссылках задаёт `PLATFORM_BASE_URL` или `--base-url`; по умолчанию `https://kurs.alfabank.ru`. Вторая команда обновляет `reports/taxonomy_coverage.md`, третья — `artifacts/personas.json` по описанию `alfarec/pipeline/personas.yaml`. Тесты сверяют закоммиченные артефакты с ожидаемым составом, а при наличии дампа — побайтную воспроизводимость и отсутствие текста уроков.
 
 ## Работа в команде
 
