@@ -189,7 +189,7 @@ def test_page_static_files_and_docs(client: TestClient) -> None:
     page = client.get("/")
     assert page.status_code == 200 and "text/html" in page.headers["content-type"]
     assert "/static/app.js" in page.text
-    assert client.get("/static/app.js").status_code == 200
+    assert client.get("/static/app.js").headers["cache-control"] == "no-cache"
     assert client.get("/static/styles.css").status_code == 200
     assert client.get("/docs").status_code == 200
     paths = client.get("/openapi.json").json()["paths"]

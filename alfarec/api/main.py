@@ -73,7 +73,11 @@ def build_services(
         logger.warning("Catalog artifact is missing: %s", catalog_path)
     personas = load_personas(personas_path or _env_path("PERSONAS_PATH", DEFAULT_PERSONAS_PATH))
     seed = [event for persona in personas for event in persona.history]
-    events = EventStore(events_path or _env_path("EVENTS_PATH", DEFAULT_EVENTS_PATH), seed)
+    events = EventStore(
+        events_path or _env_path("EVENTS_PATH", DEFAULT_EVENTS_PATH),
+        seed,
+        memory_only=[persona.user_id for persona in personas],
+    )
     return Services(
         taxonomy=taxonomy,
         catalog={item.item_id: item for item in items},
@@ -106,6 +110,14 @@ def create_app(services: Services | None = None) -> FastAPI:
     async def unexpected_error(request: Request, error: Exception) -> JSONResponse:
         logger.exception("Unhandled error on %s", request.url.path)
         return JSONResponse(status_code=500, content={"detail": "Внутренняя ошибка сервиса"})
+
+    @application.middleware("http")
+    async def revalidate_page(request: Request, call_next):
+        response = await call_next(request)
+        # The page and its scripts change between releases; ETag keeps revalidation cheap.
+        if request.url.path == "/" or request.url.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
 
     @application.get("/api/health", response_model=HealthResponse)
     def health() -> HealthResponse:

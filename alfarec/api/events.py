@@ -8,24 +8,33 @@ from alfarec.recsys.contracts import Event
 
 
 class EventStore:
-    """Per-user event log kept in memory and appended to a JSON Lines file."""
+    """Per-user event log kept in memory and appended to a JSON Lines file.
 
-    def __init__(self, path: Path | None, seed: Iterable[Event] = ()) -> None:
+    Seeded and memory-only users (demo personas) are never written to disk: feedback given on
+    a persona during a demo changes the current answers but does not alter the persona after
+    a restart. Their lines are also never read back, so an old file cannot rewrite a persona.
+    """
+
+    def __init__(
+        self, path: Path | None, seed: Iterable[Event] = (), memory_only: Iterable[str] = ()
+    ) -> None:
         self._path = path
         self._lock = threading.Lock()
         self._events: dict[str, list[Event]] = defaultdict(list)
         for event in seed:
             self._events[event.user_id].append(event)
+        self._seeded = frozenset(self._events) | frozenset(memory_only)
         if path is not None and path.is_file():
             for line in path.read_text(encoding="utf-8").splitlines():
                 if line.strip():
                     event = Event.model_validate_json(line)
-                    self._events[event.user_id].append(event)
+                    if event.user_id not in self._seeded:
+                        self._events[event.user_id].append(event)
 
     def add(self, event: Event) -> None:
         with self._lock:
             self._events[event.user_id].append(event)
-            if self._path is not None:
+            if self._path is not None and event.user_id not in self._seeded:
                 self._path.parent.mkdir(parents=True, exist_ok=True)
                 with self._path.open("a", encoding="utf-8", newline="\n") as handle:
                     handle.write(json.dumps(event.model_dump(mode="json"), ensure_ascii=False))
