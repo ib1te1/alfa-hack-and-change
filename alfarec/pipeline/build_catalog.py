@@ -203,7 +203,8 @@ class CatalogBuilder:
                     price_rub=subscription_price if closed else None,
                     subject=normalize_label(subject["Title"]) if subject else None,
                     extra_text=[html_to_text(row["ContentHeadings"])],
-                    body="" if closed else bodies.get(row["Id"], ""),
+                    # Hidden articles may need a login; their body stays out of the index.
+                    body="" if closed or row["IsPublic"] == "f" else bodies.get(row["Id"], ""),
                 )
             )
         return drafts
