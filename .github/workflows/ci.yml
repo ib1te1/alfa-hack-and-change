@@ -2,7 +2,6 @@ name: Repository checks
 
 on:
   pull_request:
-    branches: [main]
   push:
     branches: [main]
 
@@ -11,13 +10,13 @@ permissions:
 
 jobs:
   checks:
-    name: Repository checks (${{ matrix.os }})
+    name: Repository and application checks (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 5
+    timeout-minutes: 15
     defaults:
       run:
         shell: pwsh
@@ -52,3 +51,35 @@ jobs:
         run: pwsh -NoProfile -File scripts/check.ps1
       - name: Test repository checks and push guard
         run: pwsh -NoProfile -File scripts/test-checks.ps1
+      - name: Select Python 3.12
+        run: |
+          $versions = @(Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TOOL_CACHE 'Python') -Directory |
+            Where-Object Name -Match '^3\.12\.\d+$' | Sort-Object { [version]$_.Name } -Descending)
+          if ($versions.Count -eq 0) { throw 'Python 3.12 is missing from the runner tool cache' }
+          $relative = if ($IsWindows) { 'x64/python.exe' } else { 'x64/bin/python' }
+          $python = Join-Path $versions[0].FullName $relative
+          if (-not (Test-Path -LiteralPath $python)) { throw 'Python executable is missing' }
+          "PROJECT_PYTHON=$python" >> $env:GITHUB_ENV
+          & $python --version
+      - name: Install pinned Python dependencies
+        run: '& $env:PROJECT_PYTHON -m pip install -r requirements-dev.txt'
+      - name: Check Python formatting
+        run: '& $env:PROJECT_PYTHON -m ruff format --check alfarec tests'
+      - name: Lint Python
+        run: '& $env:PROJECT_PYTHON -m ruff check alfarec tests'
+      - name: Test application contracts
+        run: '& $env:PROJECT_PYTHON -m pytest'
+      - name: Verify Docker scaffold
+        if: runner.os == 'Linux'
+        run: |
+          try {
+            docker compose up --build --detach --wait --wait-timeout 90
+            if ($LASTEXITCODE -ne 0) { throw 'Docker startup failed' }
+            $health = Invoke-RestMethod http://127.0.0.1:8000/api/health
+            if ($health.status -ne 'scaffold' -or $health.ready -ne $false -or $health.artifacts_loaded -ne $false) {
+              throw 'Unexpected scaffold health response'
+            }
+          } finally {
+            docker compose logs
+            docker compose down
+          }

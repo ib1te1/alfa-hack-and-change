@@ -23,6 +23,8 @@
 ## B01. Каркас репозитория, контракты, CI, Docker-заготовка
 
 - **Владелец:** А. Ревью контрактов — Гланда до конца пятницы.
+- **Исполнитель:** `prolgrammer`, ветка `feature/b01-app-foundation`.
+- **Статус:** `review`, [PR #4](https://github.com/ib1te1/alfa-hack-and-change/pull/4), ожидает слияния. Технический результат принят 14 ноября 2026 года на `f688570`: 51 тест Python, 29 проверок репозитория, Ruff, запуск Docker, CI Windows/Ubuntu. [Контракты](../specs/b01-contracts.md) приняты для зависимых задач. Реализованы пакет, детерминированная заглушка и health endpoint; каталог, ранжирование и интерфейс остаются в следующих задачах.
 - **Цель:** оба участника пишут код параллельно против одних интерфейсов.
 - **Работа:** пакет `alfarec/` по структуре раздела 4 ТЗ; Pydantic-схемы `Profile`, `Event`, `Recommendation`, `Reason`, `NextStep`, `RecommendationResponse` из раздела 5.3; протокол `Recommender.recommend(profile, history, mode, limit) -> RecommendationResponse`; заглушка, отдающая случайные материалы из каталога; список кодов причин; `requirements.txt` с точными версиями и `requirements-ml.txt`; `ruff` и `pytest` в CI вместе с существующими проверками репозитория; черновые `Dockerfile` и `compose.yaml`, запускающие пустой FastAPI; `data/` в `.gitignore`.
 - **Приёмка:** `pytest` и `ruff check` проходят локально и в CI; `uvicorn alfarec.api.main:app` отдаёт `/api/health`; контракты согласованы обоими.
