@@ -51,7 +51,9 @@ def test_rebuild_from_dump_is_reproducible_and_has_no_lesson_text(tmp_path: Path
     assert main(arguments) == 0
     assert catalog.read_bytes() == DEFAULT_CATALOG_PATH.read_bytes()
 
-    tables = read_tables(DEFAULT_DUMP, ["LessonEmbedItems", "Articles", "ArticleEmbedItems"])
+    tables = read_tables(
+        DEFAULT_DUMP, ["LessonEmbedItems", "Articles", "ArticleEmbedItems", "Statuses"]
+    )
     lesson_lines = {
         line
         for entry in tables["LessonEmbedItems"]
@@ -60,7 +62,12 @@ def test_rebuild_from_dump_is_reproducible_and_has_no_lesson_text(tmp_path: Path
     }
     # Some lessons quote open articles word for word (tax brackets, legal lists). Such a line
     # is public anyway, so only lesson text absent from open articles counts as a leak.
-    open_articles = {row["Id"] for row in tables["Articles"] if row["IsClosed"] != "t"}
+    published = next(row["Id"] for row in tables["Statuses"] if row["Title"] == "Опубликовано")
+    open_articles = {
+        row["Id"]
+        for row in tables["Articles"]
+        if row["IsClosed"] != "t" and row["IsDeleted"] != "t" and row["StatusId"] == published
+    }
     public = "\n".join(
         html_to_text(entry["HtmlContent"])
         for entry in tables["ArticleEmbedItems"]

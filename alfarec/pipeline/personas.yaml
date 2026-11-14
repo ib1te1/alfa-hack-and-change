@@ -1,0 +1,42 @@
+# Demo personas for the page switcher (B09). History entries pick catalog items by title;
+# synthetic views are sampled with a fixed seed from free articles and documents on one
+# task of the persona (its topics and article subjects). Real users come from
+# CourseUserBindings with replaced identifiers.
+version: 1
+anchor_date: "2026-11-01T09:00:00+03:00"
+seed: 20261114
+personas:
+  - id: novice
+    title: Новичок без данных
+    legend: Первый вход, профиль пуст, истории нет — показываем стартовый набор.
+    profile: {}
+  - id: coffee
+    title: Открываю кофейню
+    legend: Думает открыть кофейню, опыта нет; нужен порядок запуска и выбор налогового режима.
+    profile: {stage: idea, industries: [horeca], tasks: [business_start, tax_regime], experience: beginner, time_budget: hour, free_text: Хочу открыть кофейню}
+  - id: seller
+    title: ИП на маркетплейсах
+    legend: Продаёт на маркетплейсах, прошёл вводный курс о маркетплейсах; дальше — налоги и рост продаж.
+    profile: {stage: operating, industries: [ecom], tasks: [marketplaces, taxes_reporting], experience: intermediate, time_budget: course}
+    history:
+      - {event: complete, title: "Маркетплейсы: с чего начать и как преуспеть", days_ago: 30}
+    synthetic_views: {task: marketplaces, count: 6, days: 21}
+  - id: services
+    title: Сфера услуг про продвижение
+    legend: Владелец салона услуг ищет, как привлекать клиентов; читал несколько статей о маркетинге.
+    profile: {stage: operating, industries: [services], tasks: [marketing, sales_customers], experience: intermediate, time_budget: hour}
+    synthetic_views: {task: marketing, count: 5, days: 14}
+  - id: hiring
+    title: Растущий бизнес про найм
+    legend: Расширяет розничную сеть и начал курс о команде продаж; нужен следующий шаг по найму.
+    profile: {stage: growth, industries: [retail], tasks: [team_hiring], experience: advanced, time_budget: course}
+    history:
+      - {event: enroll, title: "Подбор и адаптация команды продаж", days_ago: 7}
+    synthetic_views: {task: team_hiring, count: 4, days: 10}
+  - id: outside
+    title: Запрос вне каталога
+    legend: Хочет открыть автосервис в Казахстане — точного материала нет, нужно честное уточнение.
+    profile: {stage: idea, experience: beginner, free_text: Открыть автосервис в Казахстане}
+real_users:
+  count: 2
+  min_courses: 3
