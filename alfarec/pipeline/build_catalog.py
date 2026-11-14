@@ -17,7 +17,13 @@ from statistics import fmean
 import pyarrow as pa
 
 from alfarec.pipeline.dump_reader import Row, Tables, read_tables
-from alfarec.pipeline.text import html_to_text, normalize_label, parse_duration, truncate
+from alfarec.pipeline.text import (
+    fix_mixed_script,
+    html_to_text,
+    normalize_label,
+    parse_duration,
+    truncate,
+)
 from alfarec.recsys.catalog import save_catalog, write_parquet
 from alfarec.recsys.contracts import Item
 
@@ -197,7 +203,8 @@ class CatalogBuilder:
                     price_rub=subscription_price if closed else None,
                     subject=normalize_label(subject["Title"]) if subject else None,
                     extra_text=[html_to_text(row["ContentHeadings"])],
-                    body="" if closed else bodies.get(row["Id"], ""),
+                    # Hidden articles may need a login; their body stays out of the index.
+                    body="" if closed or row["IsPublic"] == "f" else bodies.get(row["Id"], ""),
                 )
             )
         return drafts
@@ -421,8 +428,8 @@ class CatalogBuilder:
         items: list[Item] = []
         index_rows: list[dict[str, str]] = []
         for draft in sorted(self.drafts(), key=lambda entry: (entry.item_type, entry.item_id)):
-            title = truncate(html_to_text(draft.title), TITLE_LIMIT)
-            description = html_to_text(draft.description)
+            title = truncate(fix_mixed_script(html_to_text(draft.title)), TITLE_LIMIT)
+            description = fix_mixed_script(html_to_text(draft.description))
             duration = parse_duration(draft.duration)
             item_format = _format(draft.item_type, duration)
             item_labels = labels.get(draft.item_id, {})
@@ -450,7 +457,12 @@ class CatalogBuilder:
             )
             items.append(item)
             body = truncate(draft.body, BODY_LIMIT) if draft.access == "free" else ""
-            parts = [title, description, *draft.extra_text, body]
+            parts = [
+                title,
+                description,
+                *map(fix_mixed_script, draft.extra_text),
+                fix_mixed_script(body),
+            ]
             index_rows.append(
                 {
                     "item_id": item.item_id,

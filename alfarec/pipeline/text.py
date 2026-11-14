@@ -79,6 +79,25 @@ def _fix_homoglyphs(word: str) -> str:
     return "".join(table.get(char, char) for char in word)
 
 
+_LETTER_RUN = re.compile(r"[^\W\d_]+")
+
+
+def fix_mixed_script(text: str) -> str:
+    """Fix look-alike letters inside each run of letters ("преуспeть"), not across hyphens."""
+    letters = [char for char in text if char.isalpha()]
+    mostly_cyrillic = sum(map(_is_cyrillic, letters)) * 2 > len(letters)
+
+    def fix(match: re.Match[str]) -> str:
+        run = match.group()
+        # A lone lowercase look-alike in Russian text is a typo ("важное o 115-ФЗ"); capitals
+        # such as "план A" stay as written.
+        if mostly_cyrillic and len(run) == 1 and run in "aceopxyk":
+            return _LATIN_TO_CYRILLIC[run]
+        return _fix_homoglyphs(run)
+
+    return _LETTER_RUN.sub(fix, text)
+
+
 def normalize_label(value: str | None) -> str:
     """Clean a dictionary title: no emoji, no stray spaces, one script per word."""
     if not value:
@@ -87,7 +106,7 @@ def normalize_label(value: str | None) -> str:
     text = "".join(
         char for char in text if unicodedata.category(char) not in {"So", "Sk", "Cf", "Cc", "Mn"}
     )
-    return " ".join(_fix_homoglyphs(word) for word in text.split())
+    return fix_mixed_script(" ".join(text.split()))
 
 
 # Typed with the English keyboard layout: "2 vbyens" means "2 минуты".
