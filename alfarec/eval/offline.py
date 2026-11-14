@@ -13,6 +13,7 @@ import math
 import statistics
 import sys
 import time
+import zlib
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -24,6 +25,7 @@ import pyarrow.parquet as pq
 from alfarec.eval.profiles import load_profiles
 from alfarec.recsys.contracts import Event, Profile
 from alfarec.recsys.ranking import Ranker, load_ranker
+from alfarec.recsys.sequence import CourseTransitions
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_HANDOFF = ROOT / "data" / "handoff"
@@ -102,6 +104,15 @@ def next_course_cases(rows: Sequence[dict]) -> list[NextCourseCase]:
         history.sort(key=lambda event: (event.ts, event.item_id, event.type))
         cases.append(NextCourseCase(history, last["course_id"], cutoff))
     return cases
+
+
+def split_users(rows: Sequence[dict], tune_share: int = 6) -> tuple[list[dict], list[dict]]:
+    """Stable user split: tune_share in 10 users fit the transitions, the rest are held out."""
+    tune, holdout = [], []
+    for row in rows:
+        bucket = zlib.crc32(row["user_key"].encode("utf-8")) % 10
+        (tune if bucket < tune_share else holdout).append(row)
+    return tune, holdout
 
 
 def evaluate_next_course(ranker: Ranker, rows: Sequence[dict]) -> dict:
@@ -206,16 +217,19 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
     ]
     if next_course.get("users"):
         lines += [
-            f"Пользователей с однозначным последним курсом: {next_course['users']}. Последний по"
-            " дате курс скрыт. Прогноз строится на начало месяца его записи. История содержит"
-            " enroll по дате записи и complete по фактической дате завершения только из более"
-            " ранних месяцев. При неизвестной дате завершения complete не создаётся."
-            " Неоднозначный последний месяц, неизвестные даты записей и повторный целевой курс"
-            " исключены.",
+            "Пользователи стабильно делятся по хешу псевдонима: 60% (`tune`) строят переходы"
+            " «курс → следующий курс» и подбирают их вес, на остальных 40% (`holdout`) считается"
+            f" таблица. Случаев в `holdout` с однозначным последним курсом: {next_course['users']}."
+            " Последний по дате курс скрыт. Прогноз строится на начало месяца его записи."
+            " История содержит enroll по дате записи и complete по фактической дате завершения"
+            " только из более ранних месяцев. При неизвестной дате завершения complete не"
+            " создаётся. Неоднозначный последний месяц, неизвестные даты записей и повторный"
+            " целевой курс исключены.",
             "",
             "| Метод | HitRate@5 | MRR |",
             "|---|---|---|",
-            f"| Наша система (курсы из выдачи, остаток — по популярности) | {f(next_course['ours_hit5'])} | {f(next_course['ours_mrr'])} |",  # noqa: E501
+            f"| Наша система с переходами между курсами | {f(next_course['ours_hit5'])} | {f(next_course['ours_mrr'])} |",  # noqa: E501
+            f"| Наша система без переходов (только содержание) | {f(next_course['content_hit5'])} | {f(next_course['content_mrr'])} |",  # noqa: E501
             f"| Популярность | {f(next_course['popularity_hit5'])} | {f(next_course['popularity_mrr'])} |",  # noqa: E501
             "",
             "Это snapshot-диагностика с историей as-of, а не полный временной backtest."
@@ -223,8 +237,10 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
             " включая период после прогноза. Величина влияния этой утечки агрегатов неизвестна;"
             " для временной оценки нужны исторические снимки всех признаков.",
             "",
-            "Таблица описывает только этот протокол. Вывод о преимуществе метода требует"
-            " отдельной проверки без будущих агрегатов; веса на этих случаях не подбирались.",
+            "Курсы из выдачи идут первыми, недостающие места дополняются по популярности."
+            " Вес переходов и смесь с популярностью подобраны только на `tune`; на `holdout`"
+            " ничего не подбиралось. Вывод о преимуществе метода требует отдельной проверки без"
+            " будущих агрегатов.",
         ]
     else:
         lines += ["Нет подходящих случаев следующего курса; метрики не рассчитаны."]
@@ -291,7 +307,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Handoff files not found in {args.handoff}; run export_handoff", file=sys.stderr)
         return 1
     ranker = load_ranker()
-    next_course = evaluate_next_course(ranker, pq.read_table(needed[0]).to_pylist())
+    tune, holdout = split_users(pq.read_table(needed[0]).to_pylist())
+    # Transitions come from tune users only, so a hidden holdout course never informs them.
+    with_sequence = load_ranker(transitions_path=None, transitions=CourseTransitions.build(tune))
+    content_only = load_ranker(transitions_path=None)
+    next_course = evaluate_next_course(with_sequence, holdout)
+    next_course["content_hit5"], next_course["content_mrr"] = (
+        (m := evaluate_next_course(content_only, holdout)).get("ours_hit5", 0.0),
+        m.get("ours_mrr", 0.0),
+    )
     editorial = evaluate_editorial(ranker, pq.read_table(needed[1]).to_pylist())
     profiles = evaluate_profiles(ranker)
     args.output.write_text(render(next_course, editorial, profiles), encoding="utf-8", newline="\n")

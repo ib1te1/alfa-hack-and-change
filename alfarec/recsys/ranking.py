@@ -36,6 +36,7 @@ from alfarec.recsys.contracts import (
 )
 from alfarec.recsys.explain import next_step_for
 from alfarec.recsys.retrieval import TfidfIndex
+from alfarec.recsys.sequence import DEFAULT_TRANSITIONS_PATH, CourseTransitions
 from alfarec.recsys.taxonomy import Taxonomy, match_key
 
 # Initial hand-set weights (spec 6.3); B06 tunes them on the tune split of the profiles.
@@ -51,6 +52,8 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "popularity": 0.3,
     "fresh": 0.2,
     "offer": 0.3,
+    # Enrolment transitions between courses; tuned on the tune split of next-course cases.
+    "sequence": 8.0,
 }
 CANDIDATES = 300
 ROUTE_MAX = 5
@@ -259,6 +262,7 @@ class _Context:
     semantic_top: float
     neighbours: dict[str, tuple[float, str]]
     empty: bool
+    sequence: dict[str, tuple[float, str]] = field(default_factory=dict)
 
 
 class Ranker:
@@ -272,6 +276,7 @@ class Ranker:
         weights: Mapping[str, float] | None = None,
         lexicon: IntentLexicon | None = None,
         now: datetime | None = None,
+        transitions: CourseTransitions | None = None,
     ) -> None:
         if len({item.item_id for item in catalog}) != len(catalog):
             raise ValueError("Catalog item IDs must be unique")
@@ -284,6 +289,7 @@ class Ranker:
         self._index = index
         self._weights = {**DEFAULT_WEIGHTS, **(weights or {})}
         self._lexicon = lexicon or load_intents()
+        self._transitions = transitions
         self._baseline = TopicBaseline(catalog, taxonomy)
         self._facts = {
             item_id: _item_facts(item, taxonomy) for item_id, item in self._items.items()
@@ -392,6 +398,7 @@ class Ranker:
         query = self._query_text(profile, tasks)
         semantic, semantic_top = self._semantic(query)
         neighbours = self._neighbours(weights)
+        sequence = self._sequence(history, excluded | set(weights))
         empty = not (
             tasks or profile.stage or profile.industries or profile.experience
             or profile.time_budget or (profile.free_text and profile.free_text.strip())
@@ -411,6 +418,7 @@ class Ranker:
             semantic_top=semantic_top,
             neighbours=neighbours,
             empty=empty,
+            sequence=sequence,
         )
 
     def _query_text(self, profile: Profile, tasks: list[str]) -> str:
@@ -450,6 +458,24 @@ class Ranker:
                     value, title = result.get(hit.item_id, (0.0, ""))
                     result[hit.item_id] = (value + hit.score * weight, title)
         return result
+
+    def _sequence(self, history: Sequence[Event], seen: set[str]) -> dict[str, tuple[float, str]]:
+        """Courses people enrol in after the user's courses (enrolment transitions)."""
+        if self._transitions is None:
+            return {}
+        taken = [
+            e.item_id
+            for e in sorted(history, key=lambda e: (e.ts, e.item_id))
+            if e.type in {"enroll", "complete"}
+            and e.item_id in self._items
+            and self._items[e.item_id].format == "course"
+        ]
+        candidates = {
+            item_id: float(item.popularity or 0)
+            for item_id, item in self._items.items()
+            if item.format == "course" and item_id not in seen and (item.popularity or 0) > 0
+        }
+        return self._transitions.scores(taken, candidates)
 
     # Candidates and scoring ---------------------------------------------------------------
 
@@ -497,6 +523,11 @@ class Ranker:
         features["history"] = max(min(neighbour, 1.0), -1.0)
         if title:
             params["history"] = {"title": title}
+        if item.item_id in context.sequence:
+            value, source = context.sequence[item.item_id]
+            features["sequence"] = value
+            if source:
+                params["sequence"] = {"title": self._items[source].title}
         quality = []
         if item.completion_rate is not None:
             # Smoothed toward the catalog-wide mean of about 0.12 for courses.
@@ -839,7 +870,11 @@ class Ranker:
             return Reason(
                 code=ReasonCode.CONTINUES_HISTORY, weight=weight, params={"title": params["title"]}
             )
-        if name in {"popularity", "quality"} and (entry.item.popularity or 0) > 0:
+        if name == "sequence" and params.get("title"):
+            return Reason(
+                code=ReasonCode.CONTINUES_HISTORY, weight=weight, params={"title": params["title"]}
+            )
+        if name in {"popularity", "quality", "sequence"} and (entry.item.popularity or 0) > 0:
             return Reason(code=ReasonCode.POPULAR_WITH_SIMILAR, weight=weight)
         if name == "format" and entry.item.duration_min and entry.item.duration_min <= 10:
             return Reason(
@@ -861,6 +896,8 @@ def load_ranker(
     index_path: Path = DEFAULT_INDEX_PATH,
     weights: Mapping[str, float] | None = None,
     base_url: str | None = None,
+    transitions_path: Path | None = DEFAULT_TRANSITIONS_PATH,
+    transitions: CourseTransitions | None = None,
 ) -> Ranker:
     """Ranker over the committed catalog and the B04 fallback index, with full index checks."""
     from alfarec.pipeline.build_index import prepare_texts
@@ -880,4 +917,7 @@ def load_ranker(
     )
     if base_url:
         catalog = with_base_url(catalog, base_url)
-    return Ranker(catalog, load_taxonomy(), index, weights=weights)
+    if transitions is None and transitions_path is not None and transitions_path.exists():
+        # Without the file the ranker still works, on content and popularity alone.
+        transitions = CourseTransitions.load(transitions_path)
+    return Ranker(catalog, load_taxonomy(), index, weights=weights, transitions=transitions)
