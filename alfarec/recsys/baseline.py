@@ -59,8 +59,17 @@ class TopicBaseline:
         mode: Mode = "baseline",
         limit: int = 10,
     ) -> RecommendationResponse:
+        # Keep the comparison baseline unchanged; the production fallback must still
+        # honour explicit feedback and completed materials.
+        excluded = (
+            {event.item_id for event in history if event.type in {"complete", "known", "dislike"}}
+            if mode == "ours"
+            else set()
+        )
+        ranked = [(item, reasons) for item, reasons in self.ranked(profile)
+                  if item.item_id not in excluded]  # fmt: skip
         return RecommendationResponse(
-            more=[_recommendation(item, reasons) for item, reasons in self.ranked(profile)[:limit]],
+            more=[_recommendation(item, reasons) for item, reasons in ranked[:limit]],
             mode=mode,
             profile_used=profile.model_copy(deep=True),
         )

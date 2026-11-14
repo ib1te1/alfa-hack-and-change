@@ -104,6 +104,30 @@ def test_unusable_index_falls_back_to_the_baseline(paths: dict[str, Path]) -> No
         assert ids(recommend(client, profile={"tasks": ["marketing"]})["more"])
 
 
+@pytest.mark.parametrize("index_problem", ["missing", "corrupt"])
+@pytest.mark.parametrize("kind", ["complete", "known", "dislike"])
+def test_fallback_keeps_feedback_exclusions(paths: dict[str, Path], index_problem, kind):
+    if index_problem == "missing":
+        paths["index"] = paths["index"].parent / "missing"
+    else:
+        (paths["index"] / "manifest.json").write_text("invalid", encoding="utf-8")
+    with TestClient(create_app(services_for(paths))) as client:
+        body = {"profile": {"tasks": ["marketing"]}, "user_id": "u1", "limit": 2}
+        first = recommend(client, **body)
+        item_id = first["more"][0]["item"]["item_id"]
+        accepted = client.post(
+            "/api/events",
+            json={"user_id": "u1", "item_id": item_id, "type": kind,
+                  "ts": "2026-11-14T10:00:00Z"},
+        )  # fmt: skip
+        assert accepted.status_code == 201
+        after = recommend(client, **body)
+        assert item_id not in ids(after["route"] + after["more"] + after["quick"])
+        assert len(after["more"]) == 2
+        assert item_id in ids(recommend(client, **{**body, "user_id": "u2"})["more"])
+        assert item_id in ids(recommend(client, **body, mode="baseline")["more"])
+
+
 def test_missing_catalog_degrades_with_a_clear_message(tmp_path: Path) -> None:
     services = build_services(
         tmp_path / "none.parquet", tmp_path / "e.jsonl", tmp_path / "none.json"
