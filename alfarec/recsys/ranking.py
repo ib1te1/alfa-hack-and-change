@@ -114,6 +114,9 @@ class Boundary(Contract):
     reason: str
     cues: list[str] = Field(min_length=1)
     question: str
+    # The boundary fires only together with one of these tasks and none of the exceptions.
+    requires_tasks: list[str] = Field(default_factory=list)
+    unless_tasks: list[str] = Field(default_factory=list)
 
 
 class IntentLexicon(Contract):
@@ -132,9 +135,8 @@ def _normalize(text: str) -> str:
 
 
 def _hits(text: str, cues: Iterable[str]) -> int:
-    return sum(
-        1 for cue in cues if re.search(_WORD_START + re.escape(_normalize(cue)), text) is not None
-    )
+    """Number of cues found; a cue is a regular expression anchored at a word start."""
+    return sum(1 for cue in cues if re.search(_WORD_START + cue, text) is not None)
 
 
 @dataclass
@@ -150,12 +152,25 @@ def understand(text: str | None, lexicon: IntentLexicon) -> Understanding:
     if not text or not text.strip():
         return Understanding([], None, None, False)
     query = _normalize(text)
-    boundary = next((b for b in lexicon.boundaries if _hits(query, b.cues)), None)
     scores = {task: _hits(query, cues) for task, cues in lexicon.tasks.items()}
+    found = {task for task, score in scores.items() if score}
     best = max(scores.values(), default=0)
     tasks = sorted((t for t, s in scores.items() if s and s == best), key=lambda t: t)
+    boundary = next(
+        (
+            b
+            for b in lexicon.boundaries
+            if _hits(query, b.cues)
+            and (not b.requires_tasks or found & set(b.requires_tasks))
+            and not found & set(b.unless_tasks)
+        ),
+        None,
+    )
     stage_hits = {stage: _hits(query, cues) for stage, cues in lexicon.stages.items()}
-    stage = max(stage_hits, key=lambda s: (stage_hits[s], s)) if any(stage_hits.values()) else None
+    top = max(stage_hits.values(), default=0)
+    leaders = [stage for stage, hits in stage_hits.items() if hits == top]
+    # A tie between stages says nothing reliable about the stage.
+    stage = leaders[0] if top and len(leaders) == 1 else None
     return Understanding(tasks[:2], stage, boundary, best > 0)
 
 
@@ -240,6 +255,7 @@ class Scored:
     score: float
     contributions: dict[str, float] = field(default_factory=dict)
     params: dict[str, dict] = field(default_factory=dict)
+    continuing: bool = False
 
 
 @dataclass
@@ -309,27 +325,28 @@ class Ranker:
             return self._baseline(profile, limit)
         understanding = understand(profile.free_text, self._lexicon)
         context = self._context(profile, history, understanding)
-        if understanding.boundary is not None:
+        if understanding.boundary is not None and not profile.tasks:
             return self._clarify(profile, context, understanding.boundary.question, limit)
-        if context.empty and not history:
+        if context.empty and not any(w > 0 for w in context.history_weights.values()):
             return self._cold_start(profile, context, limit)
         scored = self._score(self._candidates(context), context)
         if self._low_confidence(context, understanding):
             return self._clarify(profile, context, "Уточните, что ближе", limit, scored)
-        ranked = self._rerank(scored)
-        route = self._route(ranked, context)
+        route = self._route(scored, context)
         used = {entry.item.item_id for entry in route}
         quick = [
             entry
-            for entry in ranked
+            for entry in scored
             if entry.item.item_id not in used and self._is_quick(entry.item)
         ][:QUICK_LIMIT]
         used |= {entry.item.item_id for entry in quick}
-        more = [entry for entry in ranked if entry.item.item_id not in used][:limit]
         continuing = self._continue_course(history, context)
-        if continuing and continuing.item.item_id not in {e.item.item_id for e in route}:
-            more = [continuing, *[e for e in more if e.item.item_id != continuing.item.item_id]]
-            more = more[:limit]
+        if continuing is not None:
+            used.add(continuing.item.item_id)
+        # Quotas apply to the list the user actually sees first.
+        rest = [entry for entry in scored if entry.item.item_id not in used]
+        size = limit - (continuing is not None)
+        more = ([continuing] if continuing else []) + self._rerank(rest, size)
         return RecommendationResponse(
             route=[self._to_recommendation(entry, context) for entry in route],
             more=[self._to_recommendation(entry, context) for entry in more],
@@ -381,8 +398,10 @@ class Ranker:
             tasks = [task for task, _ in counter.most_common(2)]
         level = profile.experience
         raised = False
-        if known and level and level != "advanced":
-            level = LEVELS[LEVELS.index(level) + 1]
+        if known and level != "advanced":
+            # "I already know this" moves the user one step up; unknown experience counts as
+            # beginner.
+            level = LEVELS[LEVELS.index(level or "beginner") + 1]
             raised = True
         query = self._query_text(profile, tasks)
         semantic, semantic_top = self._semantic(query)
@@ -533,30 +552,31 @@ class Ranker:
         overlap = len(shared) / len(union) if union else 0.0
         return 0.5 * overlap + 0.3 * (a.topic == b.topic) + 0.2 * (left.format == right.format)
 
-    def _rerank(self, scored: list[Scored], size: int = 60) -> list[Scored]:
-        """MMR over the top candidates with the format, topic and paid quotas of the top five."""
-        pool = scored[: size * 2]
-        if not pool:
+    def _rerank(self, scored: list[Scored], size: int) -> list[Scored]:
+        """MMR with the paid, topic and format quotas of the top five; nothing is dropped."""
+        pool = list(scored)
+        if not pool or size < 1:
             return []
         top_score = max(abs(entry.score) for entry in pool) or 1.0
         selected: list[Scored] = []
         while pool and len(selected) < size:
             in_top = len(selected) < TOP_K
-            best, best_value = None, -math.inf
-            for entry in pool:
-                if in_top and not self._fits_top(entry, selected):
-                    continue
-                redundancy = max(
-                    (self._similarity(entry.item, s.item) for s in selected), default=0
-                )
-                value = MMR_LAMBDA * entry.score / top_score - (1 - MMR_LAMBDA) * redundancy
-                if value > best_value:
-                    best, best_value = entry, value
-            if best is None:
-                best = pool[0]
+            allowed = [e for e in pool if not in_top or self._fits_top(e, selected)]
+            if not allowed:
+                # Quotas cannot all hold: keep the paid limit, relax topic and format.
+                allowed = [e for e in pool if e.item.access == "free"] or pool
+            best = max(
+                allowed[: size * 3],
+                key=lambda e: (
+                    MMR_LAMBDA * e.score / top_score
+                    - (1 - MMR_LAMBDA)
+                    * max((self._similarity(e.item, s.item) for s in selected), default=0.0),
+                    e.item.item_id,
+                ),
+            )
             selected.append(best)
             pool.remove(best)
-        return selected + [entry for entry in scored[size * 2 :]][: max(0, size - len(selected))]
+        return selected
 
     def _fits_top(self, entry: Scored, selected: list[Scored]) -> bool:
         paid = sum(s.item.access != "free" for s in selected)
@@ -618,21 +638,26 @@ class Ranker:
             item,
             score=1.0,
             contributions={"history": 1.0},
-            params={"history": {"title": item.title, "continue": True}},
+            params={"history": {"title": item.title}},
+            continuing=True,
         )
 
     # Special answers ----------------------------------------------------------------------
 
     def _low_confidence(self, context: _Context, understanding: Understanding) -> bool:
+        """Unclear free text: no task cues, or several equal tasks with weak closeness."""
         if context.profile.tasks or context.history_weights:
             return False
         text = (context.profile.free_text or "").strip()
         if not text:
             return False
-        raw_top = context.semantic_top
         if not understanding.has_signal:
             return True
-        return len(understanding.tasks) > 1 and raw_top < CONFIDENT_SEMANTIC
+        if len(understanding.tasks) < 2:
+            return False
+        # Closeness of the user's own words, not of the task descriptions added to the query.
+        hits = self._index.search(text, limit=1)
+        return (hits[0].score if hits else 0.0) < CONFIDENT_SEMANTIC
 
     def _clarify(
         self,
@@ -795,7 +820,7 @@ class Ranker:
         )
 
     def _to_recommendation(self, entry: Scored, context: _Context) -> Recommendation:
-        reasons = []
+        reasons: list[Reason] = []
         item = entry.item
         facts = self._facts[item.item_id]
         for name, value in sorted(entry.contributions.items(), key=lambda kv: (-kv[1], kv[0])):
@@ -804,25 +829,55 @@ class Ranker:
             reason = self._reason(name, value, entry, facts, context)
             if reason and reason.code not in {r.code for r in reasons}:
                 reasons.append(reason)
+        # Facts about the material itself complete a short list; none contradicts the profile.
+        for reason in self._fact_reasons(item, facts, context):
+            if len(reasons) >= 3:
+                break
+            if reason.code not in {r.code for r in reasons}:
+                reasons.append(reason)
+        step = next_step_for(item)
+        if entry.continuing:
+            step = NextStep(kind="start_course", label="Продолжить курс", url=item.url)
         return Recommendation(
             item=item.model_copy(deep=True),
             score=round(entry.score, 6),
             reasons=reasons,
-            next_step=next_step_for(item),
+            next_step=step,
         )
+
+    def _fact_reasons(self, item: Item, facts: ItemFacts, context: _Context) -> list[Reason]:
+        result = []
+        if (item.popularity or 0) > 0:
+            result.append(Reason(code=ReasonCode.POPULAR_WITH_SIMILAR, weight=0.0))
+        if facts.level == "beginner" and context.level in (None, "beginner"):
+            result.append(Reason(code=ReasonCode.BEGINNER_FRIENDLY, weight=0.0))
+        if item.duration_min and item.duration_min <= 10:
+            result.append(
+                Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0,
+                       params={"minutes": item.duration_min})
+            )  # fmt: skip
+        elif item.format == "tool":
+            # A calculator answers at once; its time is not recorded in the data.
+            result.append(Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0))
+        labels = {match_key(v) for v in [*item.topics, *(filter(None, [item.subject]))]}
+        recent = item.published_at and (self._now - item.published_at) <= timedelta(days=FRESH_DAYS)
+        if recent and labels & LAW_CHANGE_LABELS:
+            result.append(Reason(code=ReasonCode.FRESH, weight=0.0))
+        if item.format == "course" and item.access == "free":
+            result.append(Reason(code=ReasonCode.DEEP_DIVE_COURSE, weight=0.0))
+        return result
 
     def _reason(
         self, name: str, value: float, entry: Scored, facts: ItemFacts, context: _Context
     ) -> Reason | None:
         weight = round(value, 6)
         params = entry.params.get(name, {})
-        if name in {"task", "semantic"} and context.tasks:
-            task = params.get("task") or context.tasks[0]
-            return Reason(code=ReasonCode.TASK_MATCH, weight=weight, params={"task": task})
-        if name == "stage" and value >= 0.5 * self._weights["stage"]:
+        if name == "task" and params.get("task"):
+            return Reason(code=ReasonCode.TASK_MATCH, weight=weight, params=params)
+        if name == "stage" and facts.stages and value >= 0.5 * self._weights["stage"]:
             return Reason(code=ReasonCode.STAGE_FIT, weight=weight, params=params)
         if name == "level":
-            if context.level_raised:
+            if context.level_raised and facts.level != "beginner":
                 return Reason(code=ReasonCode.NEXT_LEVEL, weight=weight)
             if facts.level == "beginner" and context.level == "beginner":
                 return Reason(code=ReasonCode.BEGINNER_FRIENDLY, weight=weight)
