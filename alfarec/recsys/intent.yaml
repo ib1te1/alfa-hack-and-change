@@ -1,0 +1,39 @@
+# Cues for understanding free text (B05). Each cue is a regular expression matched from the
+# start of a word in the lowercased query with "ё" replaced by "е"; \b marks the end of a word.
+# Negative examples live in retrieval_tests/test_ranking.py.
+version: 1
+tasks:
+  business_start: [открыт, открыва, откро, начат, начин, 'сво[её] дело', регистрац, зарегистр, 'ип\b', 'ооо\b', самозанят, запуск, старт, с нуля, 'иде[яи]\b', первые шаги]
+  tax_regime: [налоговый режим, режим налог, 'усн\b', патент, 'псн\b', 'аусн\b', 'осно\b', 'нпд\b', упрощ]
+  taxes_reporting: [налог, отчет, деклара, 'ндс\b', 'ндфл\b', взнос, 'фнс\b']
+  accounting_payments: [деньг, денег, выплат, поступлен, расход, учет, 'касс[аеуыой]', эквайр, платеж, оплат, кассов разрыв, бухгалт, зарплат]
+  banking_compliance: ['115[- ]?фз', блокир, 'банк(?!ет|рот)', ограничени, счет заблок]
+  marketing: [клиент, продвиж, продвига, реклам, маркетинг, узнали, узнава, соцсет, 'сайт', бренд, трафик, аудитори, контент]
+  sales_customers: [продаж, продава, покупател, переговор, воронк, сервис, удержан, возражен]
+  marketplaces: [маркетплейс, озон, ozon, wildberries, вайлдберриз, 'wb\b', авито, flowwow, селлер, 'карточк[аиу] товар']
+  team_hiring: [найм, нанят, наня, нанима, сотрудник, персонал, 'команд(?!иров)', делегир, работник, увольн, кадр, трудов]
+  legal_contracts: [договор, юрид, юрист, закон, документ, шаблон, 'суд\b', 'суда\b', 'судеб', претенз, 'право\b', правов, 'персональн[а-я]* дан', строител]
+  financing: [кредит, займ, инвест, финансир, деньги на бизнес, денег на бизнес, грант, субсид, лизинг, финанс]
+  ai_automation: ['ии\b', нейросет, искусствен, автоматиз, промпт, gpt, чат-бот, 'бот\b', 'боты\b', 'бота\b']
+  international: ['вэд\b', импорт, экспорт, китай, рубеж, иностран, валют, 'поставк[а-я]* из']
+  franchising: [франшиз, франчайз]
+stages:
+  idea: [думаю открыть, хочу открыть, с чего начать, 'иде[яи]\b', начать сво]
+  launch: [только открыл, недавно открыл, первый год, зарегистрировал]
+  operating: [веду бизнес, уже есть бизнес, давно работаю]
+  growth: [расшир, масштаб, вторую точку, филиал, 'рост\b', 'роста\b', 'расти\b', развива]
+# Requests outside the catalog's scope: the answer is a clarification, never a guessed match.
+# Boundaries apply only when the user has not chosen tasks in the profile.
+boundaries:
+  - reason: foreign_law
+    # A foreign country with registration, law or tax wording; trade with it stays in scope.
+    cues: [казахстан, беларус, белорус, узбекистан, киргиз, армени, 'грузии\b', 'в сша\b', германи, 'турци[ия]\b', 'оаэ\b']
+    requires_tasks: [business_start, legal_contracts, tax_regime, taxes_reporting]
+    unless_tasks: [international]
+    question: Каталог описывает правила для России. Уточните, что ближе
+  - reason: forecast
+    cues: [точную выручку, прогноз выручки, предскаж, через год будет, точный прогноз]
+    question: Индивидуальный прогноз мы не делаем. Уточните задачу, с которой помочь
+  - reason: off_topic
+    cues: ['зубн', 'зуба\b', 'зубы\b', 'лечить\b', болезн, лекарств, видеоигр, 'компьютерн[а-я]* игр', 'игры\b', 'игру\b', уровня игры, 'прохождени[а-я]* уровн', гороскоп, свидани]
+    question: Это вне тем для бизнеса. Уточните, что ближе
