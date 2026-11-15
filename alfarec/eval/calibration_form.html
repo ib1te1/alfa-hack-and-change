@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <title>B03 · Калибровка инструкции</title>
+  <style>
+    :root { color-scheme: light; font: 17px/1.55 system-ui, sans-serif; color: #202a39; background: #f3f5f8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 980px; margin: 0 auto; padding: 36px 24px 64px; }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.7rem); line-height: 1.15; margin: 12px 0 20px; }
+    h2 { font-size: 1.4rem; margin-top: 0; }
+    h3 { font-size: 1.15rem; margin: 0 0 12px; }
+    p { margin: 0 0 16px; }
+    .eyebrow { color: #4b5c74; font-weight: 700; letter-spacing: .08em; font-size: .8rem; }
+    .muted { color: #526176; }
+    .panel, .pair { padding: 28px; background: white; border: 1px solid #d6dee9; border-radius: 14px; margin: 24px 0; }
+    .progress { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    progress { width: 170px; accent-color: #2559b6; }
+    .rubric { padding-left: 24px; }
+    .rubric li { margin-bottom: 12px; }
+    details { border-top: 1px solid #d6dee9; padding-top: 16px; }
+    summary { cursor: pointer; font-weight: 650; }
+    details ol { padding-left: 24px; }
+    .pair-number { color: #2559b6; font-weight: 700; font-size: .9rem; margin-bottom: 16px; }
+    .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 24px; }
+    dl { margin: 0; }
+    dt { color: #526176; font-size: .85rem; margin-top: 10px; }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    .material { background: #f3f6fb; padding: 20px; border-radius: 10px; }
+    .material h3 { line-height: 1.35; }
+    .metadata { color: #526176; font-size: .9rem; }
+    fieldset { padding: 0; border: 0; margin: 0 0 16px; }
+    legend, .field-label { font-weight: 650; margin-bottom: 8px; display: block; }
+    .choices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .choice { border: 1px solid #bcc8da; border-radius: 8px; padding: 12px; cursor: pointer; }
+    .choice:has(input:checked) { background: #eaf1ff; border-color: #2559b6; }
+    input[type=radio], input[type=checkbox] { width: 18px; height: 18px; accent-color: #2559b6; vertical-align: middle; margin: 0 8px 2px 0; }
+    textarea, select { font: inherit; width: 100%; border: 1px solid #9eacc0; border-radius: 8px; padding: 10px 12px; color: inherit; background: white; }
+    textarea { resize: vertical; min-height: 95px; }
+    select { max-width: 400px; margin-bottom: 20px; }
+    :focus-visible { outline: 3px solid #2559b6; outline-offset: 3px; }
+    .check { display: block; margin: 24px 0; }
+    button { font: inherit; font-weight: 650; color: white; background: #2559b6; border: 0; padding: 14px 24px; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #174594; }
+    #export-status { margin: 16px 0 0; }
+    .fingerprint { font: .8rem/1.6 ui-monospace, monospace; overflow-wrap: anywhere; }
+    @media (max-width: 640px) {
+      main { padding: 24px 14px 40px; }
+      .panel, .pair { padding: 20px; }
+      .columns, .choices { grid-template-columns: 1fr; gap: 16px; }
+      .progress { align-items: start; flex-direction: column; gap: 8px; }
+      progress, button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">B03 · РУЧНАЯ КАЛИБРОВКА</div>
+    <h1>Одинаково ли мы понимаем полезность?</h1>
+    <p>Оцените пять реальных материалов для пяти заданных профилей. Это проверка инструкции разметки; качество рекомендателя по этим парам не измеряется.</p>
+    <p class="muted">Заполняйте самостоятельно, до обсуждения с другим участником. Форма работает без сети. Ответы остаются здесь до скачивания; при обновлении страницы они сбросятся. Персональные данные вводить не нужно.</p>
+  </header>
+  <section class="panel" aria-labelledby="rubric-title">
+    <h2 id="rubric-title">Как оценивать</h2>
+    <ul class="rubric">
+      <li><strong>2 — прямо полезно.</strong> Помогает сделать следующий шаг по задаче, подходит по стадии и опыту. Укладывается в указанный бюджет времени либо даёт немедленно пригодный инструмент.</li>
+      <li><strong>1 — частично полезно.</strong> Тема связана с задачей, но материал слишком общий, повторяет известное, требует существенно больше времени или даёт только вводный контекст.</li>
+      <li><strong>0 — не подходит.</strong> Другая задача, неподходящая отрасль при отраслевом содержании, слишком высокий уровень без подготовки, завершённый или уже известный материал. Также — доказуемое отсутствие обещанного точного ответа.</li>
+      <li><strong>Не могу оценить (unjudgeable).</strong> Публичной карточки недостаточно. Укажите, каких сведений не хватает. Не заменяйте неопределённость нулём.</li>
+    </ul>
+    <p>Оценивайте только показанный профиль и публичную карточку. Не додумывайте предпочтения, знания или содержание уроков. Платность сама по себе оценку не снижает; универсальный материал не штрафуется за отсутствие отраслевой специализации. Неизвестная длительность не равна нулю.</p>
+    <details>
+      <summary>Пять учебных примеров шкалы (синтетические)</summary>
+      <ol>
+        <li>Новичку нужно продвижение мастерской, есть час. Простая инструкция по каналам продвижения услуг на 12 минут: <strong>2</strong>.</li>
+        <li>Выбор налогового режима за 5 минут. Общий трёхчасовой курс без краткого инструмента выбора: <strong>1</strong>.</li>
+        <li>Нужен договор строительных работ. Инструкция по найму продавцов в розницу: <strong>0</strong>.</li>
+        <li>Вводный курс по маркетплейсам завершён. Предложен тот же курс с тем же ID: <strong>0</strong>.</li>
+        <li>Нужны точные формы регистрации автосервиса в Казахстане. Есть лишь общее описание бизнеса за рубежом без перечня тем: <strong>unjudgeable</strong>; наличие ответа установить нельзя.</li>
+      </ol>
+      <p>Эти примеры поясняют инструкцию. Они не являются оценками реальных карточек ниже.</p>
+    </details>
+  </section>
+  <noscript><p>Для заполнения и скачивания ответа включите JavaScript. Внешних запросов нет.</p></noscript>
+  <form id="calibration" autocomplete="off">
+    <section class="panel" aria-labelledby="rater-title">
+      <h2 id="rater-title">Ваш код участника</h2>
+      <label class="field-label" for="rater">Выберите свой код, отличный от кода коллеги</label>
+      <select id="rater" required>
+        <option value="">Выберите A или B</option>
+        <option value="A">Участник A</option>
+        <option value="B">Участник B</option>
+      </select>
+      <div class="progress">
+        <span id="progress-text" aria-live="polite">Заполнено пар: 0 из 5</span>
+        <progress id="progress" value="0" max="5" aria-label="Заполнено пар"></progress>
+      </div>
+    </section>
+    <div id="pairs"></div>
+    <section class="panel" aria-labelledby="finish-title">
+      <h2 id="finish-title">Завершение</h2>
+      <label class="field-label" for="instruction-feedback">Понятна ли инструкция? Где возникли сомнения?</label>
+      <p id="feedback-help" class="muted">Если замечаний нет, так и напишите. Если правило неоднозначно, назовите пару и объясните почему.</p>
+      <textarea id="instruction-feedback" required maxlength="2000" aria-describedby="feedback-help"></textarea>
+      <label class="check"><input id="independent" type="checkbox" required>Я прочитал(а) шкалу и учебные примеры, самостоятельно оценил(а) все пять пар и не видел(а) ответы другого участника.</label>
+      <button type="submit">Скачать мои оценки · JSON</button>
+      <p id="export-status" role="status"></p>
+    </section>
+  </form>
+  <footer class="muted">
+    <p>Передайте координатору скачанный файл. Обсуждайте ответы после того, как оба участника сохранили свои независимые оценки. Один и тот же HTML-файл можно передать коллеге.</p>
+    <p>Версия пакета:<br><span class="fingerprint" id="fingerprint"></span></p>
+  </footer>
+</main>
+<script id="packet" type="application/json">__PACKET_JSON__</script>
+<script>
+  'use strict';
+  const packet = JSON.parse(document.getElementById('packet').textContent);
+  const form = document.getElementById('calibration');
+  const accessLabels = {free: 'Бесплатно', subscription: 'По подписке', paid: 'Платно'};
+  const typeLabels = {article: 'Статья', document: 'Документ', course: 'Курс', webinar: 'Вебинар', podcast: 'Подкаст', glossary: 'Словарь', calculator: 'Калькулятор'};
+  const choices = [['2', '2 · Прямо полезно'], ['1', '1 · Частично полезно'], ['0', '0 · Не подходит'], ['unjudgeable', 'Не могу оценить']];
+  function element(tag, text, className) {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  }
+  for (const pair of packet.pairs) {
+    const section = element('section', undefined, 'pair');
+    const title = element('h2', `Пара ${pair.pair_id}`);
+    title.id = `title-${pair.pair_id}`;
+    section.setAttribute('aria-labelledby', title.id);
+    section.append(element('div', `${pair.pair_id} · ${pair.profile_id}`, 'pair-number'), title);
+    const columns = element('div', undefined, 'columns');
+    const profile = element('div');
+    profile.append(element('h3', 'Профиль пользователя'));
+    const fields = element('dl');
+    for (const field of pair.profile_fields) fields.append(element('dt', field.label), element('dd', field.value));
+    profile.append(fields);
+    const card = element('div', undefined, 'material');
+    const item = pair.item;
+    let access = accessLabels[item.access];
+    if (item.access === 'paid' && item.price_rub !== null) access += ` · ${item.price_rub.toLocaleString('ru-RU')} ₽`;
+    card.append(element('h3', item.title), element('p', item.summary || 'Описание не указано.'),
+      element('p', `${typeLabels[item.item_type]} · ${pair.format_label}`, 'metadata'),
+      element('p', item.duration_min === null ? 'Длительность не указана' : `${item.duration_min} мин`, 'metadata'),
+      element('p', access, 'metadata'), element('p', `ID: ${item.item_id}`, 'fingerprint'));
+    columns.append(profile, card);
+    const fieldset = element('fieldset');
+    fieldset.append(element('legend', 'Ваша оценка'));
+    const options = element('div', undefined, 'choices');
+    for (const [value, text] of choices) {
+      const label = element('label', undefined, 'choice');
+      const input = element('input');
+      input.type = 'radio'; input.name = pair.pair_id; input.value = value; input.required = true;
+      label.append(input, document.createTextNode(text));
+      options.append(label);
+    }
+    fieldset.append(options);
+    const noteLabel = element('label', 'Почему вы выбрали эту оценку?', 'field-label');
+    noteLabel.htmlFor = `note-${pair.pair_id}`;
+    const note = element('textarea');
+    note.id = noteLabel.htmlFor; note.required = true; note.maxLength = 2000;
+    section.append(columns, fieldset, noteLabel, note);
+    document.getElementById('pairs').append(section);
+  }
+  document.getElementById('fingerprint').textContent = packet.packet_sha256;
+  function updateProgress() {
+    for (const note of form.querySelectorAll('textarea')) {
+      note.setCustomValidity(note.value.trim() ? '' : 'Напишите краткое пояснение.');
+    }
+    const complete = packet.pairs.filter(pair => form.querySelector(`input[name="${pair.pair_id}"]:checked`) && document.getElementById(`note-${pair.pair_id}`).value.trim()).length;
+    document.getElementById('progress').value = complete;
+    document.getElementById('progress-text').textContent = `Заполнено пар: ${complete} из 5`;
+    document.getElementById('export-status').textContent = '';
+  }
+  form.addEventListener('input', updateProgress);
+  window.addEventListener('pageshow', () => { form.reset(); updateProgress(); });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    updateProgress();
+    if (!form.reportValidity()) return;
+    const response = {
+      version: 1, packet_sha256: packet.packet_sha256,
+      rater_id: document.getElementById('rater').value,
+      independent: document.getElementById('independent').checked,
+      instruction_feedback: document.getElementById('instruction-feedback').value.trim(),
+      answers: packet.pairs.map(pair => {
+        const value = form.querySelector(`input[name="${pair.pair_id}"]:checked`).value;
+        return {pair_id: pair.pair_id, score: value === 'unjudgeable' ? value : Number(value), note: document.getElementById(`note-${pair.pair_id}`).value.trim()};
+      })
+    };
+    const url = URL.createObjectURL(new Blob([JSON.stringify(response, null, 2) + '\n'], {type: 'application/json;charset=utf-8'}));
+    const download = element('a');
+    download.href = url; download.download = `b03-calibration-${response.rater_id}.json`;
+    document.body.append(download); download.click(); download.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    document.getElementById('export-status').textContent = `Файл участника ${response.rater_id} подготовлен. Проверьте его в загрузках и передайте координатору.`;
+  });
+</script>
+</body>
+</html>
