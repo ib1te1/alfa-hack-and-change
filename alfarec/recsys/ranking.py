@@ -69,6 +69,8 @@ MAX_SAME_TOPIC_IN_TOP = 2
 MIN_FORMATS_IN_TOP = 2
 CONFIDENT_SEMANTIC = 0.18
 FRESH_DAYS = 365
+# A reading time is stated as a fact reason up to this length.
+FACT_MAX_MIN = 20
 
 EVENT_WEIGHTS = {"complete": 1.0, "enroll": 0.7, "save": 0.6, "view": 0.4, "dislike": -0.7}
 EXCLUDED_EVENTS = {"complete", "known", "dislike"}
@@ -216,7 +218,8 @@ def _item_facts(item: Item, taxonomy: Taxonomy) -> ItemFacts:
         stages.add("idea")
     if labels & GROWTH_LABELS:
         stages |= {"operating", "growth"}
-    if item.item_type == "glossary" or BEGINNER_TITLE.search(item.title):
+    # Terms and calculators need no preparation: they answer one question at once.
+    if item.item_type in {"glossary", "calculator"} or BEGINNER_TITLE.search(item.title):
         level: Level = "beginner"
     elif match_key("С опытом") in raw_industries or ADVANCED_TITLE.search(item.title):
         level = "advanced"
@@ -840,7 +843,7 @@ class Ranker:
             result.append(Reason(code=ReasonCode.POPULAR_WITH_SIMILAR, weight=0.0))
         if facts.level == "beginner" and context.level in (None, "beginner"):
             result.append(Reason(code=ReasonCode.BEGINNER_FRIENDLY, weight=0.0))
-        if item.duration_min and item.duration_min <= 10:
+        if item.duration_min and item.duration_min <= FACT_MAX_MIN:
             result.append(
                 Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0,
                        params={"minutes": item.duration_min})
@@ -848,12 +851,24 @@ class Ranker:
         elif item.format == "tool":
             # A calculator answers at once; its time is not recorded in the data.
             result.append(Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0))
+        elif item.format == "template":
+            result.append(
+                Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0, params={"format": "template"})
+            )
         labels = {match_key(v) for v in [*item.topics, *(filter(None, [item.subject]))]}
         recent = item.published_at and (self._now - item.published_at) <= timedelta(days=FRESH_DAYS)
         if recent and labels & LAW_CHANGE_LABELS:
             result.append(Reason(code=ReasonCode.FRESH, weight=0.0))
         if item.format == "course" and item.access == "free":
             result.append(Reason(code=ReasonCode.DEEP_DIVE_COURSE, weight=0.0))
+        # Topic-level links (0.5) are enough to name the material's subject truthfully.
+        own = [(s, t) for t, s in facts.tasks.items() if s >= 0.5]
+        if own:
+            # Last resort, worded as the material's topic rather than the user's task.
+            task = max(own)[1]
+            result.append(
+                Reason(code=ReasonCode.TASK_MATCH, weight=0.0, params={"task": task, "about": True})
+            )
         return result
 
     def _reason(
