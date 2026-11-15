@@ -4,7 +4,7 @@
     "catalog": "d75b5586a07025ba32401b78e5d670eac1bc93d00b02727a36d6d180f247ac29",
     "profiles": "b3541685d9117629a327a9f753a36d062be9bd472fbbca0ff0e0e6c3f967cce3",
     "taxonomy": "99105e96b9620893377460fb033818d24a2705335846dba1ebd3b8e88042be5a",
-    "instructions": "2e29580d26c975bf497d3ea1b51ede7870145b78af799e61da1f435c7c4e97dd",
+    "instructions": "e1b27b530cb6da2261a82564298f1d031065bec22a1f2fdd1782fb22317e6999",
     "selections": "9132ffc268b2e94d3b609ba084f9e98a0d91f381ee745060696176d76f6e104c",
     "form_template": "46a90eafe2b312a919559425e64dbb801e9fa2cc31a8bd89edce1f6000a00c72"
   },
@@ -276,5 +276,5 @@
       "format_label": "Короткий ответ"
     }
   ],
-  "packet_sha256": "f1948269b5984ffd0f85894f5c21257a90ae9957b2118c5528b6d5b504ea8b88"
+  "packet_sha256": "17c16fd3fc46fbf80a65de04e0ce2eecba35b88b7670a848ff2baef98a515b6e"
 }
