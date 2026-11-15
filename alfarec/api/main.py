@@ -89,7 +89,7 @@ def build_services(
         except (OSError, ValueError) as error:
             # A stale or missing index must not take the page down: serve the baseline and
             # report it in /api/health.
-            logger.error("Ranking index unavailable, serving the baseline: %s", error)
+            logger.error("Ranking artifacts unavailable, serving the baseline: %s", error)
             recommender, kind = TopicBaseline(items, taxonomy), "baseline"
     else:
         logger.warning("Catalog artifact is missing: %s", catalog_path)
@@ -124,8 +124,8 @@ def create_app(services: Services | None = None) -> FastAPI:
         version="0.2.0",
         description=(
             "Подбор материалов «Альфа-Курса» под задачу, стадию и опыт предпринимателя. "
-            "До подключения ML-ранжирования режим ours использует промежуточную выдачу "
-            "на основе бейзлайна по темам."
+            "Ранжирование учитывает профиль и историю; фактический режим поиска "
+            "и доступность артефактов отражаются в /api/health."
         ),
     )
 

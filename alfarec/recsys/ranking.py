@@ -39,6 +39,7 @@ from alfarec.recsys.explain import next_step_for
 from alfarec.recsys.retrieval import DenseIndex, TfidfIndex
 from alfarec.recsys.sequence import DEFAULT_TRANSITIONS_PATH, CourseTransitions
 from alfarec.recsys.taxonomy import Taxonomy, match_key
+from alfarec.recsys.weights import DEFAULT_WEIGHTS_PATH, load_weights, validate_weights
 
 # Initial hand-set weights (spec 6.3); B06 tunes them on the tune split of the profiles.
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -293,7 +294,10 @@ class Ranker:
         self._order = sorted(self._items)
         self._taxonomy = taxonomy
         self._index = index
-        self._weights = {**DEFAULT_WEIGHTS, **(weights or {})}
+        self._weights = {
+            **DEFAULT_WEIGHTS,
+            **validate_weights(weights if weights is not None else {}),
+        }
         self._lexicon = lexicon or load_intents()
         self._transitions = transitions
         # Off only for the B06 ablation: the list then keeps the plain score order.
@@ -950,6 +954,7 @@ def load_ranker(
     encoder_mode: str | None = None,
     ml_path: Path | None = None,
     model_path: Path | None = None,
+    weights_path: Path | None = DEFAULT_WEIGHTS_PATH,
 ) -> Ranker:
     """Ranker over the committed catalog and the B04 fallback index, with full index checks."""
     from alfarec.pipeline.build_index import prepare_texts
@@ -958,6 +963,18 @@ def load_ranker(
     from alfarec.recsys.taxonomy import load_taxonomy
 
     catalog_path = catalog_path or DEFAULT_CATALOG_PATH
+    saved_weights = {}
+    if weights_path is not None:
+        configured = (
+            os.environ.get("WEIGHTS_PATH") if weights_path == DEFAULT_WEIGHTS_PATH else None
+        )
+        path = Path(configured) if configured else weights_path
+        if path.exists() or configured or path != DEFAULT_WEIGHTS_PATH:
+            saved_weights = load_weights(path, catalog_path)
+    effective_weights = {
+        **saved_weights,
+        **validate_weights(weights if weights is not None else {}),
+    }
     catalog = load_catalog(catalog_path)
     ids, texts = prepare_texts(catalog, source="metadata")
     index = TfidfIndex.load(
@@ -1004,7 +1021,7 @@ def load_ranker(
         # Without the file the ranker still works, on content and popularity alone.
         transitions = CourseTransitions.load(transitions_path)
     ranker = Ranker(
-        catalog, taxonomy, index, weights=weights, transitions=transitions, rerank=rerank
+        catalog, taxonomy, index, weights=effective_weights, transitions=transitions, rerank=rerank
     )
     if labels is not None:
         for item_id, row in labels.items():
