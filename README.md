@@ -59,8 +59,10 @@ docker compose up --build
 удаляет и его.
 
 Сборка скачивает образ Python, пакеты (CPU-сборку PyTorch) и веса модели по фиксированной ревизии. Запущенный
-сервис внешних API не вызывает, страница внешних ресурсов не грузит; после сборки сеть не нужна. Резервный
-образ без нейросетевых библиотек (только TF-IDF):
+сервис внешних API не вызывает, страница внешних ресурсов не грузит. Docker-проверка B10 подтверждает работу
+режимов dense и TF-IDF после сборки в контейнере с `--network none`; среда и SHA — в
+[протоколе A01](reports/b10_startup.md). Если скачать модель при сборке не удаётся, есть резервный образ без
+нейросетевых библиотек (только TF-IDF):
 
 ```sh
 docker build --build-arg WITH_ENCODER=0 -t alfarec-tfidf .
@@ -272,6 +274,16 @@ python -m pytest
 pwsh -NoProfile -File scripts/check.ps1
 pwsh -NoProfile -File scripts/test-checks.ps1
 ```
+
+Отдельная Docker-приёмка (нужны Docker, Compose и PowerShell 7):
+
+```sh
+pwsh -NoProfile -File scripts/check-docker.ps1
+```
+
+Она создаёт отдельный Compose-проект на порту 18000, проверяет dense, запуск без сети, сохранение обычных событий
+при пересоздании контейнера с тем же томом, сброс демо-персон и явный TF-IDF. Удаляет только собственные тестовые
+контейнеры и том.
 
 Презентация: `python presentation/build.py` собирает `dist/alfa-course-recommendations.pdf` (вне git) из отчётов и
 ответов API на текущем коммите; нужен Edge или Chrome (`--browser`), `--skip-pdf` — только HTML. Для сдаваемого PDF
