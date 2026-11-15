@@ -87,9 +87,18 @@ def test_invalid_answers_are_rejected(tmp_path, change):
         load_answers(answers(tmp_path, **change), pool_fixture())
 
 
-def test_unjudgeable_needs_a_note(tmp_path):
+@pytest.mark.parametrize("note", [" ", None])
+def test_unjudgeable_needs_a_note(tmp_path, note):
     payload = json.loads(answers(tmp_path).read_text(encoding="utf-8"))
-    payload["answers"][1]["note"] = " "
+    payload["answers"][1]["note"] = note
+    path = tmp_path / "bad.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError):
+        load_answers(path, pool_fixture())
+
+
+@pytest.mark.parametrize("payload", [[], {"answers": [1]}, {"answers": [], "labeler": ["A"]}])
+def test_malformed_files_raise_validation_errors(tmp_path, payload):
     path = tmp_path / "bad.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError):
@@ -121,9 +130,16 @@ def test_committed_pool_is_current_and_hides_the_source():
     pool = json.loads(judgments.POOL_PATH.read_text(encoding="utf-8"))
     rebuilt, lists = judgments.build_pool()
     assert rebuilt["pool_sha256"] == pool["pool_sha256"]
+    assert rebuilt["lists_sha256"] == judgments.canonical_sha256(lists["lists"])
+    committed_lists = json.loads(judgments.LISTS_PATH.read_text(encoding="utf-8"))
+    assert committed_lists["lists"] == lists["lists"]
     text = json.dumps(pool, ensure_ascii=False)
-    for hidden in ("legend", "expected_behavior", "score", "ours", "baseline"):
+    # The legend is shown as in docs/labeling.md; expectations and the source stay hidden.
+    for hidden in ("expected_behavior", "score", "ours", "baseline"):
         assert f'"{hidden}"' not in text
+    pooled = {p["id"]: set(p["items"]) for p in pool["profiles"]}
+    for profile_id, variants in lists["lists"].items():
+        assert set().union(*map(set, variants.values())) == pooled[profile_id]
     form = judgments.FORM_PATH.read_text(encoding="utf-8")
     assert pool["pool_sha256"] in form and "/*POOL*/null" not in form
     assert set(lists["lists"]) == {p["id"] for p in pool["profiles"]}
