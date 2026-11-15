@@ -1,0 +1,17 @@
+{
+ "agreement": {
+  "disagreements": [],
+  "kappa": 1.0,
+  "numeric_pairs": 50,
+  "shared_pairs": 51
+ },
+ "confirmed_copy_change": "Only independent changes from false to true; raw files remain unchanged.",
+ "independence_basis": "Continuation of the same two-participant independent labeling workflow explicitly confirmed by the participant on 2026-11-15; files supplied on 2026-11-16.",
+ "pool_sha256": "9ebd99c28a61cce6428c4e5ccd8d8406654330255bf284b12fa295a0881d48fe",
+ "raw_sha256": {
+  "A": "3c0a0e18aa71f8c61b0aa6a267c52e1e7bc086413291b215cbf03936ba764da1",
+  "B": "7760e9549f32d41d78430a6b166b91c84d0461fa70502dd9496b780f3c994826"
+ },
+ "unique_pairs": 290,
+ "unjudgeable_pairs": 5
+}

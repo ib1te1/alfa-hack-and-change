@@ -211,6 +211,46 @@ def evaluate_judged() -> dict | None:
     """Metrics on the human judgments over the judged lists, or None before they exist."""
     from alfarec.eval import judgments
 
+    folder = ROOT / "artifacts/weight_tuning"
+    if (folder / "selection.json").exists():
+        selection = json.loads((folder / "selection.json").read_text("utf-8"))
+        if selection.get("status") == "complete":
+            from alfarec.eval.tune_weights import score, sources
+            from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH
+            from alfarec.recsys.weights import load_weights
+
+            weights = json.loads((ROOT / "artifacts/weights.json").read_text("utf-8"))
+            experiment = json.loads((folder / "experiment.json").read_text("utf-8"))
+            rows = json.loads((folder / "final_grades.json").read_text("utf-8"))
+            loaded = load_weights(ROOT / "artifacts/weights.json", DEFAULT_CATALOG_PATH)
+            experiment_hash = judgments.canonical_sha256(
+                {k: v for k, v in experiment.items() if k != "experiment_sha256"}
+            )
+            if (
+                weights["provenance"]["evaluation_sha256"] != judgments.canonical_sha256(selection)
+                or selection["final_grades_sha256"] != judgments.canonical_sha256(rows)
+                or experiment["sources"] != sources(experiment["encoder"])
+                or experiment_hash != experiment["experiment_sha256"]
+                or experiment_hash != selection["experiment_sha256"]
+                or experiment_hash != weights["provenance"]["experiment_sha256"]
+                or loaded != experiment["candidates"][selection["winner"]]
+            ):
+                raise ValueError("Final relevance evidence is stale or inconsistent")
+            grades = {(r["profile_id"], r["item_id"]): r["grade"] for r in rows}
+            splits = {p.id: p.split for p in load_profiles().profiles}
+            tune = {p: v for p, v in experiment["lists"].items() if splits[p] == "tune"}
+            return {
+                "tune": {
+                    "ours": selection["tune"][selection["winner"]] | {"profiles": len(tune)},
+                    "baseline": score({p: v["baseline"] for p, v in tune.items()}, grades)
+                    | {"profiles": len(tune)},
+                },
+                "holdout": {
+                    name: values | {"profiles": sum(s == "holdout" for s in splits.values())}
+                    for name, values in selection["holdout"].items()
+                },
+            }
+
     if not (judgments.JUDGMENTS_PATH.exists() and judgments.LISTS_PATH.exists()):
         return None
     lists = json.loads(judgments.LISTS_PATH.read_text(encoding="utf-8"))
@@ -224,12 +264,12 @@ def evaluate_judged() -> dict | None:
 def render(next_course: dict, editorial: dict, profiles: dict, judged: dict | None = None) -> str:
     f = lambda value: f"{value:.3f}"  # noqa: E731
     lines = [
-        "# Офлайн-оценка: этап 1",
+        "# Офлайн-оценка",
         "",
         "Отчёт создаёт `python -m alfarec.eval` по каталогу, индексу B04, ранжированию B05 и"
-        " входам из `data/handoff/` (см. [отчёт передачи](b02_handoff.md)). Это проверки без"
-        " ручной разметки. Главная метрика ТЗ — nDCG@10 на тестовых профилях по оценкам 0/1/2 —"
-        " ещё не посчитана: нужны оценки двух участников. Веса ранжирования ручные, абляций нет.",
+        " входам из `data/handoff/` (см. [отчёт передачи](b02_handoff.md)). Диагностика поведения"
+        " и редакторских связей отделена от ручной релевантности. Подбор весов, происхождение"
+        " оценок и ограничения — [итог B06](b06_final.md). Абляции не измерены.",
         "",
         "## Следующий курс по поведению",
         "",
@@ -312,7 +352,7 @@ def render(next_course: dict, editorial: dict, profiles: dict, judged: dict | No
         "",
         *render_judgments(judged),
     ]
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def render_judgments(judged: dict | None) -> list[str]:
@@ -340,6 +380,9 @@ def render_judgments(judged: dict | None) -> list[str]:
     lines += [
         "nDCG@10 с выигрышем 2^оценка − 1; Precision@5 и MRR считают релевантной оценку 2."
         " Неоценённые карточки пропускаются и показаны отдельно, нулём не считаются.",
+        "Итоговый выбранный список полностью покрыт ответами; оставшиеся пропуски — явные"
+        " unjudgeable. После просмотра holdout веса не менялись. Настройка улучшила tune,"
+        " но немного уступила начальным весам на holdout; сравнение сохранено в итоге B06.",
         "",
         unmeasured,
         "",

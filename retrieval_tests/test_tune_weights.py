@@ -9,8 +9,41 @@ import pytest
 from alfarec.eval import tune_weights as t
 
 
-def test_historical_raw_files_remain_unchanged_and_confirmation_only_changes_flag():
-    archive = Path(__file__).resolve().parents[1] / "reports/b06/historical-652a8151"
+def test_report_rejects_modified_weights_even_with_unchanged_provenance(tmp_path, monkeypatch):
+    from alfarec.eval import offline
+
+    root = Path(__file__).resolve().parents[1]
+    target = tmp_path / "artifacts/weight_tuning"
+    target.mkdir(parents=True)
+    for filename in ("experiment.json", "selection.json", "final_grades.json"):
+        (target / filename).write_bytes((root / "artifacts/weight_tuning" / filename).read_bytes())
+    weights = json.loads((root / "artifacts/weights.json").read_text("utf-8"))
+    weights["weights"]["history"] = 3.0
+    t.j.write_json(tmp_path / "artifacts/weights.json", weights)
+    monkeypatch.setattr(offline, "ROOT", tmp_path)
+    with pytest.raises(ValueError, match="stale or inconsistent"):
+        offline.evaluate_judged()
+
+
+def test_selected_weight_file_is_bound_to_complete_evaluation_and_final_grades():
+    root = Path(__file__).resolve().parents[1]
+    weights = json.loads((root / "artifacts/weights.json").read_text("utf-8"))
+    folder = root / "artifacts/weight_tuning"
+    selection = json.loads((folder / "selection.json").read_text("utf-8"))
+    grades = json.loads((folder / "final_grades.json").read_text("utf-8"))
+    assert selection["status"] == "complete"
+    assert weights["provenance"]["evaluation_sha256"] == t.j.canonical_sha256(selection)
+    assert selection["final_grades_sha256"] == t.j.canonical_sha256(grades)
+    assert weights["weights"] == t.candidates()[selection["winner"]]
+    from alfarec.eval.offline import evaluate_judged
+
+    reported = evaluate_judged()
+    assert reported["holdout"]["ours"]["ndcg10"] == selection["holdout"]["ours"]["ndcg10"]
+
+
+@pytest.mark.parametrize("folder", ["historical-652a8151", "supplement-9ebd99c2"])
+def test_archived_raw_files_remain_unchanged_and_confirmation_only_changes_flag(folder):
+    archive = Path(__file__).resolve().parents[1] / "reports/b06" / folder
     evidence = json.loads((archive / "validation.json").read_text("utf-8"))
     for code in ("A", "B"):
         raw_bytes = (archive / f"raw-{code}.json").read_bytes()
