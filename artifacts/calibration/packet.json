@@ -1,0 +1,280 @@
+{
+  "version": 1,
+  "sources": {
+    "catalog": "d75b5586a07025ba32401b78e5d670eac1bc93d00b02727a36d6d180f247ac29",
+    "profiles": "b3541685d9117629a327a9f753a36d062be9bd472fbbca0ff0e0e6c3f967cce3",
+    "taxonomy": "99105e96b9620893377460fb033818d24a2705335846dba1ebd3b8e88042be5a",
+    "instructions": "2e29580d26c975bf497d3ea1b51ede7870145b78af799e61da1f435c7c4e97dd",
+    "selections": "9132ffc268b2e94d3b609ba084f9e98a0d91f381ee745060696176d76f6e104c",
+    "form_template": "46a90eafe2b312a919559425e64dbb801e9fa2cc31a8bd89edce1f6000a00c72"
+  },
+  "pairs": [
+    {
+      "pair_id": "K01",
+      "profile_id": "P06",
+      "profile": {
+        "stage": "launch",
+        "industries": [
+          "services"
+        ],
+        "tasks": [
+          "marketing"
+        ],
+        "experience": "beginner",
+        "time_budget": "hour",
+        "free_text": null
+      },
+      "profile_fields": [
+        {
+          "label": "Стадия бизнеса",
+          "value": "Только открыл"
+        },
+        {
+          "label": "Сфера",
+          "value": "Услуги"
+        },
+        {
+          "label": "Задача",
+          "value": "Продвижение и маркетинг"
+        },
+        {
+          "label": "Опыт",
+          "value": "Начинающий"
+        },
+        {
+          "label": "Время",
+          "value": "До часа"
+        },
+        {
+          "label": "Запрос своими словами",
+          "value": "Не указан"
+        }
+      ],
+      "item": {
+        "item_id": "1de3d795-d405-4c56-9fd4-5f36ba9917e0",
+        "item_type": "article",
+        "format": "guide",
+        "title": "Как разработать стратегию продвижения в интернете",
+        "summary": "Объясняем, зачем нужна стратегия, и даём пошаговый план её разработки и реализации",
+        "duration_min": 7,
+        "access": "free",
+        "price_rub": null
+      },
+      "format_label": "Инструкция"
+    },
+    {
+      "pair_id": "K02",
+      "profile_id": "P18",
+      "profile": {
+        "stage": "idea",
+        "industries": [
+          "services"
+        ],
+        "tasks": [
+          "business_start",
+          "tax_regime"
+        ],
+        "experience": "beginner",
+        "time_budget": "hour",
+        "free_text": null
+      },
+      "profile_fields": [
+        {
+          "label": "Стадия бизнеса",
+          "value": "Думаю открыть"
+        },
+        {
+          "label": "Сфера",
+          "value": "Услуги"
+        },
+        {
+          "label": "Задача",
+          "value": "Открыть и зарегистрировать бизнес, Выбрать налоговый режим"
+        },
+        {
+          "label": "Опыт",
+          "value": "Начинающий"
+        },
+        {
+          "label": "Время",
+          "value": "До часа"
+        },
+        {
+          "label": "Запрос своими словами",
+          "value": "Не указан"
+        }
+      ],
+      "item": {
+        "item_id": "b9045d6e-07ad-407f-a305-472e82fef797",
+        "item_type": "course",
+        "format": "course",
+        "title": "Бизнес в сфере услуг: запускаем с экспертами",
+        "summary": "Рассказываем, как открыть бизнес в сфере услуг и сохранить внутренний баланс",
+        "duration_min": 210,
+        "access": "free",
+        "price_rub": null
+      },
+      "format_label": "Курс"
+    },
+    {
+      "pair_id": "K03",
+      "profile_id": "P09",
+      "profile": {
+        "stage": "growth",
+        "industries": [
+          "manufacturing"
+        ],
+        "tasks": [
+          "team_hiring"
+        ],
+        "experience": "intermediate",
+        "time_budget": "course",
+        "free_text": null
+      },
+      "profile_fields": [
+        {
+          "label": "Стадия бизнеса",
+          "value": "Расширяюсь"
+        },
+        {
+          "label": "Сфера",
+          "value": "Производство"
+        },
+        {
+          "label": "Задача",
+          "value": "Команда и найм"
+        },
+        {
+          "label": "Опыт",
+          "value": "С опытом"
+        },
+        {
+          "label": "Время",
+          "value": "Готов пройти курс"
+        },
+        {
+          "label": "Запрос своими словами",
+          "value": "Не указан"
+        }
+      ],
+      "item": {
+        "item_id": "a25c8282-94c7-458e-abf6-9fbd7b996ef7",
+        "item_type": "course",
+        "format": "course",
+        "title": "Как управлять командой",
+        "summary": "Команду собрали, а дальше? Расскажем, как сделать, чтобы сотрудники были довольны, а бизнес развивался",
+        "duration_min": 25,
+        "access": "subscription",
+        "price_rub": 990
+      },
+      "format_label": "Курс"
+    },
+    {
+      "pair_id": "K04",
+      "profile_id": "P03",
+      "profile": {
+        "stage": "operating",
+        "industries": [
+          "horeca"
+        ],
+        "tasks": [
+          "taxes_reporting"
+        ],
+        "experience": "intermediate",
+        "time_budget": "hour",
+        "free_text": null
+      },
+      "profile_fields": [
+        {
+          "label": "Стадия бизнеса",
+          "value": "Веду бизнес"
+        },
+        {
+          "label": "Сфера",
+          "value": "HoReCa"
+        },
+        {
+          "label": "Задача",
+          "value": "Налоги и отчётность"
+        },
+        {
+          "label": "Опыт",
+          "value": "С опытом"
+        },
+        {
+          "label": "Время",
+          "value": "До часа"
+        },
+        {
+          "label": "Запрос своими словами",
+          "value": "Не указан"
+        }
+      ],
+      "item": {
+        "item_id": "0828e7e3-84da-4ff7-a4af-1011118edde4",
+        "item_type": "article",
+        "format": "guide",
+        "title": "Как составить договор строительного подряда: пошаговая инструкция",
+        "summary": "О чём говорить с подрядчиком и что делать, если после строительства объекта обнаружили дефекты",
+        "duration_min": 7,
+        "access": "free",
+        "price_rub": null
+      },
+      "format_label": "Инструкция"
+    },
+    {
+      "pair_id": "K05",
+      "profile_id": "P15",
+      "profile": {
+        "stage": "launch",
+        "industries": [
+          "b2g"
+        ],
+        "tasks": [
+          "legal_contracts"
+        ],
+        "experience": "beginner",
+        "time_budget": "hour",
+        "free_text": null
+      },
+      "profile_fields": [
+        {
+          "label": "Стадия бизнеса",
+          "value": "Только открыл"
+        },
+        {
+          "label": "Сфера",
+          "value": "B2G"
+        },
+        {
+          "label": "Задача",
+          "value": "Договоры и юридические вопросы"
+        },
+        {
+          "label": "Опыт",
+          "value": "Начинающий"
+        },
+        {
+          "label": "Время",
+          "value": "До часа"
+        },
+        {
+          "label": "Запрос своими словами",
+          "value": "Не указан"
+        }
+      ],
+      "item": {
+        "item_id": "1134fddf-493e-4cf7-9b0f-48caecf51494",
+        "item_type": "glossary",
+        "format": "quick_answer",
+        "title": "Тендер",
+        "summary": "Тендер — это конкурс, в ходе которого заказчик выбирает подходящего исполнителя для поставки товаров или услуг. Главная цель тендера — обеспечить честную конкуренцию и найти лучшее предложение по цене и качеству.",
+        "duration_min": 2,
+        "access": "free",
+        "price_rub": null
+      },
+      "format_label": "Короткий ответ"
+    }
+  ],
+  "packet_sha256": "f1948269b5984ffd0f85894f5c21257a90ae9957b2118c5528b6d5b504ea8b88"
+}
