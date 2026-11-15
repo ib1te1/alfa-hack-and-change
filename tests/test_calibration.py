@@ -54,6 +54,13 @@ def test_pairs_are_real_tune_snapshots_without_hidden_fields(packet):
     assert '"score"' not in serialized
 
 
+def test_pairs_stay_outside_the_b06_judgment_pool(packet):
+    pool = json.loads((c.ROOT / "artifacts" / "judgments" / "pool.json").read_text("utf-8"))
+    pooled = {p["id"]: set(p["items"]) for p in pool["profiles"]}
+    for pair in packet.pairs:
+        assert pair.item.item_id not in pooled.get(pair.profile_id, set())
+
+
 @pytest.mark.parametrize("profile_id", ["P02", "P19"])
 def test_holdout_and_unresolved_history_are_rejected(profile_id):
     selections = c.Selections.model_validate_json(c.SELECTIONS.read_text("utf-8"))
