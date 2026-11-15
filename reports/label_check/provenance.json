@@ -1,0 +1,8 @@
+{
+  "source": "reports/label_check/b04-label-check.json",
+  "sha256": "8f1bd6611dbf26eff77e51a10710e10ca19e54de7dcaee1e57e528abc71b7f83",
+  "sample_sha256": "2c1b58f2b3ea84f6f10d24d37d2951801017419de161e959725b12051c97d8fa",
+  "human_blind_annotation": true,
+  "basis": "15 ноября 2026 года участник команды явно подтвердил: размечены человеком вслепую. Исходный JSON не изменён.",
+  "compared_against": "B04 packaged labels; reports/label_check.md; original earlier rules comparison is historical"
+}

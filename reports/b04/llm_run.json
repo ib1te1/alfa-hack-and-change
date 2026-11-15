@@ -1,0 +1,24 @@
+{
+  "model_id": "Qwen/Qwen2.5-7B-Instruct",
+  "peak_vram_bytes": 6443519488,
+  "provenance": {
+    "batch_size": 8,
+    "cards_sha256": "3d30468ad915ba7a8e21545f41dad83a5dd548e02e3acbafe4aa39573513e186",
+    "do_sample": false,
+    "max_new_tokens": 80,
+    "prompt_sha256": "d9601ce44aafe6ed1d0b0fcbe27700c7094037ce2021b379274ffda56731756a",
+    "quantization": "NF4"
+  },
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "run_note": {
+    "basis": "Observed local GPU run 15 November 2026; same public cards and system prompt throughout",
+    "first_item_batch_size": 1,
+    "first_item_max_new_tokens": 100,
+    "first_item_smoke": "000ecbf2-ccb2-4305-82e2-f3ed7ce1b22c",
+    "remaining_batch_size": 8,
+    "remaining_max_new_tokens": 80
+  },
+  "rows": 1497,
+  "valid_rows": 1497,
+  "sha256": "c556a8d776fc85f5c4c3bbdcc50c2e91c7e104814ac87757e61f8670694133c5"
+}

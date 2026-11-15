@@ -278,6 +278,14 @@ class DenseIndex:
         self._vectors /= norms
         self._encoder = encoder
 
+    def neighbours(self, item_id: str, limit: int = 30) -> list[SearchHit]:
+        position = self.item_ids.index(item_id)
+        return _hits(self.item_ids, self._vectors @ self._vectors[position], limit, {item_id})
+
+    def similarity(self, left: str, right: str) -> float:
+        value = self._vectors[self.item_ids.index(left)] @ self._vectors[self.item_ids.index(right)]
+        return float(np.clip(value, 0, 1))
+
     def search(
         self, text: str, limit: int = 10, excluded: Set[str] = frozenset()
     ) -> list[SearchHit]:

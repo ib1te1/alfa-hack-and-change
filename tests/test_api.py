@@ -42,7 +42,9 @@ CATALOG = [
 
 
 @pytest.fixture
-def paths(tmp_path: Path) -> dict[str, Path]:
+def paths(tmp_path: Path, monkeypatch) -> dict[str, Path]:
+    # This fixture has an independent five-item catalog and a TF-IDF-only index.
+    monkeypatch.setenv("ENCODER", "tfidf")
     catalog = tmp_path / "catalog.parquet"
     save_catalog(CATALOG, catalog)
     # The ranker checks that its index belongs to this exact catalog file.
