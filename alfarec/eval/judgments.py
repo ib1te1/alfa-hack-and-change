@@ -40,9 +40,8 @@ SEED = 20261115
 K = 10
 SHARED_TUNE, SHARED_HOLDOUT = 3, 2
 VARIANTS = ("ours", "baseline", "no_stage_level", "no_history", "no_rerank")
-# Judged pool: the two compared systems and the history ablation. The other ablations share
-# about 80% of their lists with these; their unjudged items are reported, never counted as 0.
-POOLED = ("ours", "baseline", "no_history")
+# The protocol pools the top-10 of every compared variant, so ablations are judged in full.
+POOLED = VARIANTS
 VARIANT_LABELS = {
     "ours": "Наша система",
     "baseline": "Бейзлайн по теме",
@@ -203,7 +202,14 @@ def observable_profile(case: EvaluationProfile, history: list[Event], ranker: Ra
         f" «{items[event.item_id].title}»"
         for event in history
     ]
-    return {"id": case.id, "split": case.split, "fields": fields, "history": past}
+    # docs/labeling.md: the legend explains the scenario but sets no hidden requirements.
+    return {
+        "id": case.id,
+        "split": case.split,
+        "legend": case.legend,
+        "fields": fields,
+        "history": past,
+    }
 
 
 def public_card(item) -> dict:
@@ -255,6 +261,8 @@ def build_pool(ranker: Ranker | None = None) -> tuple[dict, dict]:
         "profiles": profiles,
         "cards": dict(sorted(cards.items())),
     }
+    # The ordered lists decide the metrics, so any change in them makes a new pool.
+    pool["lists_sha256"] = canonical_sha256(lists)
     pool["pool_sha256"] = canonical_sha256(pool)
     return pool, {"pool_sha256": pool["pool_sha256"], "variants": list(VARIANTS), "lists": lists}
 
@@ -298,14 +306,17 @@ def pool_command(check: bool) -> int:
 
 def load_answers(path: Path, pool: dict) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not isinstance(payload.get("answers"), list):
+        raise ValueError(f"{path}: expected an object with a list of answers")
     errors = []
     if payload.get("version") != 1:
         errors.append("version must be 1")
     if payload.get("pool_sha256") != pool["pool_sha256"]:
         errors.append("answers were made for another pool")
     labeler = payload.get("labeler")
-    if labeler not in pool["assigned"]:
+    if not isinstance(labeler, str) or labeler not in pool["assigned"]:
         errors.append("labeler must be A or B")
+        labeler = None
     if payload.get("independent") is not True:
         errors.append("independence is not confirmed")
     expected = {
@@ -315,17 +326,20 @@ def load_answers(path: Path, pool: dict) -> dict:
         for item in p["items"]
     }
     seen = set()
-    for answer in payload.get("answers", []):
-        key = (answer.get("profile_id"), answer.get("item_id"))
-        status, grade = answer.get("status"), answer.get("grade")
+    for answer in payload["answers"]:
+        if not isinstance(answer, dict) or not all(
+            isinstance(answer.get(f), str) for f in ("profile_id", "item_id", "status", "note")
+        ):
+            errors.append("each answer needs string profile_id, item_id, status and note")
+            continue
+        key = (answer["profile_id"], answer["item_id"])
+        status, grade = answer["status"], answer.get("grade")
         if key not in expected or key in seen:
             errors.append(f"unexpected or repeated pair {key}")
         seen.add(key)
         if status == "judged" and not (type(grade) is int and grade in (0, 1, 2)):
             errors.append(f"grade must be 0, 1 or 2 for {key}")
-        if status == "unjudgeable" and (
-            grade is not None or not str(answer.get("note", "")).strip()
-        ):
+        if status == "unjudgeable" and (grade is not None or not answer["note"].strip()):
             errors.append(f"unjudgeable needs no grade and a note for {key}")
         if status not in {"judged", "unjudgeable"}:
             errors.append(f"unknown status for {key}")

@@ -25,9 +25,11 @@ def test_pairs_follow_enrolment_order_and_rare_pairs_are_dropped():
         row("c", "c2", 1), row("c", "c3", 2),  # seen once: below the privacy threshold
         row("d", "c1", 5), row("d", "c3", 5),  # same month: no order
     ]  # fmt: skip
-    counts = CourseTransitions.build(rows).counts
+    built = CourseTransitions.build(rows, min_count=2)
     # A user counts once per pair, however many times they re-enrolled.
-    assert counts == {"c1": {"c2": 2}}
+    assert built.counts == {"c1": {"c2": 2}}
+    assert built.popularity == {"c1": 3, "c2": 3, "c3": 2}
+    assert CourseTransitions.build(rows).counts == {}  # the default threshold is five users
 
 
 def test_scores_prefer_the_followed_course_and_name_its_source():
@@ -38,12 +40,18 @@ def test_scores_prefer_the_followed_course_and_name_its_source():
     assert scores["c2"][0] < 1.0 and scores["c2"][1] == ""
 
 
+def test_popularity_of_the_built_rows_replaces_catalog_popularity():
+    transitions = CourseTransitions({}, popularity={"c2": 1, "c3": 9})
+    scores = transitions.scores(["c1"], {"c2": 100.0, "c3": 1.0})
+    assert scores["c3"][0] == 1.0 and scores["c2"][0] < 1.0
+
+
 def test_scores_without_history_are_empty():
     assert CourseTransitions({"c1": {"c2": 3}}).scores([], {"c2": 1.0}) == {}
 
 
 def test_round_trip(tmp_path):
-    transitions = CourseTransitions({"c1": {"c2": 3}})
+    transitions = CourseTransitions({"c1": {"c2": 3}}, popularity={"c1": 4, "c2": 7})
     path = tmp_path / "t.json"
     transitions.save(path)
     assert CourseTransitions.load(path) == transitions
