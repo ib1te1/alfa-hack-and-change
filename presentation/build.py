@@ -74,6 +74,16 @@ def case_count(path: Path) -> str:
     return match.group(1) if match else "?"
 
 
+def holdout_table(tables: dict[str, list[list[str]]]) -> tuple[str, list[list[str]]]:
+    """Choose the held-out relevance table, not a parent heading or the tune table."""
+    for heading, rows in tables.items():
+        if re.match(r"^`?holdout`?(?:\s|$)", heading) and rows and "nDCG@10" in rows[0]:
+            match = re.search(r"профилей:\s*(\d+)", heading)
+            count = match.group(1) if match else "?"
+            return count, rows
+    return "?", tables.get("Релевантность по ручной разметке", [])
+
+
 def commit_label() -> str:
     """Short SHA of the commit the deck is built on, flagged when tracked files differ from it."""
 
@@ -231,7 +241,15 @@ def bullets(items: list[str]) -> str:
 def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> str:
     models = ml.get("Протокол", [])
     labels = ml.get("Метки и контроль", [])
-    manual = tables.get("Релевантность по ручной разметке", [])
+    manual_count, manual = holdout_table(tables)
+    final_report = ROOT / "reports" / "b06_final.json"
+    final = json.loads(final_report.read_text("utf-8")) if final_report.is_file() else {}
+    initial = final.get("metrics", {}).get("holdout", {}).get("initial", {}).get("ndcg10")
+    weight_note = (
+        f"Начальные веса дали nDCG@10 {initial:.3f}; настройка немного уступила им. "
+        if isinstance(initial, (int, float))
+        else ""
+    )
     model_id = packaged_model()
     commit = commit_label()
     next_course = tables.get("Следующий курс по поведению", [])
@@ -424,20 +442,23 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
             f"<p class='sub'>Следующий курс: {e(cases)} отложенных пользователей, переходы"
             " построены по другим</p>"
             + (table(next_course, highlight=0) if next_course else "<p>нет данных</p>")
-            + "<p class='sub'>Редакторские подборки платформы</p>"
+            + "<p class='sub'>Редакторские подборки платформы, диагностика</p>"
             + (table(editorial, highlight=0) if editorial else "")
             + "</div><div><p class='sub'>36 тестовых профилей, без ручной разметки</p>"
             + (table(profiles[:5]) if profiles else "")
             + (
-                "<p class='sub'>Релевантность по ручным оценкам двух участников</p>"
-                + table(manual, highlight=0)
+                f"<p class='sub'>Ручная релевантность: holdout, {e(manual_count)} профилей</p>"
+                + table(columns(manual, [0, 1, 2, 3]), highlight=0)
                 if manual
                 else "<p class='sub'>Бейзлайн для «Продвижение · Услуги»:</p>"
                 f"<ul class='plain'>{base_titles}</ul>"
             )
             + "</div></div>"
             + (
-                ""
+                "<p class='todo'>Веса выбраны только на tune. "
+                + e(weight_note)
+                + "Выборка мала, есть явные unjudgeable. Редакторские связи уже использовались"
+                " при выборе модели; бизнес-эффект не измерен.</p>"
                 if manual
                 else "<p class='todo'>Ручная релевантность не измерена: nDCG@10, Precision@5 и"
                 " MRR появятся после оценок двух участников. Таблицы на слайде описывают"
@@ -470,7 +491,10 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
             "<div class='cols'><div><b>Честно о текущей версии</b>"
             + bullets(
                 (
-                    []
+                    [
+                        "Отложенная выборка мала, профили использовались ранее."
+                        " Есть явные unjudgeable.",
+                    ]
                     if manual
                     else [
                         "Ручная релевантность выдачи не измерена: форма выдачи и поведенческая"
@@ -490,8 +514,12 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
             + "</div><div><b>Дальше</b>"
             + bullets(
                 [
-                    "Подбор весов по ручным оценкам, затем learning-to-rank на событиях после"
-                    " запуска.",
+                    (
+                        "Новая независимая оценочная выборка и learning-to-rank"
+                        " на событиях после запуска."
+                        if manual
+                        else "Подбор весов по ручным оценкам, затем learning-to-rank на событиях."
+                    ),
                     "Исторические снимки признаков для честной временной оценки.",
                     "Онлайн-обновление профиля по «Уже знаю» и «Не то».",
                     "Интеграция с платформой и A/B-тест.",
