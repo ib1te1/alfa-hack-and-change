@@ -2163,8 +2163,8 @@
    "type": "article"
   }
  },
- "lists_sha256": "de3dee4f601df5da77de8571ff4ac41a926640cdafa355cd2f8414fcdef86aa2",
- "pool_sha256": "d6dc527c5ecca74714141d5c9680cb885c8f396b7c184ac6f0d1338f173b48f8",
+ "lists_sha256": "4f25027a33b271358ebcce57f2e5c6c61077981d07a9011f97dd67414bff76e0",
+ "pool_sha256": "004159ea711f9e38ab0cb09cade5559fd1e5e78dd07c79e83c90ff05eafdf9dd",
  "profiles": [
   {
    "fields": [
@@ -3171,26 +3171,26 @@
    ],
    "id": "P21",
    "items": [
-    "7024714f-1b95-4e5e-8ce9-ad98bbe44a4b",
+    "71dbad6e-c284-4a6a-a846-ba5d5d263408",
     "0b644297-1b7b-4323-a490-a28b24b4ac23",
     "f3870706-b145-4f4b-a891-203aedb4e86e",
-    "4a4798ad-fa00-46a9-b594-46bb642f35c2",
+    "4e01f5da-7cfc-447d-be0e-49ba1d3f481b",
     "e36097d7-161b-48c9-81c0-2c44ee3b95f5",
-    "3d17b03e-0e69-44cf-aa04-110e92437016",
+    "4a4798ad-fa00-46a9-b594-46bb642f35c2",
     "f704402a-a6a9-495b-be84-243051c25d16",
     "a26fad9d-4380-4ba2-a8b9-27e495eeb721",
-    "552c492d-fac3-43f6-97f4-7a2d2625744c",
+    "5c9ecc99-f409-460e-98f3-38f76d7f3cf8",
     "0c54e6cc-ad77-4b13-9c78-de7d4adce189",
     "02fd3dab-fecf-4618-ae31-35a931a318ee",
-    "71dbad6e-c284-4a6a-a846-ba5d5d263408",
+    "8e5e57f9-a169-4def-b5e4-7babdc091d67",
     "b9045d6e-07ad-407f-a305-472e82fef797",
     "9e0e0f59-3edd-47bc-bdac-7fa9a20149f8",
     "329aefef-d5d3-4c98-8a92-e347cbab8283",
     "fd296e1b-3adc-4557-ac50-5a2dd4764fbf",
+    "7024714f-1b95-4e5e-8ce9-ad98bbe44a4b",
+    "552c492d-fac3-43f6-97f4-7a2d2625744c",
     "639382e9-9687-415a-a444-eaabc97082e4",
-    "52679570-e47c-4a6e-b0d8-81b2f9904c54",
-    "5c9ecc99-f409-460e-98f3-38f76d7f3cf8",
-    "4e01f5da-7cfc-447d-be0e-49ba1d3f481b"
+    "52679570-e47c-4a6e-b0d8-81b2f9904c54"
    ],
    "legend": "Начал курс по управлению командой; должен получить возможность продолжить его, а не начать заново.",
    "split": "tune"
