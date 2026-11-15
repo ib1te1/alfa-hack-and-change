@@ -2,10 +2,10 @@ name: Retrieval checks
 
 on:
   pull_request:
-    paths: ['alfarec/**', 'retrieval_tests/**', 'requirements-retrieval.*', 'artifacts/catalog.parquet', 'artifacts/retrieval_tfidf/**', '.github/workflows/retrieval.yml']
+    paths: ['alfarec/**', 'retrieval_tests/**', 'requirements-retrieval.*', 'artifacts/catalog.parquet', 'artifacts/retrieval_tfidf/**', 'artifacts/course_transitions.json', 'artifacts/judgments/**', 'docs/labeling.md', '.github/workflows/retrieval.yml']
   push:
     branches: [main]
-    paths: ['alfarec/**', 'retrieval_tests/**', 'requirements-retrieval.*', 'artifacts/catalog.parquet', 'artifacts/retrieval_tfidf/**', '.github/workflows/retrieval.yml']
+    paths: ['alfarec/**', 'retrieval_tests/**', 'requirements-retrieval.*', 'artifacts/catalog.parquet', 'artifacts/retrieval_tfidf/**', 'artifacts/course_transitions.json', 'artifacts/judgments/**', 'docs/labeling.md', '.github/workflows/retrieval.yml']
 
 permissions:
   contents: read

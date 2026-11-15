@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ручная разметка 120 материалов</title>
+<style>
+  :root { --ink: #1d1f24; --muted: #5d6370; --line: #dfe2e7; --soft: #f5f6f8; --accent: #c8202a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 "Segoe UI", Arial, sans-serif; color: var(--ink); background: #fff; }
+  header { position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 16px; display: flex; gap: 20px; align-items: center; z-index: 2; }
+  header h1 { font-size: 17px; margin: 0; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .intro { background: var(--soft); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; }
+  .item { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+  .item.done { border-color: #9cc9a8; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .title { font-weight: 600; margin: 2px 0 4px; }
+  fieldset { border: 0; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  legend { font-size: 13px; color: var(--muted); width: 100%; margin-bottom: 4px; }
+  fieldset label { border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px; font-size: 13px; cursor: pointer; }
+  textarea { width: 100%; min-height: 30px; margin-top: 8px; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+  .finish { border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 40px; }
+  .bad { color: var(--accent); }
+  button { font: inherit; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<header><h1>Разметка 120 материалов</h1><div id="progress" aria-live="polite"></div></header>
+<main>
+  <div class="intro">
+    Для каждого материала по публичной карточке отметьте: <b>стадии</b> бизнеса, для которых он полезен (можно несколько; ни одной — если стадия не важна),
+    <b>уровень</b> подготовки читателя (или «не определить») и <b>задачи</b> — от одной до трёх главных (ни одной — если ни одна не подходит).
+    Модельных меток здесь нет — размечайте самостоятельно. Ответы сохраняются в этом браузере; итоговый файл скачайте кнопкой внизу.
+  </div>
+  <div id="items"></div>
+  <div class="finish">
+    <p id="missing" class="bad"></p>
+    <button id="download" disabled>Скачать метки · JSON</button>
+  </div>
+</main>
+<script>
+const SAMPLE = /*SAMPLE*/null;
+const FORMATS = { quick_answer: "Короткий ответ", guide: "Руководство", template: "Шаблон", tool: "Калькулятор", course: "Курс", recording: "Запись вебинара", podcast: "Подкаст" };
+const ACCESS = { free: "бесплатно", subscription: "по подписке «Курс+»", paid: "платно" };
+const KEY = "b04-label-check:" + SAMPLE.sample_sha256;
+let answers = {};
+try { answers = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { answers = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(answers)); } catch (e) { /* private mode */ } }
+function el(tag, attrs, text) { const n = document.createElement(tag); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); if (text !== undefined) n.textContent = text; return n; }
+function entry(id) { return answers[id] || (answers[id] = { stages: [], level: undefined, tasks: [], note: "" }); }
+function complete(a) { return a && a.level !== undefined && a.tasks.length <= 3; }
+function update() {
+  const done = SAMPLE.items.filter(i => complete(answers[i.item_id])).length;
+  document.getElementById("progress").textContent = "Готово " + done + " из " + SAMPLE.items.length;
+  const left = SAMPLE.items.length - done;
+  document.getElementById("missing").textContent = left ? "Осталось материалов: " + left + " (нужен уровень; задач не больше трёх)" : "";
+  document.getElementById("download").disabled = left > 0;
+}
+function checks(name, options, selected, onChange, type) {
+  const box = el("fieldset"); box.append(el("legend", {}, name));
+  options.forEach(([value, label]) => {
+    const l = el("label"); const input = el("input", { type: type, name: name + Math.random(), value: value });
+    if (type === "checkbox" ? selected.includes(value) : selected === value) input.checked = true;
+    input.addEventListener("change", () => onChange(value, input.checked));
+    l.append(input, document.createTextNode(" " + label)); box.append(l);
+  });
+  return box;
+}
+function render() {
+  const root = document.getElementById("items");
+  SAMPLE.items.forEach((item, index) => {
+    const a = entry(item.item_id);
+    const card = el("section", { class: "item" });
+    const meta = [index + 1, item.type, FORMATS[item.format] || item.format];
+    if (item.duration_min) meta.push(item.duration_min + " мин");
+    meta.push(ACCESS[item.access] || item.access);
+    card.append(el("div", { class: "meta" }, meta.join(" · ")), el("div", { class: "title" }, item.title), el("div", {}, item.summary || "Описания нет"));
+    const refresh = () => { card.classList.toggle("done", complete(a)); save(); update(); };
+    card.append(checks("Стадии", Object.entries(SAMPLE.stages), a.stages, (v, on) => { a.stages = on ? [...new Set([...a.stages, v])] : a.stages.filter(x => x !== v); refresh(); }, "checkbox"));
+    const levelBox = checks("Уровень", [...Object.entries(SAMPLE.levels), ["", "не определить"]], a.level === null ? "" : a.level, (v) => { a.level = v === "" ? null : v; refresh(); }, "radio");
+    levelBox.querySelectorAll("input").forEach(i => i.name = "level-" + item.item_id);
+    card.append(levelBox);
+    card.append(checks("Задачи (до трёх)", Object.entries(SAMPLE.tasks), a.tasks, (v, on) => { a.tasks = on ? [...new Set([...a.tasks, v])] : a.tasks.filter(x => x !== v); refresh(); }, "checkbox"));
+    const note = el("textarea", { placeholder: "Комментарий (необязательно)", "aria-label": "Комментарий" }); note.value = a.note || "";
+    note.addEventListener("input", () => { a.note = note.value; save(); });
+    card.append(note); card.classList.toggle("done", complete(a)); root.append(card);
+  });
+  update();
+}
+document.getElementById("download").addEventListener("click", () => {
+  const list = SAMPLE.items.map(i => { const a = answers[i.item_id]; return { item_id: i.item_id, stages: a.stages, level: a.level, tasks: a.tasks, note: (a.note || "").trim() }; });
+  const blob = new Blob([JSON.stringify({ version: 1, sample_sha256: SAMPLE.sample_sha256, answers: list }, null, 1)], { type: "application/json" });
+  const link = el("a", { href: URL.createObjectURL(blob), download: "b04-label-check.json" });
+  document.body.append(link); link.click(); link.remove();
+});
+render();
+</script>
+</body>
+</html>

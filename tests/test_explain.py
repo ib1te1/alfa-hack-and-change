@@ -269,3 +269,20 @@ def test_index_text_of_closed_materials_is_landing_only():
     ]
     assert closed_articles
     assert all(len(row["index_text"]) < 1500 for row in closed_articles)
+
+
+def test_fact_reasons_name_the_topic_and_the_template():
+    taxonomy = load_taxonomy()
+    about = Reason(code="task_match", weight=0.0, params={"task": "marketing", "about": True})
+    assert reason_text(about, taxonomy).startswith("Материал по теме «")
+    template = Reason(code="short_format", weight=0.0, params={"format": "template"})
+    assert reason_text(template, taxonomy) == "Готовый шаблон: скачайте и заполните"
+
+
+def test_long_topic_fact_stays_a_fact_and_preserves_its_closing_quote():
+    text = reason_text(
+        Reason(code="task_match", weight=0.0, params={"task": "Д" * 200, "about": True}),
+        TAXONOMY,
+    )
+    assert len(text) <= 200
+    assert text.startswith("Материал по теме «") and text.endswith("…»")
