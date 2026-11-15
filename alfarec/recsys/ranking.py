@@ -635,9 +635,7 @@ class Ranker:
             best = max(
                 allowed[: size * 3],
                 key=lambda e: (
-                    MMR_LAMBDA * e.score / top_score
-                    - (1 - MMR_LAMBDA)
-                    * strongest_overlap(e),
+                    MMR_LAMBDA * e.score / top_score - (1 - MMR_LAMBDA) * strongest_overlap(e),
                     e.item.item_id,
                 ),
             )

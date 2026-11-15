@@ -8,6 +8,7 @@ from alfarec.recsys.contracts import Event, Profile, Recommender
 from alfarec.recsys.ranking import (
     MAX_PAID_IN_TOP,
     ROUTE_ROLES,
+    Scored,
     load_intents,
     load_ranker,
     understand,
@@ -17,6 +18,24 @@ from alfarec.recsys.taxonomy import load_taxonomy
 NOW = datetime(2026, 11, 1, tzinfo=UTC)
 SUITE = load_profiles()
 TAXONOMY = load_taxonomy()
+
+
+def test_mmr_computes_each_candidate_selected_pair_once(ranker, monkeypatch):
+    from collections import Counter
+
+    original = ranker._similarity
+    calls = Counter()
+
+    def measured(left, right):
+        calls[(left.item_id, right.item_id)] += 1
+        return original(left, right)
+
+    monkeypatch.setattr(ranker, "_similarity", measured)
+    scored = [Scored(item, 50.0 - n) for n, item in enumerate(list(ranker._items.values())[:40])]
+    selected = ranker._rerank(scored[2:], 20, prefix=scored[:2])
+    assert len(selected) == 20
+    assert len({entry.item.item_id for entry in selected}) == 20
+    assert calls and max(calls.values()) == 1
 
 
 @pytest.fixture(scope="module")
