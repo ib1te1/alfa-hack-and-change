@@ -142,6 +142,7 @@ function render() {
     const section = el("section", { class: "profile" });
     const head = el("div", { class: "head" });
     head.append(el("h2", {}, "Профиль " + profile.id));
+    if (profile.legend) head.append(el("p", { class: "meta" }, "Сценарий: " + profile.legend + " Оцениваются только потребности из полей профиля и истории."));
     const fields = el("dl", { class: "fields" });
     if (!profile.fields.length) fields.append(el("dt", {}, "Профиль"), el("dd", {}, "ничего не указано"));
     profile.fields.forEach(([name, value]) => fields.append(el("dt", {}, name), el("dd", {}, value)));

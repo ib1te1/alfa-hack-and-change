@@ -53,7 +53,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "fresh": 0.2,
     "offer": 0.3,
     # Enrolment transitions between courses; tuned on the tune split of next-course cases.
-    "sequence": 8.0,
+    "sequence": 16.0,
 }
 CANDIDATES = 300
 ROUTE_MAX = 5
