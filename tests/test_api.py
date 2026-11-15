@@ -94,6 +94,78 @@ def test_health_reports_loaded_catalog(client: TestClient) -> None:
     }
 
 
+def test_saved_weights_change_real_http_scores(paths, monkeypatch):
+    from alfarec.recsys.ranking import DEFAULT_WEIGHTS
+    from alfarec.recsys.weights import weight_artifact
+
+    monkeypatch.setenv("ENCODER", "tfidf")
+    monkeypatch.delenv("WEIGHTS_PATH", raising=False)
+    with TestClient(create_app(services_for(paths))) as client:
+        before = recommend(client, profile={"tasks": ["marketing"]})
+    weights = {key: 0.0 for key in DEFAULT_WEIGHTS} | {"task": 7.0}
+    path = paths["catalog"].parent / "weights.json"
+    path.write_text(json.dumps(weight_artifact(weights, paths["catalog"], {"method": "test"})))
+    monkeypatch.setenv("WEIGHTS_PATH", str(path))
+    with TestClient(create_app(services_for(paths))) as client:
+        after = recommend(client, profile={"tasks": ["marketing"]})
+        assert client.get("/api/health").json()["recommender"] == "ranking"
+
+    def scores(answer):
+        return {c["item"]["item_id"]: c["score"] for c in answer["more"]}
+
+    assert scores(before) != scores(after)
+    assert all(c["score"] in {0.0, 3.5} for c in after["more"])
+
+
+def test_weight_overrides_and_explicit_disable(paths, monkeypatch):
+    from alfarec.recsys.ranking import DEFAULT_WEIGHTS, load_ranker
+    from alfarec.recsys.weights import weight_artifact
+
+    path = paths["catalog"].parent / "weights.json"
+    path.write_text(
+        json.dumps(
+            weight_artifact(DEFAULT_WEIGHTS | {"task": 7.0}, paths["catalog"], {"method": "test"})
+        )
+    )
+    monkeypatch.setenv("WEIGHTS_PATH", str(path))
+    loaded = load_ranker(paths["catalog"], paths["index"], weights={"task": 3.0})
+    assert loaded._weights["task"] == 3.0
+    # None must bypass even an explicitly configured, broken file for offline controls.
+    path.write_text("{")
+    control = load_ranker(paths["catalog"], paths["index"], weights_path=None)
+    assert control._weights == DEFAULT_WEIGHTS
+
+
+@pytest.mark.parametrize(
+    "problem", ["missing", "corrupt", "stale", "nan", "unknown", "bool", "huge", "overflow"]
+)
+def test_invalid_weights_keep_api_available_with_explicit_fallback(paths, monkeypatch, problem):
+    from alfarec.recsys.ranking import DEFAULT_WEIGHTS
+    from alfarec.recsys.weights import weight_artifact
+
+    path = paths["catalog"].parent / "weights.json"
+    payload = weight_artifact(DEFAULT_WEIGHTS, paths["catalog"], {"method": "test"})
+    if problem == "stale":
+        payload["catalog_sha256"] = "0" * 64
+    elif problem == "nan":
+        payload["weights"]["task"] = float("nan")
+    elif problem == "bool":
+        payload["weights"]["task"] = True
+    elif problem == "huge":
+        payload["weights"]["task"] = 10**1000
+    elif problem == "overflow":
+        payload["weights"]["task"] = 1e308
+    elif problem == "unknown":
+        payload["weights"]["typo"] = 2.0
+    if problem != "missing":
+        path.write_text("{" if problem == "corrupt" else json.dumps(payload))
+    monkeypatch.setenv("WEIGHTS_PATH", str(path))
+    with TestClient(create_app(services_for(paths))) as client:
+        health = client.get("/api/health").json()
+        assert (health["status"], health["recommender"]) == ("degraded", "baseline")
+        assert recommend(client, profile={"tasks": ["marketing"]})["more"]
+
+
 def test_unusable_index_falls_back_to_the_baseline(paths: dict[str, Path]) -> None:
     services = build_services(
         paths["catalog"], paths["events"], paths["personas"], paths["index"].parent / "missing"
