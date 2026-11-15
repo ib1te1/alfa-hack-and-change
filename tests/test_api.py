@@ -55,6 +55,21 @@ def paths(tmp_path: Path, monkeypatch) -> dict[str, Path]:
         catalog_sha256=digest(catalog),
         texts_sha256=texts_digest(item_ids, texts),
     )
+    # Production weights belong to the production catalog, not this synthetic fixture.
+    from alfarec.recsys.ranking import DEFAULT_WEIGHTS
+    from alfarec.recsys.weights import weight_artifact
+
+    weights_path = tmp_path / "initial-weights.json"
+    weights_path.write_text(
+        json.dumps(
+            weight_artifact(
+                DEFAULT_WEIGHTS,
+                catalog,
+                {"method": "initial weights for the synthetic API fixture"},
+            )
+        )
+    )
+    monkeypatch.setenv("WEIGHTS_PATH", str(weights_path))
     return {
         "catalog": catalog,
         "events": tmp_path / "events" / "events.jsonl",
@@ -99,7 +114,6 @@ def test_saved_weights_change_real_http_scores(paths, monkeypatch):
     from alfarec.recsys.weights import weight_artifact
 
     monkeypatch.setenv("ENCODER", "tfidf")
-    monkeypatch.delenv("WEIGHTS_PATH", raising=False)
     with TestClient(create_app(services_for(paths))) as client:
         before = recommend(client, profile={"tasks": ["marketing"]})
     weights = {key: 0.0 for key in DEFAULT_WEIGHTS} | {"task": 7.0}

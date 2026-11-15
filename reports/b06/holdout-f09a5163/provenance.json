@@ -1,0 +1,37 @@
+{
+ "date": "2026-11-16",
+ "empty_A": "No pairs are assigned to participant A in this holdout supplement.",
+ "new_human_judgments": [
+  {
+   "grade": 1,
+   "item_id": "60929168-f317-4bc1-9d49-07b7b6717910",
+   "note": "Полезно для регистрации ИП при работе по найму, но трудоустройство в профиле не указано. Материал разбирает частный случай.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "bb03afc6-c765-48c6-8287-7d87aeb8d911",
+   "note": "Есть образец и правила оформления партнёрства, но открытие бизнеса с партнёром в профиле не заявлено. Для текущей задачи польза косвенная.",
+   "profile_id": "P20",
+   "status": "judged"
+  }
+ ],
+ "new_judgment_source": "Participant B manual relevance grades and explanations.",
+ "participant": "B",
+ "pool_sha256": "f09a51630d89faabffecb8d81b36f43808a4b4ccdad14d6fcaf8dd586bcac295",
+ "source_B_sha256": "d2ff38ed83408d02acd1ac18915cd17b87911593aa3a550792334df361dfc8ac",
+ "transferred": {
+  "grades": [
+   {
+    "grade": 0,
+    "item_id": "9ede4cb3-1b6c-467e-81de-d5dcc2ee2465",
+    "profile_id": "P20"
+   }
+  ],
+  "instruction_update_accepted": true,
+  "method": "Exact visible context and public card equality; original participant B grade reused.",
+  "source_pool_sha256": "652a8151e7e2e2854e4a7aec725d8201fc413fd7a75bef7ead06dbef606523fe",
+  "target_pool_sha256": "f09a51630d89faabffecb8d81b36f43808a4b4ccdad14d6fcaf8dd586bcac295"
+ }
+}

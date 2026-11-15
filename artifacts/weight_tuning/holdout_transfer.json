@@ -1,0 +1,13 @@
+{
+ "grades": [
+  {
+   "grade": 0,
+   "item_id": "9ede4cb3-1b6c-467e-81de-d5dcc2ee2465",
+   "profile_id": "P20"
+  }
+ ],
+ "instruction_update_accepted": true,
+ "method": "Exact visible context and public card equality; original participant B grade reused.",
+ "source_pool_sha256": "652a8151e7e2e2854e4a7aec725d8201fc413fd7a75bef7ead06dbef606523fe",
+ "target_pool_sha256": "f09a51630d89faabffecb8d81b36f43808a4b4ccdad14d6fcaf8dd586bcac295"
+}

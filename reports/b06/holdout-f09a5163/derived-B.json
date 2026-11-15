@@ -1,0 +1,29 @@
+{
+ "answers": [
+  {
+   "grade": 1,
+   "item_id": "60929168-f317-4bc1-9d49-07b7b6717910",
+   "note": "Полезно для регистрации ИП при работе по найму, но трудоустройство в профиле не указано. Материал разбирает частный случай.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "bb03afc6-c765-48c6-8287-7d87aeb8d911",
+   "note": "Есть образец и правила оформления партнёрства, но открытие бизнеса с партнёром в профиле не заявлено. Для текущей задачи польза косвенная.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9ede4cb3-1b6c-467e-81de-d5dcc2ee2465",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  }
+ ],
+ "independent": true,
+ "labeler": "B",
+ "pool_sha256": "f09a51630d89faabffecb8d81b36f43808a4b4ccdad14d6fcaf8dd586bcac295",
+ "version": 1
+}
