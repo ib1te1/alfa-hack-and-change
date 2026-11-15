@@ -1,0 +1,77 @@
+name: Retrieval checks
+
+on:
+  pull_request:
+    paths: ['alfarec/**', 'retrieval_tests/**', 'requirements-retrieval.*', 'artifacts/catalog.parquet', 'artifacts/retrieval_tfidf/**', 'artifacts/course_transitions.json', 'artifacts/judgments/**', 'docs/labeling.md', '.github/workflows/retrieval.yml']
+  push:
+    branches: [main]
+    paths: ['alfarec/**', 'retrieval_tests/**', 'requirements-retrieval.*', 'artifacts/catalog.parquet', 'artifacts/retrieval_tfidf/**', 'artifacts/course_transitions.json', 'artifacts/judgments/**', 'docs/labeling.md', '.github/workflows/retrieval.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  retrieval:
+    name: Retrieval (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Fetch and verify event revision
+        env:
+          BOOTSTRAP_TOKEN: ${{ github.token }}
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}.git
+          EVENT_REF: ${{ github.ref }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git init --quiet .
+          if ($LASTEXITCODE -ne 0) { throw 'Repository initialization failed' }
+          git remote add origin $env:REPOSITORY_URL
+          if ($LASTEXITCODE -ne 0) { throw 'Origin setup failed' }
+          try {
+            $env:GIT_CONFIG_COUNT = '1'
+            $env:GIT_CONFIG_KEY_0 = 'http.extraHeader'
+            $env:GIT_CONFIG_VALUE_0 = 'AUTHORIZATION: basic ' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('x-access-token:' + $env:BOOTSTRAP_TOKEN))
+            git fetch --quiet --no-tags --depth=1 origin $env:EVENT_REF
+            $fetchCode = $LASTEXITCODE
+          } finally {
+            Remove-Item Env:GIT_CONFIG_COUNT, Env:GIT_CONFIG_KEY_0, Env:GIT_CONFIG_VALUE_0, Env:BOOTSTRAP_TOKEN -ErrorAction SilentlyContinue
+          }
+          if ($fetchCode -ne 0) { throw 'Event revision fetch failed' }
+          git checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Event revision checkout failed' }
+          if ((git rev-parse HEAD) -cne $env:EVENT_SHA) { throw 'Fetched revision differs from event SHA' }
+      - name: Select Python 3.12
+        run: |
+          $versions = @(Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TOOL_CACHE 'Python') -Directory |
+            Where-Object Name -Match '^3\.12\.\d+$' | Sort-Object { [version]$_.Name } -Descending)
+          if ($versions.Count -eq 0) { throw 'Python 3.12 is missing from the runner tool cache' }
+          $relative = if ($IsWindows) { 'x64/python.exe' } else { 'x64/bin/python' }
+          $python = Join-Path $versions[0].FullName $relative
+          if (-not (Test-Path -LiteralPath $python)) { throw 'Python executable is missing' }
+          "PROJECT_PYTHON=$python" >> $env:GITHUB_ENV
+          & $python --version
+      - name: Install retrieval dependencies
+        run: '& $env:PROJECT_PYTHON -m pip install -r requirements-retrieval.txt'
+      - name: Check formatting and lint
+        run: |
+          & $env:PROJECT_PYTHON -m ruff format --check alfarec tests retrieval_tests
+          if ($LASTEXITCODE -ne 0) { throw 'Formatting failed' }
+          & $env:PROJECT_PYTHON -m ruff check alfarec tests retrieval_tests
+          if ($LASTEXITCODE -ne 0) { throw 'Lint failed' }
+      - name: Test service and retrieval contracts
+        run: '& $env:PROJECT_PYTHON -m pytest tests retrieval_tests'
+      - name: Build and benchmark on committed metadata
+        run: |
+          $index = Join-Path $env:RUNNER_TEMP 'retrieval-index'
+          & $env:PROJECT_PYTHON -m alfarec.pipeline.build_index --source metadata --output $index
+          if ($LASTEXITCODE -ne 0) { throw 'Index build failed' }
+          & $env:PROJECT_PYTHON -m alfarec.eval.benchmark_retrieval --source metadata --index $index --repeats 2
+          if ($LASTEXITCODE -ne 0) { throw 'Index benchmark failed' }

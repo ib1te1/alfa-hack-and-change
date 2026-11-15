@@ -3,6 +3,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -17,10 +18,11 @@ from alfarec.api.schemas import (
     Persona,
     RecommendationRequest,
 )
-from alfarec.recsys.baseline import InterimRecommender
+from alfarec.recsys.baseline import TopicBaseline
 from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog, with_base_url
 from alfarec.recsys.contracts import Event, Item, RecommendationResponse, Recommender
 from alfarec.recsys.explain import explain_response
+from alfarec.recsys.ranking import DEFAULT_INDEX_PATH, load_ranker
 from alfarec.recsys.taxonomy import Taxonomy, load_taxonomy
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -43,6 +45,8 @@ class Services:
     recommender: Recommender | None
     events: EventStore
     personas: list[Persona]
+    # "ranking" when the B05 ranker runs; "baseline" when its index could not be loaded.
+    recommender_kind: Literal["ranking", "baseline", "unavailable"] = "unavailable"
 
 
 def _env_path(name: str, default: Path) -> Path:
@@ -64,14 +68,29 @@ def build_services(
     catalog_path: Path | None = None,
     events_path: Path | None = None,
     personas_path: Path | None = None,
+    index_path: Path | None = None,
 ) -> Services:
     taxonomy = load_taxonomy()
     catalog_path = catalog_path or _env_path("CATALOG_PATH", DEFAULT_CATALOG_PATH)
     items: list[Item] = []
+    base_url = os.environ.get("PLATFORM_BASE_URL")
+    recommender: Recommender | None = None
+    kind: Literal["ranking", "baseline", "unavailable"] = "unavailable"
     if catalog_path.is_file():
         items = load_catalog(catalog_path)
-        if base_url := os.environ.get("PLATFORM_BASE_URL"):
+        if base_url:
             items = with_base_url(items, base_url)
+        try:
+            recommender = load_ranker(
+                catalog_path, index_path or _env_path("INDEX_PATH", DEFAULT_INDEX_PATH),
+                base_url=base_url,
+            )  # fmt: skip
+            kind = "ranking"
+        except (OSError, ValueError) as error:
+            # A stale or missing index must not take the page down: serve the baseline and
+            # report it in /api/health.
+            logger.error("Ranking index unavailable, serving the baseline: %s", error)
+            recommender, kind = TopicBaseline(items, taxonomy), "baseline"
     else:
         logger.warning("Catalog artifact is missing: %s", catalog_path)
     personas = load_personas(personas_path or _env_path("PERSONAS_PATH", DEFAULT_PERSONAS_PATH))
@@ -84,9 +103,10 @@ def build_services(
     return Services(
         taxonomy=taxonomy,
         catalog={item.item_id: item for item in items},
-        recommender=InterimRecommender(items, taxonomy) if items else None,
+        recommender=recommender,
         events=events,
         personas=personas,
+        recommender_kind=kind,
     )
 
 
@@ -124,13 +144,14 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     @application.get("/api/health", response_model=HealthResponse)
     def health() -> HealthResponse:
-        loaded = bool(state.catalog)
+        ranking = state.recommender_kind == "ranking"
         return HealthResponse(
-            status="ok" if loaded else "degraded",
+            status="ok" if ranking else "degraded",
             ready=state.recommender is not None,
-            artifacts_loaded=loaded,
+            artifacts_loaded=bool(state.catalog),
             catalog_items=len(state.catalog),
-            recommender="interim" if state.recommender else "unavailable",
+            encoder="tfidf" if ranking else "unavailable",
+            recommender=state.recommender_kind,
         )
 
     @application.get("/api/meta", response_model=MetaResponse)

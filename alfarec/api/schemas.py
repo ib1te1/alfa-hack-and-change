@@ -24,8 +24,8 @@ class HealthResponse(Contract):
     ready: bool
     artifacts_loaded: bool
     catalog_items: int
-    encoder: Literal["unavailable"] = "unavailable"
-    recommender: Literal["interim", "unavailable"]
+    encoder: Literal["tfidf", "unavailable"] = "unavailable"
+    recommender: Literal["ranking", "baseline", "unavailable"]
 
 
 class MetaOption(Contract):
