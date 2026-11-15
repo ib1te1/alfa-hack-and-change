@@ -1,9 +1,11 @@
 **
 !Dockerfile
 !requirements.txt
+!requirements-encoder.txt
 !alfarec/
 !alfarec/**
 !artifacts/
 !artifacts/**
 **/__pycache__/
 **/*.pyc
+artifacts/ml/model/

@@ -1,0 +1,1448 @@
+{
+ "version": 1,
+ "sample_sha256": "2c1b58f2b3ea84f6f10d24d37d2951801017419de161e959725b12051c97d8fa",
+ "answers": [
+  {
+   "item_id": "76091d92-fbab-46b7-bf1f-e5c7baad92c3",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "019dab27-c05c-7648-b77b-7f7b923402ba",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "tax_regime"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "45f7d69b-a227-4e5c-9081-7ec83b15bdec",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "taxes_reporting",
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "34b0b3a5-c722-4aba-ae48-de1472dabd9e",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "accounting_payments",
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "defc5abc-e692-4ae8-87f6-987d791705b0",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "3121df66-bd8f-4e46-b25d-2571e44282df",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "business_start"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "28e2a868-0b58-4fd6-af4d-7aa268ae91b4",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting",
+    "accounting_payments",
+    "marketplaces"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "2bf774d6-66c4-4575-898f-72fd4c09f163",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers",
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "d45b210d-f55b-4f8e-aee0-e24d37bb2206",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "0288bdab-dafc-42b8-831f-d234eb929d6b",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting",
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "ba4f7636-04ec-436d-8934-76d83f0406d6",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "71aec7ff-de79-44e7-b0e2-da71e5cc5866",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "d6ad80da-2995-4efa-bd68-39782c05a3be",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f7e49982-ac30-4cb0-802c-ef63dad1c113",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": "Справка о празднике, практической задачи по найму здесь нет."
+  },
+  {
+   "item_id": "2d89a271-a4ff-4631-ba5a-9d66815918fe",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketing",
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "abda2f84-22c5-4cd9-94eb-f9b4a5a8a869",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "6c505856-c764-4fd5-b6ba-0150cc8630f3",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketplaces"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "ed73387a-8157-4450-a7d8-7fdc67eeb67b",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f23a7f86-c090-49e6-af88-c060d849aaa8",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts",
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "822e9427-3a39-4d25-b8ea-5ed65c036296",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "6df524fa-c8e6-4da2-b80b-32c6230b02b2",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": ""
+  },
+  {
+   "item_id": "36f3ea23-4ad9-4581-baaf-fd5f6887f08f",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": ""
+  },
+  {
+   "item_id": "f9261eb6-848e-4de0-a64a-ed7e35893a46",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "sales_customers",
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "768b3f39-a132-4915-b5b9-738a03847929",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "06dc41ea-e3db-4a84-b8e1-3c935951ba2d",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "2883b545-f6c8-43ad-91d5-47cb80898df1",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "33a3a4ca-ab5e-4e58-bbeb-62afae4de0ba",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketplaces"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "3a46a630-6e00-472b-88d5-b0ec99c31878",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": ""
+  },
+  {
+   "item_id": "2c39fc30-1a46-4aa1-819f-d2159fdda877",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments",
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "47d5c5c2-bddf-4209-9d33-027a4cfa4b8e",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "d312cdab-4e2b-4fc5-ba8c-b8f3d412ec4a",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketing",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "2e413db8-c786-4abb-8cbb-762ecf59a819",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "advanced",
+   "tasks": [
+    "accounting_payments",
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "e8eb4f2a-3c0f-4368-a82a-a5041141814e",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "taxes_reporting",
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "388ae02a-ece5-474c-9d39-6bbe7283582d",
+   "stages": [
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "marketing",
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "dbdf96f4-8022-4cc2-8a2d-3b584941615a",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "39356586-699d-4e96-a1fa-6dd76debbf80",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "ai_automation",
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "2039ab3e-65a2-4539-a16e-a0edca9ea7c8",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketplaces",
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "a99d2268-f782-4e10-98c9-836703cd5c38",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [],
+   "note": "Про связи и обмен опытом. Отдельной подходящей задачи в списке нет."
+  },
+  {
+   "item_id": "b46b92f8-6967-4f15-9425-028afb96c9b5",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketplaces",
+    "marketing",
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "e2e0fd51-31b4-40d5-a856-36c428b4f3b6",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "643b65b0-2bb4-4b22-afa2-eff778fcb7a8",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments",
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "62e5fa2f-acdf-4742-8669-163d91d1bfd7",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "accounting_payments",
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "1eded3db-ecc0-4c85-864e-54ff56e1ecc7",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "fd4ca655-e4c6-487c-903b-241bbe9e4027",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "franchising",
+    "business_start"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f355224c-cda0-4472-aa24-89ef82f703e7",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting",
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c681c269-c0ef-48e9-8a57-173efd3d7927",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [],
+   "note": "Общие уроки из бизнес-кейсов; конкретная задача по карточке не выделяется."
+  },
+  {
+   "item_id": "a2e5b190-3f33-41df-8764-f9cffbf5eb07",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "cf48949f-f446-4deb-90b7-6454144e5af7",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "d38ff662-4489-4dcf-8555-93abc52bf98c",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "614c37fb-e67d-4394-a70a-7347fe4215e5",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketplaces",
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "504284dd-5b8e-4fc5-b034-f87433044002",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "international",
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "5db03402-6ef2-46a6-8864-1e2d9aa4c927",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "e6d166d6-4af5-41a6-aa65-b86bb603776f",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f359bbf0-8d91-4ffd-862a-fd5344d36b93",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketplaces"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c9ee7322-b61b-4c33-bd4f-a025447467c1",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "1c34dffb-6d03-4537-aabe-f9d22dbd8ba6",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "7207cfe0-6f77-417a-a9d1-975a163aedc0",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "95f98421-9166-4826-b657-ea8a024a9397",
+   "stages": [
+    "idea",
+    "launch",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "business_start",
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "87d99c44-3f65-43de-83d1-c5f53948154a",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "d39c24d8-102e-4829-af72-ed57c1bcbff2",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "taxes_reporting",
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "b763f7e8-106e-4cd2-b144-55de179ca494",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "625ac09e-9277-462d-8d83-465b974b9cbe",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "tax_regime",
+    "taxes_reporting",
+    "marketplaces"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "ffe9f7ac-9201-42f7-845c-f4bc432e89a2",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "advanced",
+   "tasks": [
+    "international",
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "89960fbe-4f0c-40c5-b63f-a63fba4cce5d",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "a15524e4-59a1-4278-90eb-05482621a871",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "4bb38286-633e-46de-88fa-fd54650537b2",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c16abf76-1996-4191-b6ba-e8abb8d8b138",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "eff9e604-e6f4-4677-b207-7487021cbcc5",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": ""
+  },
+  {
+   "item_id": "a89ac72a-5e40-4213-8787-aeed9402c7ec",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "765cc7c9-2821-49b1-9e93-a8c2fbab9170",
+   "stages": [],
+   "level": null,
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": "Без описания неясно, насколько подробно разобран термин."
+  },
+  {
+   "item_id": "c790ba67-ff0c-49be-b3b8-4d18b347dc6d",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments",
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "a88811d9-0479-4f6c-ad53-087dc31395cb",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "sales_customers",
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "0e1b66eb-b636-47cf-a677-63a2d74aa4db",
+   "stages": [
+    "idea",
+    "launch",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers",
+    "marketplaces"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "01df7ea0-8244-4149-b1a0-57731a9ced49",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c25dc6f4-de0e-4f66-95cc-53b92612da34",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": "Обычный расчёт процентов, без привязки к бизнес-задаче."
+  },
+  {
+   "item_id": "6829aca0-311e-4d32-96be-ed9d8babc0be",
+   "stages": [
+    "idea",
+    "launch",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "franchising",
+    "business_start"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "0f4b5720-a406-4813-89b1-df921a375d6d",
+   "stages": [
+    "launch",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "dc4a527f-3063-4613-83bb-8ba5fa6393f3",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts",
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "a131d249-ed4c-4b5a-8e3e-8acc6c31ec0d",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "74791c96-bd58-40d8-9bce-cf24d9aa5e2e",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "6d0aed0c-f190-4dea-a053-52ca02b78f8a",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "ai_automation",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "fc6241b1-9b48-43c7-bbef-3f07ab0f9285",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "3ee3c392-4c6d-49e4-ad46-a138fdd3a8d7",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "sales_customers"
+   ],
+   "note": "ИИ здесь — сфера стартапа, а основная задача — продажи крупным клиентам."
+  },
+  {
+   "item_id": "e076e963-28a4-40b0-9268-9326933e34cb",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "36f70ed2-f0c8-454c-b8ec-b1119ab55470",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "31b4c116-b31b-419d-8938-2eb9e057b82c",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f44dd0c2-f558-4dfc-bc7d-1f9dd47b63e3",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "5b9e6ac0-eb17-42bc-a551-3b99954b2434",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c7f5579e-8b3b-4795-a0fc-eb0051d28f41",
+   "stages": [],
+   "level": null,
+   "tasks": [],
+   "note": ""
+  },
+  {
+   "item_id": "c5f2d682-0cc7-408d-aeed-12fd7166da72",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "712ed216-8c93-4f6b-9bbf-ac5d0e6649ad",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "dfe6fded-257c-408b-bf56-806153759a55",
+   "stages": [],
+   "level": null,
+   "tasks": [
+    "financing"
+   ],
+   "note": "Описания нет, уровень по одному названию не определить."
+  },
+  {
+   "item_id": "f49a4452-6512-4ae5-b57c-ce1921683efd",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "07d0365a-0fed-4dea-ad75-51b4c15ca088",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "656676a1-5fc1-4ac1-b86c-1d6364b6b38b",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "9b528699-4033-47a0-a53e-c9d2ecdc8569",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "ai_automation",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f04980cc-84a2-4259-ae94-10a95bf0c1f2",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers",
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "370819c9-1049-4182-8bc5-855f7a076bc7",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [],
+   "note": "Слишком общий термин, конкретная задача не указана."
+  },
+  {
+   "item_id": "65edaebf-4edc-4aac-ba95-b7200ac79302",
+   "stages": [
+    "idea",
+    "launch",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f36e8336-0e12-4919-8e55-423be6871888",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "f0775155-4e9e-40e6-8ddd-e77b279ec02b",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "7b7487a1-b21b-4eb5-987c-e0b582f59b9f",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "international",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "dcd0e085-e7ab-44cf-b842-bfd97fcc0038",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts",
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "9955e9b9-36b4-4566-974a-62891a1c71bc",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": null,
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": "В заголовке второй выпуск, в описании первый. Глубина разговора неясна."
+  },
+  {
+   "item_id": "6e063dc0-b964-4546-bf89-c0e34611d147",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "6b3a0b39-c29c-4d19-b89f-e577815c168a",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "taxes_reporting"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "a5d14569-324f-41bd-a3ce-4a0953766570",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c6de9ca6-1053-4d1c-9a5b-9f8c8d96e97f",
+   "stages": [
+    "idea",
+    "launch"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "business_start"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "87490050-be7f-45c0-a966-d94ea7513c87",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "financing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "92decaa7-3069-4c88-b455-30807df6592d",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "accounting_payments",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "3d15f877-2984-4c5c-9c0d-2a1ae5d632fd",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "international",
+    "taxes_reporting",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "b3f50d49-388f-4e74-8b75-14e73e2ee3f3",
+   "stages": [
+    "launch",
+    "operating"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "accounting_payments"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "ea4abad4-0d82-4997-8fbb-d00dedf74329",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers",
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "d7db5b35-d118-4db3-ac66-69f88bf935e0",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "686c5b78-c108-42b6-9509-fd57800caa5d",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "intermediate",
+   "tasks": [
+    "taxes_reporting",
+    "legal_contracts"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c300ccfb-42b5-4507-b812-27fe8c10d3b1",
+   "stages": [
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "team_hiring"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c5729151-8770-41ad-9394-be906d9e5680",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "sales_customers"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "c4072e56-a319-4fd7-9195-9179ab166138",
+   "stages": [],
+   "level": "beginner",
+   "tasks": [
+    "marketing"
+   ],
+   "note": ""
+  },
+  {
+   "item_id": "9088e565-0583-4fd5-aa56-77eb235eff7f",
+   "stages": [
+    "launch",
+    "operating",
+    "growth"
+   ],
+   "level": "beginner",
+   "tasks": [
+    "legal_contracts",
+    "sales_customers"
+   ],
+   "note": ""
+  }
+ ]
+}

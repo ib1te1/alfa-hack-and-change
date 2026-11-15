@@ -1,0 +1,45 @@
+{
+  "candidate": "e5-small",
+  "catalog_sha256": "d75b5586a07025ba32401b78e5d670eac1bc93d00b02727a36d6d180f247ac29",
+  "cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+  "cpu_p50_ms": 13.44495000103052,
+  "cpu_p95_ms": 15.474845000608184,
+  "e5": true,
+  "editorial_sha256": "20eddcf0fa4260a59dd5a6b0729c3b20a142529f214c36ef244105a394495e5b",
+  "metrics": {
+    "holdout_ndcg": {
+      "mean": 0.1425306967792813,
+      "n": 449
+    },
+    "holdout_recall": {
+      "mean": 0.17913882702301412,
+      "n": 449
+    },
+    "tune_ndcg": {
+      "mean": 0.1302914405239107,
+      "n": 666
+    },
+    "tune_recall": {
+      "mean": 0.16624124124124123,
+      "n": 666
+    }
+  },
+  "model_id": "intfloat/multilingual-e5-small",
+  "queries": [
+    "Как открыть бизнес",
+    "Налоги и отчётность для начинающего предпринимателя",
+    "Нужно привлечь клиентов в небольшую мастерскую с минимальным бюджетом",
+    "Как выбрать налоговый режим для ИП, нанять первого сотрудника и подготовить договор",
+    "Продажи",
+    "Маркетплейсы и онлайн-продажи: первые шаги и расчёт затрат"
+  ],
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "texts_sha256": "ddc3d50df60d4a1ec68ae51ee04bb2643e3f65b1292e36867dfd3d9720590617",
+  "threads": 4,
+  "timed_queries": 30,
+  "vectors_sha256": "2ddf64bc28df6c92d6416d61bc8376d70413699e9661c9c7e983485206cbd8bd",
+  "warmup": 5,
+  "weights_bytes": 493308085,
+  "item_count": 1497,
+  "item_ids_sha256": "16ec9e42f7f1849a03990a1b75db412430220ef4d991d6163913d96000255321"
+}

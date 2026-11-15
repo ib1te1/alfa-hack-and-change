@@ -7,6 +7,7 @@ of a feature is returned as a reason code, so the explanation is the model itsel
 """
 
 import math
+import os
 import re
 from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
@@ -35,7 +36,7 @@ from alfarec.recsys.contracts import (
     Stage,
 )
 from alfarec.recsys.explain import next_step_for
-from alfarec.recsys.retrieval import TfidfIndex
+from alfarec.recsys.retrieval import DenseIndex, TfidfIndex
 from alfarec.recsys.sequence import DEFAULT_TRANSITIONS_PATH, CourseTransitions
 from alfarec.recsys.taxonomy import Taxonomy, match_key
 
@@ -276,7 +277,7 @@ class Ranker:
         self,
         catalog: Sequence[Item],
         taxonomy: Taxonomy,
-        index: TfidfIndex,
+        index: TfidfIndex | DenseIndex,
         weights: Mapping[str, float] | None = None,
         lexicon: IntentLexicon | None = None,
         now: datetime | None = None,
@@ -301,6 +302,7 @@ class Ranker:
         self._facts = {
             item_id: _item_facts(item, taxonomy) for item_id, item in self._items.items()
         }
+        self._graph = None
         dates = [item.published_at for item in catalog if item.published_at]
         # A fixed clock keeps answers deterministic; the newest material is "now".
         self._now = now or (max(dates) if dates else datetime(2026, 11, 1, tzinfo=UTC))
@@ -457,17 +459,29 @@ class Ranker:
             if weight <= 0:
                 continue
             source = self._items[item_id]
-            for hit in self._index.search(_item_text(source), limit=30, excluded={item_id}):
+            if self._graph is not None:
+                row = self._graph.getrow(self._graph_positions[item_id])
+                for position, similarity in zip(row.indices, row.data, strict=True):
+                    target = self._graph_ids[position]
+                    value = min(float(similarity) * weight, 1.0)
+                    if value > result.get(target, (0.0, ""))[0]:
+                        result[target] = (value, source.title)
+            for hit in self._item_neighbours(source):
                 value = min(hit.score * weight, 1.0)
                 if value > result.get(hit.item_id, (0.0, ""))[0]:
                     result[hit.item_id] = (value, source.title)
         for item_id, weight in weights.items():
             if weight < 0:
                 source = self._items[item_id]
-                for hit in self._index.search(_item_text(source), limit=30, excluded={item_id}):
+                for hit in self._item_neighbours(source):
                     value, title = result.get(hit.item_id, (0.0, ""))
                     result[hit.item_id] = (value + hit.score * weight, title)
         return result
+
+    def _item_neighbours(self, source: Item):
+        if isinstance(self._index, DenseIndex):
+            return self._index.neighbours(source.item_id, limit=30)
+        return self._index.search(_item_text(source), limit=30, excluded={source.item_id})
 
     def _sequence(self, history: Sequence[Event], seen: set[str]) -> dict[str, tuple[float, str]]:
         """Courses people enrol in after the user's courses (enrolment transitions)."""
@@ -573,6 +587,8 @@ class Ranker:
     # Reranking, route and blocks -------------------------------------------------------
 
     def _similarity(self, left: Item, right: Item) -> float:
+        if isinstance(self._index, DenseIndex):
+            return self._index.similarity(left.item_id, right.item_id)
         a, b = self._facts[left.item_id], self._facts[right.item_id]
         shared = set(a.tasks) & set(b.tasks)
         union = set(a.tasks) | set(b.tasks)
@@ -931,6 +947,9 @@ def load_ranker(
     transitions_path: Path | None = DEFAULT_TRANSITIONS_PATH,
     transitions: CourseTransitions | None = None,
     rerank: bool = True,
+    encoder_mode: str | None = None,
+    ml_path: Path | None = None,
+    model_path: Path | None = None,
 ) -> Ranker:
     """Ranker over the committed catalog and the B04 fallback index, with full index checks."""
     from alfarec.pipeline.build_index import prepare_texts
@@ -948,11 +967,56 @@ def load_ranker(
         expected_text_source="metadata",
         expected_texts_sha256=texts_digest(ids, texts),
     )
+    from alfarec.recsys.ml_artifacts import (
+        DEFAULT_ML_PATH,
+        checked_manifest,
+        load_dense,
+        load_graph,
+        load_labels,
+    )
+
+    encoder_mode = encoder_mode or os.environ.get("ENCODER", "auto")
+    if encoder_mode not in {"auto", "tfidf", "dense"}:
+        raise ValueError("ENCODER must be auto, tfidf or dense")
+    ml_path = ml_path or Path(os.environ.get("ML_PATH", str(DEFAULT_ML_PATH)))
+    labels = graph = None
+    taxonomy = load_taxonomy()
+    if encoder_mode != "tfidf" and (ml_path / "manifest.json").exists():
+        manifest = checked_manifest(ml_path, catalog_path, ids)
+        model_path = model_path or Path(os.environ.get("MODEL_PATH", str(ml_path / "model")))
+        try:
+            dense = load_dense(ml_path, manifest, model_path)
+        except ImportError:
+            dense = None
+        if dense is not None:
+            index = dense
+            labels = load_labels(ml_path / "item_labels.parquet", ids, taxonomy)
+            # Full-snapshot co-enrolments are packaged separately. Use only semantic edges
+            # here so hidden-next-course evaluation cannot observe future enrolments.
+            graph = load_graph(ml_path / "semantic_graph.npz", len(ids))
+        elif encoder_mode == "dense":
+            raise ValueError("Requested dense encoder weights/dependencies unavailable")
+    elif encoder_mode == "dense":
+        raise ValueError("Requested dense artifacts unavailable")
     if base_url:
         catalog = with_base_url(catalog, base_url)
     if transitions is None and transitions_path is not None and transitions_path.exists():
         # Without the file the ranker still works, on content and popularity alone.
         transitions = CourseTransitions.load(transitions_path)
-    return Ranker(
-        catalog, load_taxonomy(), index, weights=weights, transitions=transitions, rerank=rerank
+    ranker = Ranker(
+        catalog, taxonomy, index, weights=weights, transitions=transitions, rerank=rerank
     )
+    if labels is not None:
+        for item_id, row in labels.items():
+            old = ranker._facts[item_id]
+            ranker._facts[item_id] = ItemFacts(
+                {task: 1.0 for task in row["tasks"]},
+                frozenset(row["stages"]),
+                row["level"] or old.level,
+                frozenset(row["industries"]),
+                old.topic,
+            )
+        ranker._graph = graph
+        ranker._graph_ids = ids
+        ranker._graph_positions = {item: n for n, item in enumerate(ids)}
+    return ranker

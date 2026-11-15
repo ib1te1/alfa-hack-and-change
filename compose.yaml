@@ -4,6 +4,7 @@ services:
     ports:
       - "127.0.0.1:${PORT:-8000}:8000"
     environment:
+      ENCODER: ${ENCODER:-auto}
       PLATFORM_BASE_URL: ${PLATFORM_BASE_URL:-https://kurs.alfabank.ru}
     volumes:
       - events:/app/data/events
