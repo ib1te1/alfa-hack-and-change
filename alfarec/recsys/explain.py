@@ -6,7 +6,7 @@ and no facts that are not in the data. Params may carry taxonomy ids or ready la
 Params by code:
 - task_match: task; industry_match: industry; stage_fit: stage;
 - continues_history: title (the material from the history);
-- short_format: minutes; popular_with_similar: count (optional).
+- short_format: minutes (optional: a calculator has no recorded time).
 """
 
 from collections.abc import Callable, Mapping
@@ -108,7 +108,9 @@ def reason_text(reason: Reason, taxonomy: Taxonomy) -> str | None:
         ),
         ReasonCode.POPULAR_WITH_SIMILAR: lambda: "Популярно у предпринимателей с похожими задачами",
         ReasonCode.SHORT_FORMAT: lambda: (
-            f"Займёт {minutes} мин" if (minutes := _minutes(params.get("minutes"))) else None
+            f"Займёт {minutes} мин"
+            if (minutes := _minutes(params.get("minutes")))
+            else "Короткий формат: ответ сразу"
         ),
         ReasonCode.FRESH: lambda: "Свежий материал об изменениях",
         ReasonCode.NEXT_LEVEL: lambda: "Следующий шаг после того, что вы уже знаете",

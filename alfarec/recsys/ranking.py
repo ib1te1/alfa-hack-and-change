@@ -18,6 +18,7 @@ from typing import Literal
 from pydantic import Field
 
 from alfarec.config import load_configuration
+from alfarec.recsys.baseline import TopicBaseline
 from alfarec.recsys.contracts import (
     Clarification,
     Contract,
@@ -33,6 +34,7 @@ from alfarec.recsys.contracts import (
     RecommendationResponse,
     Stage,
 )
+from alfarec.recsys.explain import next_step_for
 from alfarec.recsys.retrieval import TfidfIndex
 from alfarec.recsys.taxonomy import Taxonomy, match_key
 
@@ -232,23 +234,6 @@ def _item_text(item: Item) -> str:
     return f"{item.title}. {item.summary}"
 
 
-def next_step_for(item: Item) -> NextStep:
-    if item.access == "subscription":
-        return NextStep(kind="subscribe", label="Оформить Курс+", url=item.url)
-    if item.access == "paid":
-        return NextStep(kind="purchase", label="Купить курс", url=item.url)
-    kind, label = {
-        "quick_answer": ("read", "Читать"),
-        "guide": ("read", "Читать"),
-        "template": ("download", "Скачать шаблон"),
-        "tool": ("calculate", "Посчитать"),
-        "course": ("start_course", "Начать курс"),
-        "recording": ("watch", "Смотреть запись"),
-        "podcast": ("listen", "Слушать"),
-    }[item.format]
-    return NextStep(kind=kind, label=label, url=item.url)
-
-
 @dataclass
 class Scored:
     item: Item
@@ -299,6 +284,7 @@ class Ranker:
         self._index = index
         self._weights = {**DEFAULT_WEIGHTS, **(weights or {})}
         self._lexicon = lexicon or load_intents()
+        self._baseline = TopicBaseline(catalog, taxonomy)
         self._facts = {
             item_id: _item_facts(item, taxonomy) for item_id, item in self._items.items()
         }
@@ -322,7 +308,7 @@ class Ranker:
         if type(limit) is not int or not 1 <= limit <= 50:
             raise ValueError("Limit must be an integer from 1 to 50")
         if mode == "baseline":
-            return self._baseline(profile, limit)
+            return self._baseline.recommend(profile, history, mode, limit)
         understanding = understand(profile.free_text, self._lexicon)
         context = self._context(profile, history, understanding)
         if understanding.boundary is not None and not profile.tasks:
@@ -775,45 +761,6 @@ class Ranker:
                                   i.duration_min or 0, i.item_id))  # fmt: skip
         return [Scored(i, 0.5, {"format": 0.5}, {}) for i in short[:WEEK_PLAN_DAYS]]
 
-    # Baseline (spec 6.6) ----------------------------------------------------------------
-
-    def _baseline(self, profile: Profile, limit: int) -> RecommendationResponse:
-        topics: dict[str, str] = {}
-        for task_id in profile.tasks:
-            task = self._taxonomy.tasks.get(task_id)
-            if task:
-                for topic in task.source_links.topics:
-                    topics.setdefault(match_key(topic), task.label)
-        epoch = datetime(1970, 1, 1, tzinfo=UTC)
-        ordered = sorted(
-            self._items.values(),
-            key=lambda i: (-(i.popularity or 0.0), -(i.published_at or epoch).timestamp(),
-                           i.item_id),
-        )  # fmt: skip
-        result = []
-        for item in ordered:
-            matched = [topics[k] for k in map(match_key, item.topics) if k in topics]
-            if topics and not matched:
-                continue
-            reasons = (
-                [Reason(code=ReasonCode.TASK_MATCH, weight=1.0, params={"task": matched[0]})]
-                if matched
-                else []
-            )
-            result.append(
-                Recommendation(
-                    item=item.model_copy(deep=True),
-                    score=0.0,
-                    reasons=reasons,
-                    next_step=next_step_for(item),
-                )
-            )
-            if len(result) == limit:
-                break
-        return RecommendationResponse(
-            more=result, mode="baseline", profile_used=profile.model_copy(deep=True)
-        )
-
     # Output ----------------------------------------------------------------------------
 
     def _profile_used(self, profile: Profile, context: _Context) -> Profile:
@@ -913,10 +860,11 @@ def load_ranker(
     catalog_path: Path | None = None,
     index_path: Path = DEFAULT_INDEX_PATH,
     weights: Mapping[str, float] | None = None,
+    base_url: str | None = None,
 ) -> Ranker:
     """Ranker over the committed catalog and the B04 fallback index, with full index checks."""
     from alfarec.pipeline.build_index import prepare_texts
-    from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog
+    from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog, with_base_url
     from alfarec.recsys.retrieval import digest, texts_digest
     from alfarec.recsys.taxonomy import load_taxonomy
 
@@ -930,4 +878,6 @@ def load_ranker(
         expected_text_source="metadata",
         expected_texts_sha256=texts_digest(ids, texts),
     )
+    if base_url:
+        catalog = with_base_url(catalog, base_url)
     return Ranker(catalog, load_taxonomy(), index, weights=weights)
