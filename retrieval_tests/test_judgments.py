@@ -139,7 +139,8 @@ def test_committed_pool_is_current_and_hides_the_source():
         assert f'"{hidden}"' not in text
     pooled = {p["id"]: set(p["items"]) for p in pool["profiles"]}
     for profile_id, variants in lists["lists"].items():
-        assert set().union(*map(set, variants.values())) == pooled[profile_id]
+        judged = [set(variants[name]) for name in judgments.POOLED]
+        assert set().union(*judged) == pooled[profile_id]
     form = judgments.FORM_PATH.read_text(encoding="utf-8")
     assert pool["pool_sha256"] in form and "/*POOL*/null" not in form
     assert set(lists["lists"]) == {p["id"] for p in pool["profiles"]}

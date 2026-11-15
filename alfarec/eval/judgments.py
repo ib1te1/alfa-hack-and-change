@@ -40,8 +40,10 @@ SEED = 20261115
 K = 10
 SHARED_TUNE, SHARED_HOLDOUT = 3, 2
 VARIANTS = ("ours", "baseline", "no_stage_level", "no_history", "no_rerank")
-# The protocol pools the top-10 of every compared variant, so ablations are judged in full.
-POOLED = VARIANTS
+# Team decision for the hackathon (docs/judgments.md): only the two compared systems are
+# judged. Ablation lists are still built and kept, but their metrics are reported as not
+# measured: scoring them on a partly judged pool would be biased.
+POOLED = ("ours", "baseline")
 VARIANT_LABELS = {
     "ours": "Наша система",
     "baseline": "Бейзлайн по теме",
@@ -457,7 +459,7 @@ def evaluate_judgments(
             p for p in lists if splits.get(p) == split and by_profile.get(p) and not exclude(p)
         ]
         result[split] = {}
-        for variant in VARIANTS:
+        for variant in POOLED:
             rows = [list_metrics(lists[p][variant], by_profile[p]) for p in cases]
             if rows:
                 result[split][variant] = {

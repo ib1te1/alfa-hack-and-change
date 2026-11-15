@@ -312,21 +312,31 @@ def render(next_course: dict, editorial: dict, profiles: dict, judged: dict | No
 
 
 def render_judgments(judged: dict | None) -> list[str]:
-    from alfarec.eval.judgments import VARIANT_LABELS, VARIANTS
+    from alfarec.eval.judgments import POOLED, VARIANT_LABELS, VARIANTS
 
     lines = ["## Релевантность по ручной разметке", ""]
+    skipped = [VARIANT_LABELS[v] for v in VARIANTS if v not in POOLED]
+    unmeasured = (
+        "В пул для разметки входят только наша система и бейзлайн (решение команды по объёму"
+        " ручной работы). Абляции не измерены: "
+        + ", ".join(label.lower() for label in skipped)
+        + ". Их списки сохраняются, но метрики по частично оценённому пулу были бы смещены."
+    )
     if not judged:
         return lines + [
             "Пул выдач для разметки готов (`python -m alfarec.eval.judgments pool`, форма —"
             " `artifacts/judgments/form.html`), оценок двух участников ещё нет. nDCG@10,"
-            " Precision@5, MRR и абляции появятся здесь после `python -m alfarec.eval.judgments"
-            " merge`. Веса, кроме переходов между курсами, не подбирались.",
+            " Precision@5 и MRR нашей системы и бейзлайна появятся здесь после"
+            " `python -m alfarec.eval.judgments merge`. Веса, кроме переходов между курсами,"
+            " не подбирались.",
+            "",
+            unmeasured,
         ]
     lines += [
         "nDCG@10 с выигрышем 2^оценка − 1; Precision@5 и MRR считают релевантной оценку 2."
-        " Неоценённые карточки пропускаются и показаны отдельно, нулём не считаются. Пул —"
-        " наша система, бейзлайн и вариант без истории; остальные абляции оцениваются по"
-        " пересечению с пулом.",
+        " Неоценённые карточки пропускаются и показаны отдельно, нулём не считаются.",
+        "",
+        unmeasured,
         "",
     ]
     for split, title in (("holdout", "`holdout` — основное сравнение"), ("tune", "`tune`")):
@@ -340,7 +350,7 @@ def render_judgments(judged: dict | None) -> list[str]:
             "| Вариант | nDCG@10 | Precision@5 | MRR | Неоценённых в списке |",
             "|---|---|---|---|---|",
         ]
-        for variant in VARIANTS:
+        for variant in POOLED:
             if variant in rows:
                 m = rows[variant]
                 lines.append(
