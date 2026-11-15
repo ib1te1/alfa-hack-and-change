@@ -1,4 +1,4 @@
-from presentation.build import holdout_table, markdown_tables, render
+from presentation.build import holdout_table, markdown_tables, render, ru, verdict
 
 
 def test_render_shows_holdout_metrics_and_removes_unmeasured_claims():
@@ -11,8 +11,9 @@ def test_render_shows_holdout_metrics_and_removes_unmeasured_claims():
     data["health"] = {"encoder": "dense", "recommender": "ranking", "catalog_items": 1497}
     data["seller_persona"] = {"title": "Демо", "legend": ""}
     result = render(data, {"`holdout` — основное сравнение, профилей: 14": rows}, {}, "191", False)
-    assert "0.499" in result and "0.250" in result
+    assert "0,499" in result and "0,250" in result
     assert "holdout, 14 профилей" in result
+    assert "nDCG@10 0,499 против 0,250 у бейзлайна — в 2,0 раза выше" in result
     assert "Ручная релевантность не измерена" not in result
 
 
@@ -39,3 +40,13 @@ def test_manual_relevance_uses_holdout_subheading_even_when_tune_is_first(tmp_pa
 
 def test_missing_manual_ratings_keep_the_unmeasured_state():
     assert holdout_table({"Следующий курс по поведению": [["Метод", "MRR"]]}) == ("?", [])
+
+
+def test_numbers_use_decimal_comma_without_touching_identifiers():
+    assert ru("e5-small 0.1303 / 12.60") == "e5-small 0,1303 / 12,60"
+    assert ru("B04 (dense)") == "B04 (dense)"
+
+
+def test_verdict_is_empty_without_a_baseline_row():
+    assert verdict([["Вариант", "nDCG@10"], ["Наша система", "0.499"]]) == ""
+    assert verdict([]) == ""
