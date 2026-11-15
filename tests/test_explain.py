@@ -41,7 +41,7 @@ def wrap(item, reasons=()):
             "Продолжает «Маркетплейсы», который вы уже изучали",
         ),
         ("short_format", {"minutes": 8}, "Займёт 8 мин"),
-        ("short_format", {}, None),
+        ("short_format", {}, "Короткий формат: ответ сразу"),
         ("beginner_friendly", {}, "Для тех, кто только начинает"),
     ],
 )
@@ -74,7 +74,7 @@ def test_card_keeps_three_strongest_distinct_reasons():
     ]
     explained = explain_recommendation(wrap(by_format("guide"), reasons), TAXONOMY)
     assert [reason.code for reason in explained.reasons] == [
-        "task_match", "industry_match", "beginner_friendly",
+        "task_match", "industry_match", "short_format",
     ]  # fmt: skip
     assert all(reason.text for reason in explained.reasons)
 
@@ -155,3 +155,11 @@ def test_index_text_of_closed_materials_is_landing_only():
     ]
     assert closed_articles
     assert all(len(row["index_text"]) < 1500 for row in closed_articles)
+
+
+def test_fact_reasons_name_the_topic_and_the_template():
+    taxonomy = load_taxonomy()
+    about = Reason(code="task_match", weight=0.0, params={"task": "marketing", "about": True})
+    assert reason_text(about, taxonomy).startswith("Материал по теме «")
+    template = Reason(code="short_format", weight=0.0, params={"format": "template"})
+    assert reason_text(template, taxonomy) == "Готовый шаблон: скачайте и заполните"
