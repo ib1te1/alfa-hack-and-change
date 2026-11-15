@@ -166,7 +166,11 @@ def evaluate_editorial(ranker: Ranker, pairs: Sequence[dict]) -> dict:
         for name, ranked in (("index", ours), ("same_topic", same_topic)):
             scores[f"{name}_recall"].append(recall(ranked, links[source], K))
             scores[f"{name}_ndcg"].append(ndcg(ranked, links[source], K))
-    return {"sources": len(links), **{k: statistics.fmean(v) for k, v in scores.items()}}
+    return {
+        "sources": len(links),
+        "encoder": ranker._index.mode,
+        **{k: statistics.fmean(v) for k, v in scores.items()},
+    }
 
 
 def evaluate_profiles(ranker: Ranker) -> dict:
@@ -271,7 +275,7 @@ def render(next_course: dict, editorial: dict, profiles: dict, judged: dict | No
         "",
         "| Метод | Recall@10 | nDCG@10 |",
         "|---|---|---|",
-        f"| Индекс TF-IDF B04 по метаданным | {f(editorial['index_recall'])} | {f(editorial['index_ndcg'])} |",  # noqa: E501
+        f"| Индекс B04 ({editorial.get('encoder', 'tfidf')}) | {f(editorial['index_recall'])} | {f(editorial['index_ndcg'])} |",  # noqa: E501
         f"| Свежие материалы той же темы | {f(editorial['same_topic_recall'])} | {f(editorial['same_topic_ndcg'])} |",  # noqa: E501
         "",
         "## Списки по 36 тестовым профилям (без разметки)",
@@ -325,10 +329,11 @@ def render_judgments(judged: dict | None) -> list[str]:
     if not judged:
         return lines + [
             "Пул выдач для разметки готов (`python -m alfarec.eval.judgments pool`, форма —"
-            " `artifacts/judgments/form.html`), оценок двух участников ещё нет. nDCG@10,"
-            " Precision@5 и MRR нашей системы и бейзлайна появятся здесь после"
-            " `python -m alfarec.eval.judgments merge`. Веса, кроме переходов между курсами,"
-            " не подбирались.",
+            " `artifacts/judgments/form.html`). Переданные исторические оценки сохранены"
+            " отдельно в `reports/b06/historical-652a8151/`: они не подтверждают новую"
+            " ML-выдачу. Текущее покрытие, форма дополнения и подбор весов —"
+            " `docs/b06-weight-tuning.md`, `artifacts/weight_tuning/selection.json`."
+            " Веса, кроме переходов между курсами, пока не приняты.",
             "",
             unmeasured,
         ]

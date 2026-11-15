@@ -7,3 +7,5 @@ artifacts/*.json text eol=lf
 *.npy binary
 *.npz binary
 artifacts/retrieval_tfidf/*.json text eol=lf
+reports/b06/historical-652a8151/raw-*.json binary
+reports/b06/historical-652a8151/labeling.txt -text

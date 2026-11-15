@@ -1,0 +1,2535 @@
+{
+ "answers": [
+  {
+   "grade": 1,
+   "item_id": "de95fb1b-35cb-4a3f-9d36-9a5e672bf466",
+   "note": "Полезно при выборе названия, но порядок регистрации бизнеса не объясняет.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "fba0ba5a-45d3-40be-9d57-3872f5ff226a",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "48fa14ee-dbe2-45ec-a528-7e00198afe26",
+   "note": "Запуск торговых автоматов, а в профиле сфера услуг.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "39d56e76-2da6-4ac4-8c57-1e7ba2b856c7",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "2155a4c8-2293-4b16-b928-cf72f2de72b5",
+   "note": "Поможет при переходе с самозанятости. Такой статус в профиле не указан.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "386cdfd3-a335-4446-a415-b251f52f0f57",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "24e2108c-72f7-4a08-bc96-9354aeaaa7a4",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "3d17b03e-0e69-44cf-aa04-110e92437016",
+   "note": "Тема для начинающего подходит, но 270 минут заметно больше часа.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "9e33739c-5c5b-4c46-ba32-d49713a33065",
+   "note": "Частный маршрут для спортивного бизнеса; конкретный вид услуг не назван.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "3121df66-bd8f-4e46-b25d-2571e44282df",
+   "note": "История запуска может дать ориентиры, но не заменяет инструкцию по регистрации.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "272095ed-8987-4306-a6a5-4adad2bdcec0",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "ef42f5c8-1c1c-4fc8-995e-3eb484f9b91b",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5da52136-3e3b-42fd-85e4-e8aaa3a2b9d5",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f8621b64-2a22-4a90-97c4-6373c796b381",
+   "note": "Касса — один из шагов запуска, а не весь порядок открытия.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a26fad9d-4380-4ba2-a8b9-27e495eeb721",
+   "note": "Скорее про ведение нескольких проектов; к тому же 90 минут вместо часа.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "50760212-8d41-4a7d-92e8-9d29762801a4",
+   "note": "Готовое заявление для одного из основных шагов регистрации ИП.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "41b2acff-d220-4e81-a90f-706444ce22c2",
+   "note": "Есть документы, способ регистрации и дальнейшие действия; 10 минут подходят.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "c7441fb2-c22c-482d-93b8-fdba3e7f75fc",
+   "note": "",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "36eb26c7-e5a5-47d9-a2a1-f764a2859139",
+   "note": "Рабочая форма, но рассчитана на ООО с двумя учредителями. Такая конфигурация не указана.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "552c492d-fac3-43f6-97f4-7a2d2625744c",
+   "note": "Общий курс про бизнес на 270 минут; для первого шага за час слишком объёмный.",
+   "profile_id": "P01",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "65ee1ff5-29f7-426c-ba67-71ac8b31ff26",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "Помогает разобраться с НДС внутри УСН, но не сравнивает все режимы и занимает 9 минут.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1606138e-15dd-47d9-af29-bd242d0b531a",
+   "note": "Разбирает один из вариантов, но 8 минут больше заявленного бюджета.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9766af8e-1923-4313-a4a8-e78a218d4b81",
+   "note": "Считает НДФЛ, а не выбирает налоговый режим магазина.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "27aae11d-0320-4233-b123-3be4b0d955f0",
+   "note": "Именно про проверку режима; семь минут вместо пяти.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "edfa1068-c576-4787-9d75-9a55c4e5bf92",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cc490db4-f1b5-4a1a-9123-efbe945f548d",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "0b644297-1b7b-4323-a490-a28b24b4ac23",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "8de1b480-a7f4-42de-b82c-2a9142f94477",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "bed8c4c5-1a54-4f86-87a7-3149e3d57633",
+   "note": "Сравнивает варианты УСН, но занимает шесть минут и не охватывает остальные режимы.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "0c54e6cc-ad77-4b13-9c78-de7d4adce189",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "60602d31-ba32-4d49-b8b7-9de16431442d",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "05636dba-99d4-4107-a4e9-84cda7d89f84",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "7e67e83b-7680-4a28-8939-fb2ff849e133",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "6b3a0b39-c29c-4d19-b89f-e577815c168a",
+   "note": "Узнать текущую систему полезно, но это ещё не сравнение вариантов.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "a1730ff6-02b4-4c3d-a336-97c723d0d310",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "436d99ec-50d7-4abc-a0ed-ddd2f7d122d9",
+   "note": "Есть часть про выбор режима, однако статья в основном об открытии ИП и длится 9 минут.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "9e162930-de94-4cb8-891c-4d42fdcff3dd",
+   "note": "Расчёт налогов на одном режиме; не инструмент выбора подходящей системы.",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "260f80ff-14a5-43a2-9a6d-edb5773f682e",
+   "note": "",
+   "profile_id": "P02",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "c4657bd0-9f4d-4a00-b47d-493c473507db",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "0c54e6cc-ad77-4b13-9c78-de7d4adce189",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "2a495b02-fe50-41bd-90f9-6a89dac29b5d",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "891a237a-dcaa-42ea-8c9b-67604ae01bfe",
+   "note": "По теме налогов, но наличие земли у бизнеса не указано.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "ee1f563b-15a3-4ba7-b674-25bcf287e66b",
+   "note": "Нужна для определённых плательщиков; из профиля неясно, применима ли именно 3-НДФЛ.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "0b644297-1b7b-4323-a490-a28b24b4ac23",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "5180ba88-a690-4b0a-9c0b-36595c2ec417",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "536068b2-1c25-45db-b915-571508785809",
+   "note": "Готовое письмо контрагенту, но это только сопутствующий документ по НДС.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "65ee1ff5-29f7-426c-ba67-71ac8b31ff26",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "0288bdab-dafc-42b8-831f-d234eb929d6b",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "edfa1068-c576-4787-9d75-9a55c4e5bf92",
+   "note": "Сборник разных изменений, налоговая часть — только часть статьи.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "60602d31-ba32-4d49-b8b7-9de16431442d",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "05636dba-99d4-4107-a4e9-84cda7d89f84",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cc490db4-f1b5-4a1a-9123-efbe945f548d",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "f51f0b13-7640-463f-ac84-9769ae86112b",
+   "note": "Можно оформить запрос в ФНС по расчёту налогов и заполнению отчётности.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "Тема подходит, но вебинар на 90 минут превышает час.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f985086c-4424-44b8-b526-3d255c4da91b",
+   "note": "Полезно при споре с проверкой; такой ситуации в профиле нет.",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "260f80ff-14a5-43a2-9a6d-edb5773f682e",
+   "note": "",
+   "profile_id": "P03",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "fdf984ae-00b6-4aa1-a9ff-d42011b703a0",
+   "note": "",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f29ccc50-8193-4f50-a54e-9b64ca48baea",
+   "note": "Частный выход на китайские площадки; такой рынок пользователь не выбирал.",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "d2778678-54a0-4550-8201-21fe7208dc30",
+   "note": "",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1a78b86f-3d62-48be-9987-78567a48fa80",
+   "note": "Площадка может подойти не каждому ассортименту; курс на 150 минут не укладывается в час.",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "93f74dcd-8d31-45e2-9059-536fcca009b1",
+   "note": "Полезная справка о рисках, но не маршрут запуска.",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "ce9e4b30-5716-4188-a1de-dffd3a24be87",
+   "note": "Есть расчёты и формулы для цены и маржи.",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "28fa7835-2c31-4d6a-ac86-c63361f8e7a8",
+   "note": "",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "55791895-4544-4b54-86de-cd911b09f615",
+   "note": "",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "d0aa4598-3da2-478b-bbf8-bda81b231b58",
+   "note": "Вводный курс по задаче, но 120 минут при бюджете около часа.",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "5216ec41-1938-446a-a9f4-67a874fe6a03",
+   "note": "Курс на пять часов с акцентом на аналитику действующих продаж.",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "b9d3361f-5428-4899-b351-7a0f03ef0ff7",
+   "note": "",
+   "profile_id": "P08",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "7ed5b9e2-d183-4440-b467-f6ce6fcea1be",
+   "note": "Постоплата влияет на деньги, но не сравнивает способы финансирования.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "af6cd118-eae7-477a-9f26-650af15ce626",
+   "note": "Вводный материал «если вы не финансист», тогда как опыт продвинутый.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "5a5d6364-9ffc-465f-aa4f-3401aeb3e877",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "0aa82f3c-7bc7-4518-a323-393da042feab",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "55e903e5-a65f-40b0-83db-17fc050e565a",
+   "note": "Тема подходит, но описание ориентировано на старт бизнеса, а не расширение финансового сервиса.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "176ffb53-68d6-4119-a435-2fe7ecb1b21c",
+   "note": "Уровень подходит, но курс на 270 минут не помещается в час.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cf48949f-f446-4deb-90b7-6454144e5af7",
+   "note": "Про заработок агента, а не финансирование существующего бизнеса.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "062ff7a9-4168-4d30-9334-1e8eb10555f0",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "95f0903b-144f-4e11-9323-81f81d7e703b",
+   "note": "Специфика торговли с Китаем, не заявленная в профиле.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "1c34dffb-6d03-4537-aabe-f9d22dbd8ba6",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cf1731d4-8f56-453e-83d1-45f2305f9247",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "aa405158-ccc7-425f-aac1-cef7b3a7d5d7",
+   "note": "Справка о допустимости операций, без плана финансирования компании.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "2bfd2876-6813-43c2-ab4a-2c74638fea40",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3d17b03e-0e69-44cf-aa04-110e92437016",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "88325fdb-adaf-47ac-9da1-e072c024d4a5",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "d38ff662-4489-4dcf-8555-93abc52bf98c",
+   "note": "Полезная основа финансового анализа, но для продвинутого пользователя часть будет вводной.",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P11",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "a1db453d-d4c8-4fbc-b17b-bd89e9933fd7",
+   "note": "Найм иностранца в РФ и внешняя торговля — разные задачи.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "58a7de4f-82d7-492e-a7f5-febd3adacbba",
+   "note": "",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "388ae02a-ece5-474c-9d39-6bbe7283582d",
+   "note": "Общая стратегия нового рынка, без конкретных внешнеторговых процедур.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "95f0903b-144f-4e11-9323-81f81d7e703b",
+   "note": "Практический курс, но только про Китай; страна в профиле не выбрана.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "0f0ab03b-1205-44f1-ba6b-dfdeac473a42",
+   "note": "Узкая китайская инфраструктура вместо общего обзора ВЭД.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7ca82b5c-04d1-4fe6-8ef9-3ec5d26e88c8",
+   "note": "",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "a306379f-116b-4d3a-b248-5885b396a121",
+   "note": "",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "fae11b5f-e955-4bb5-bf92-6bc4c4c920cb",
+   "note": "Частный рынок сбыта; интерес к Китаю не указан.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f29ccc50-8193-4f50-a54e-9b64ca48baea",
+   "note": "Обзор одного зарубежного рынка, а не всех процессов внешней торговли.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "efcb3e9d-8672-4593-9c68-7d7eb02f7bd9",
+   "note": "",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "bfe7f6ad-8a40-41c7-bb91-e0cdd4c32e3a",
+   "note": "",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "4a6deac5-46e2-4d47-9388-73df6874bc6e",
+   "note": "Неясно, что означает «эксперт» и какие навыки проверяются. Темы ВЭД в карточке нет.",
+   "profile_id": "P13",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 0,
+   "item_id": "ef42f5c8-1c1c-4fc8-995e-3eb484f9b91b",
+   "note": "Про российский бизнес владельца за границей, а не импорт и экспорт компании.",
+   "profile_id": "P13",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "eb371f34-34ea-4cb3-991a-cbbea147eda2",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "7e67e83b-7680-4a28-8939-fb2ff849e133",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "a48c8334-9984-4fbd-bc48-ef9c6ee9413b",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5edc0396-99c8-4513-9a5d-f7ec20da3d8a",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "fd4ca655-e4c6-487c-903b-241bbe9e4027",
+   "note": "Объяснение термина, без проверки конкретного предложения франчайзера.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "74f77833-ac2f-4901-b00c-8c80dda4acef",
+   "note": "Франшизы в подходящей сфере HoReCa: есть сравнение сетей и критерии выбора.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1a73c636-dedd-4981-8e85-421de27fdf15",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5c9ecc99-f409-460e-98f3-38f76d7f3cf8",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "7a617f0e-15fd-4441-bebd-728353cff73d",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "62c9b798-2a15-49af-aba2-9c85fc0858dc",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "52d541b1-6057-4780-8251-296daf2ce575",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "2d497201-7129-45bf-adfe-5e1d4d39265c",
+   "note": "Общие инструменты планирования; к выбору франшизы относятся косвенно.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "e07e384c-6f11-47c3-b2d6-dfd82e97f730",
+   "note": "Анализ внешней среды полезен как часть проверки идеи.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "ac2d06cf-b68a-434f-aa42-1c43faa1c527",
+   "note": "Практический вопрос проверки франчайзера и прав на товарный знак.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "bf700049-6248-4f4b-95ec-178c1b231652",
+   "note": "Помогает проверить спрос, но не условия покупки франшизы.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "b826e37d-852a-4f7a-8900-185cd62ed422",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "2db46ed3-fb05-4380-bd20-30dff4f4a4c6",
+   "note": "",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "de0b8a92-9c76-45f8-9976-25cbf43cccb6",
+   "note": "Обзор плюсов и минусов — полезный вводный контекст.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "e8f2b3ca-a701-4c25-bffc-75e9cf9d1c7f",
+   "note": "Магазин одежды не соответствует сфере HoReCa.",
+   "profile_id": "P14",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "1ed176ad-3412-41c3-b97f-820bec6afd63",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "c16abf76-1996-4191-b6ba-e8abb8d8b138",
+   "note": "Связано с B2G, но 210 минут значительно больше часа.",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "6592e5e5-e128-4655-b9d5-eff2a230dbb0",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "da3457cb-0580-4ad9-b7f0-8e7af93996f3",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1e4351d5-c245-4556-9fb1-38cffc583cf5",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5d2da4b4-b054-4000-af91-c558c813aa69",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "bfbf5d41-a299-485b-b5de-c3906ebf52ad",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "657cde4f-48a6-475e-b2d6-5963072ee689",
+   "note": "Экспорт и импорт не заявлены; внешнеторговый контракт не является базовым B2G-документом.",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "88325fdb-adaf-47ac-9da1-e072c024d4a5",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "c2f1446a-1cbf-4e42-ad73-45569644cf85",
+   "note": "Общая юридическая проверка на 160 минут вместо часа.",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "da1c5011-8929-4d27-8fd9-d28be5c99ba6",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "defc5abc-e692-4ae8-87f6-987d791705b0",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "177d0573-e412-4f32-8535-0939480f32b4",
+   "note": "Есть образцы и порядок заполнения базового договорного документа.",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "d7f0ed5c-9215-4fb9-802a-0fabdeed9e97",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "efcb3e9d-8672-4593-9c68-7d7eb02f7bd9",
+   "note": "",
+   "profile_id": "P15",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "a88811d9-0479-4f6c-ad53-087dc31395cb",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cf48949f-f446-4deb-90b7-6454144e5af7",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "c1b52f0c-3207-496c-9841-605a6bef8744",
+   "note": "Частная репутационная акция, а не системное продвижение интернет-магазина.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "d927c3a8-188a-459f-bf10-d9e9dc67d0df",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "3c3cf65d-8401-42eb-8ea6-bba9fed43756",
+   "note": "Практично для карточек маркетплейсов, но работа именно на этих площадках не указана.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "8ce01fb1-d1f0-47a7-9986-93c6d6aba8ed",
+   "note": "Базовые принципы клиентской базы; для продвинутого уровня скорее повторение основ.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "26ae5eeb-9d81-4bfc-85d6-1086d9ab5a44",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "712e494c-f1cb-42dd-9640-fd8fc9dc0132",
+   "note": "Отдельный контекст социального предпринимательства, которого нет в профиле.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "72b09272-9cce-40e7-b500-92e5d8f4aff7",
+   "note": "Базовый приём оплаты, а не продвижение и развитие клиентских отношений.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "4edc4abf-1f3c-41db-be25-25dfae8486b0",
+   "note": "Отраслевое исследование производителей и оптовиков, а не интернет-магазинов.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "6ae980f7-41d2-4c8f-87f7-3348be389e4d",
+   "note": "Общий вводный материал о качестве обслуживания.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7031320b-1412-48ea-bca8-47ffe9748547",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "4a6deac5-46e2-4d47-9388-73df6874bc6e",
+   "note": "Не раскрыты предмет проверки и значение «эксперт». Связь с маркетингом и продажами не установить.",
+   "profile_id": "P16",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 2,
+   "item_id": "eb371f34-34ea-4cb3-991a-cbbea147eda2",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "9edef6a0-e4c8-4745-9739-dd77f5bc6a7c",
+   "note": "Конкретный сервис, который помогает покупателям оплачивать заказы частями.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "c2f1446a-1cbf-4e42-ad73-45569644cf85",
+   "note": "",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "79b332f0-a676-4a9b-9772-e6aad483ce4f",
+   "note": "Фасадная вывеска не отвечает задаче продвижения интернет-магазина.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+   "note": "В основном базовый выход на новую площадку; продвинутому магазину полезна лишь часть.",
+   "profile_id": "P16",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "93c3ea54-a660-4c20-a043-edb44590faee",
+   "note": "Только для сельхозналога; такого условия в профиле нет.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1c34dffb-6d03-4537-aabe-f9d22dbd8ba6",
+   "note": "Финансовая тема подходит, но 10 минут вместо пяти.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "87d2e893-2aed-4207-a017-3fdb90fa523f",
+   "note": "Пригодно для производства, но 10 минут при бюджете пять.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "7ed5b9e2-d183-4440-b467-f6ce6fcea1be",
+   "note": "Отдельный способ расчётов, шесть минут вместо пяти.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "Про учёт, но вебинар на 90 минут.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "227afdcd-fab7-41e0-8ec5-6536504f5b6b",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "310ee5d3-8567-4415-b04b-e4cb5dafa846",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "4d77d664-85cf-4546-92ae-37f16080c278",
+   "note": "Коротко, однако это базовое различие счетов для пользователя с опытом.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "6ba5c1c7-f374-4e3e-8616-c48c4198a23e",
+   "note": "Пригодная форма учёта при условии УСН; налоговый режим не указан.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "2887002e-8d61-4bb6-b2ad-eb4d97101ae8",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "296e7be7-e4ff-4ed9-9302-7f3dacad8d8b",
+   "note": "Тема денежных потоков подходит, но курс занимает 35 минут.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7024714f-1b95-4e5e-8ce9-ad98bbe44a4b",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "69b8ccd8-0c04-4aee-b710-f8ac4e3637b0",
+   "note": "Нет описания. Заголовок не показывает, есть ли сведения об учёте денег.",
+   "profile_id": "P17",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 2,
+   "item_id": "b763f7e8-106e-4cd2-b144-55de179ca494",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1d1e34b8-8f46-4f36-8d5d-0e7aea417913",
+   "note": "Про платежи от физлиц; тип покупателей неизвестен, длительность 13 минут.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "5a5d6364-9ffc-465f-aa4f-3401aeb3e877",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "0aa82f3c-7bc7-4518-a323-393da042feab",
+   "note": "Практический инструмент планирования, но чтение займёт 15 минут.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "b3ec9fb8-daec-469e-beb1-0828adaf884b",
+   "note": "Узкий налоговый платёж при конкретном режиме, а не общий контроль поступлений и расходов.",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "6f67bc74-7f66-413a-ac2e-da792bdf034a",
+   "note": "",
+   "profile_id": "P17",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "5216ec41-1938-446a-a9f4-67a874fe6a03",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "90ae3f77-78dc-4534-b6d7-fd324be9910d",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "85593183-b695-41cb-96cc-a9d75b6d5d20",
+   "note": "Может помочь сменить схему, но это преимущественно базовое сравнение FBO и FBS.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "d0aa4598-3da2-478b-bbf8-bda81b231b58",
+   "note": "Тот же вводный курс уже завершён 15.09.2026.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1a78b86f-3d62-48be-9987-78567a48fa80",
+   "note": "Новая площадка, но её применимость зависит от ассортимента, которого в профиле нет.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "65ee1ff5-29f7-426c-ba67-71ac8b31ff26",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cc490db4-f1b5-4a1a-9123-efbe945f548d",
+   "note": "Нет сведений о продаже табачной продукции.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "fdf984ae-00b6-4aa1-a9ff-d42011b703a0",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f75d459b-87c4-415e-ac58-e310609a84e8",
+   "note": "Обзор популярных категорий, а не углублённая работа действующего продавца.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "55791895-4544-4b54-86de-cd911b09f615",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f29ccc50-8193-4f50-a54e-9b64ca48baea",
+   "note": "Отдельный зарубежный рынок, интерес к нему не указан.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "260f80ff-14a5-43a2-9a6d-edb5773f682e",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "33a3a4ca-ab5e-4e58-bbeb-62afae4de0ba",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "edfa1068-c576-4787-9d75-9a55c4e5bf92",
+   "note": "Содержит полезные изменения, но значительная часть — общие и отраслевые новости.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "8d30a17e-1e9d-4167-a46a-583a1373d426",
+   "note": "",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "0b644297-1b7b-4323-a490-a28b24b4ac23",
+   "note": "Найм иностранцев не относится к указанным задачам.",
+   "profile_id": "P19",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "36eb26c7-e5a5-47d9-a2a1-f764a2859139",
+   "note": "Нужна для ООО с двумя учредителями; форма бизнеса и число учредителей не указаны.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "de95fb1b-35cb-4a3f-9d36-9a5e672bf466",
+   "note": "Поможет избежать проблем с названием, но не даёт весь порядок открытия.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "50760212-8d41-4a7d-92e8-9d29762801a4",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5da52136-3e3b-42fd-85e4-e8aaa3a2b9d5",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9ede4cb3-1b6c-467e-81de-d5dcc2ee2465",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "39d56e76-2da6-4ac4-8c57-1e7ba2b856c7",
+   "note": "Сборник кейсов вместо последовательности регистрации магазина.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "41b2acff-d220-4e81-a90f-706444ce22c2",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9e33739c-5c5b-4c46-ba32-d49713a33065",
+   "note": "Спортивный бизнес не совпадает с розницей.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "fba0ba5a-45d3-40be-9d57-3872f5ff226a",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "48fa14ee-dbe2-45ec-a528-7e00198afe26",
+   "note": "Практический запуск одного из форматов розничной торговли.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "ef42f5c8-1c1c-4fc8-995e-3eb484f9b91b",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "552c492d-fac3-43f6-97f4-7a2d2625744c",
+   "note": "Общий курс на 270 минут, при бюджете около часа.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "2155a4c8-2293-4b16-b928-cf72f2de72b5",
+   "note": "Узкий переход с самозанятости; такой статус не указан.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "fde2bacb-a795-4454-90f7-ea364f904b5c",
+   "note": "Кейс розничного магазина даёт ориентиры, но не универсальный порядок оформления.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a26fad9d-4380-4ba2-a8b9-27e495eeb721",
+   "note": "Про несколько проектов, а не первое открытие; 90 минут вместо часа.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "386cdfd3-a335-4446-a415-b251f52f0f57",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "3d17b03e-0e69-44cf-aa04-110e92437016",
+   "note": "Подходит начинающему, но курс длится 270 минут.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "272095ed-8987-4306-a6a5-4adad2bdcec0",
+   "note": "",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "f8621b64-2a22-4a90-97c4-6373c796b381",
+   "note": "Конкретный шаг запуска розничных продаж — регистрация кассы.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "3121df66-bd8f-4e46-b25d-2571e44282df",
+   "note": "История ремесленного бизнеса, а не инструкция по регистрации магазина.",
+   "profile_id": "P20",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "71dbad6e-c284-4a6a-a846-ba5d5d263408",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "0b644297-1b7b-4323-a490-a28b24b4ac23",
+   "note": "Специфика иностранных сотрудников, наличие которых не указано.",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f3870706-b145-4f4b-a891-203aedb4e86e",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "4e01f5da-7cfc-447d-be0e-49ba1d3f481b",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "e36097d7-161b-48c9-81c0-2c44ee3b95f5",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "4a4798ad-fa00-46a9-b594-46bb642f35c2",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "f704402a-a6a9-495b-be84-243051c25d16",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "a26fad9d-4380-4ba2-a8b9-27e495eeb721",
+   "note": "Про ведение нескольких проектов, тема команды в карточке не заявлена.",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "5c9ecc99-f409-460e-98f3-38f76d7f3cf8",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "0c54e6cc-ad77-4b13-9c78-de7d4adce189",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "02fd3dab-fecf-4618-ae31-35a931a318ee",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "8e5e57f9-a169-4def-b5e4-7babdc091d67",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "b9045d6e-07ad-407f-a305-472e82fef797",
+   "note": "Запуск бизнеса услуг, тогда как пользователь расширяет HoReCa и решает кадровые задачи.",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "9e0e0f59-3edd-47bc-bdac-7fa9a20149f8",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "329aefef-d5d3-4c98-8a92-e347cbab8283",
+   "note": "Кадровый кризис в строительстве — другая отрасль.",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "fd296e1b-3adc-4557-ac50-5a2dd4764fbf",
+   "note": "Нет данных о работах на высоте в этом бизнесе.",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7024714f-1b95-4e5e-8ce9-ad98bbe44a4b",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "552c492d-fac3-43f6-97f4-7a2d2625744c",
+   "note": "На курс уже записался, но описание не раскрывает его темы. Неясно, помогает ли он управлению командой; данных о прогрессе тоже нет.",
+   "profile_id": "P21",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 1,
+   "item_id": "639382e9-9687-415a-a444-eaabc97082e4",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "52679570-e47c-4a6e-b0d8-81b2f9904c54",
+   "note": "",
+   "profile_id": "P21",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "902ff81d-ab85-454a-977e-a7dd219c80cd",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "547edfe1-1de7-48bc-b500-2d27026ebdeb",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "eb371f34-34ea-4cb3-991a-cbbea147eda2",
+   "note": "Практический курс подходит по теме, но четыре часа вместо одного.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+   "note": "Акцент на товарах, а профиль — услуги; ещё и 120 минут вместо часа.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a5eb9564-d2b3-4b85-a423-312ec2557246",
+   "note": "Защита бренда, а не привлечение аудитории.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "9c884290-7757-4a84-adaf-e0979386a584",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7031320b-1412-48ea-bca8-47ffe9748547",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "39d56e76-2da6-4ac4-8c57-1e7ba2b856c7",
+   "note": "В карточке не перечислены темы кейсов, поэтому пользу именно для продвижения установить нельзя.",
+   "profile_id": "P22",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 1,
+   "item_id": "c5729151-8770-41ad-9394-be906d9e5680",
+   "note": "Сервис помогает продажам и лояльности, но продвижение раскрывает лишь косвенно.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3c3cf65d-8401-42eb-8ea6-bba9fed43756",
+   "note": "Специально для селлеров, пользователь работает в услугах.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "712e494c-f1cb-42dd-9640-fd8fc9dc0132",
+   "note": "Особая задача социального бизнеса в профиле не указана.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7dc31c2f-15dc-471a-a6aa-312d23090597",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "c1b52f0c-3207-496c-9841-605a6bef8744",
+   "note": "Одна частная акция для репутации, без системы продвижения.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "79b332f0-a676-4a9b-9772-e6aad483ce4f",
+   "note": "Помогает только с одним офлайн-инструментом.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "4edc4abf-1f3c-41db-be25-25dfae8486b0",
+   "note": "Про покупателей производителей и оптовиков, а не услуг.",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "cd330130-ce64-4400-9307-a75187447428",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "4a6deac5-46e2-4d47-9388-73df6874bc6e",
+   "note": "Карточка не раскрывает, какие навыки проверяются и как это связано с маркетингом.",
+   "profile_id": "P22",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 2,
+   "item_id": "8a259667-075a-45f8-8a84-384b545dc833",
+   "note": "",
+   "profile_id": "P22",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "33e658a1-7913-4448-9977-05288162efa1",
+   "note": "Про денежный поток, ровно пять минут — подходит для быстрой финансовой проверки.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "176ffb53-68d6-4119-a435-2fe7ecb1b21c",
+   "note": "Модель заёмного финансирования слишком объёмная для пяти минут: 270 минут.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cf48949f-f446-4deb-90b7-6454144e5af7",
+   "note": "Другой вид заработка, а не финансовый инструмент для оптовой компании.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "0aa82f3c-7bc7-4518-a323-393da042feab",
+   "note": "Хороший инструмент планирования, но 15 минут вместо пяти.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "062ff7a9-4168-4d30-9334-1e8eb10555f0",
+   "note": "",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1c34dffb-6d03-4537-aabe-f9d22dbd8ba6",
+   "note": "По задаче управления деньгами, однако 10 минут при бюджете пять.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "88325fdb-adaf-47ac-9da1-e072c024d4a5",
+   "note": "",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "af6cd118-eae7-477a-9f26-650af15ce626",
+   "note": "Основы управления финансами, но 13 минут вместо пяти.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "55e903e5-a65f-40b0-83db-17fc050e565a",
+   "note": "Тема финансирования подходит; 35 минут заметно больше бюджета.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "Про учёт, но 90 минут не отвечают текущему ограничению.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9a513950-a49f-4989-83de-92445fe9915a",
+   "note": "",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cf1731d4-8f56-453e-83d1-45f2305f9247",
+   "note": "Делегирование операций, а не финансовое планирование.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "7ed5b9e2-d183-4440-b467-f6ce6fcea1be",
+   "note": "Поможет с условиями расчётов; шесть минут и только часть финансовой задачи.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "95f0903b-144f-4e11-9323-81f81d7e703b",
+   "note": "",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "2bfd2876-6813-43c2-ab4a-2c74638fea40",
+   "note": "Финансовый анализ полезен, но занимает 15 минут.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3d17b03e-0e69-44cf-aa04-110e92437016",
+   "note": "",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "5a5d6364-9ffc-465f-aa4f-3401aeb3e877",
+   "note": "Практический финансовый риск, но десять минут вместо пяти.",
+   "profile_id": "P24",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "8d30a17e-1e9d-4167-a46a-583a1373d426",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "edfa1068-c576-4787-9d75-9a55c4e5bf92",
+   "note": "Среди разных изменений есть НДС, но это лишь часть общего обзора.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "2a495b02-fe50-41bd-90f9-6a89dac29b5d",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "95c83eaf-1afe-431b-af7d-cce532abb500",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "536068b2-1c25-45db-b915-571508785809",
+   "note": "Пригодный сопутствующий документ, но не инструкция по расчёту и сдаче налогов.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "65ee1ff5-29f7-426c-ba67-71ac8b31ff26",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "cc490db4-f1b5-4a1a-9123-efbe945f548d",
+   "note": "Лицензирование не является налоговой отчётностью; табачный ассортимент не указан.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "bfe7f6ad-8a40-41c7-bb91-e0cdd4c32e3a",
+   "note": "Внешняя торговля в профиле не указана.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "c4657bd0-9f4d-4a00-b47d-493c473507db",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "5180ba88-a690-4b0a-9c0b-36595c2ec417",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "60602d31-ba32-4d49-b8b7-9de16431442d",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "042a8e6c-1fb2-4c1b-a503-950b1aa90ca3",
+   "note": "Не перечислены конкретные изменения. Нельзя установить, есть ли здесь налоги и отчётность.",
+   "profile_id": "P26",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 0,
+   "item_id": "0c54e6cc-ad77-4b13-9c78-de7d4adce189",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "c4de4de6-2d5e-4c40-a79e-ee8d525d02a4",
+   "note": "Лицензия на алкоголь — другая задача; алкогольный ассортимент неизвестен.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "260f80ff-14a5-43a2-9a6d-edb5773f682e",
+   "note": "Правила площадок не отвечают задаче налоговой отчётности розницы.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "891a237a-dcaa-42ea-8c9b-67604ae01bfe",
+   "note": "По налоговой теме, но наличие земли у компании не указано.",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "0b644297-1b7b-4323-a490-a28b24b4ac23",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "05636dba-99d4-4107-a4e9-84cda7d89f84",
+   "note": "",
+   "profile_id": "P26",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "9c884290-7757-4a84-adaf-e0979386a584",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "7031320b-1412-48ea-bca8-47ffe9748547",
+   "note": "Поможет с правилами рекламы, но не заменяет выбор способа привлечения аудитории.",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "7dc31c2f-15dc-471a-a6aa-312d23090597",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1e4351d5-c245-4556-9fb1-38cffc583cf5",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "c25dc6f4-de0e-4f66-95cc-53b92612da34",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9766af8e-1923-4313-a4a8-e78a218d4b81",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "72b09272-9cce-40e7-b500-92e5d8f4aff7",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": null,
+   "item_id": "39d56e76-2da6-4ac4-8c57-1e7ba2b856c7",
+   "note": "Описание не называет разобранные проблемы. Нельзя понять, есть ли кейсы о поиске клиентов.",
+   "profile_id": "P28",
+   "status": "unjudgeable"
+  },
+  {
+   "grade": 0,
+   "item_id": "d39c24d8-102e-4829-af72-ed57c1bcbff2",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3fc10c68-3465-4aff-b0c2-6f50def687fc",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+   "note": "Есть продвижение, но акцент курса на продаже товаров; вид бизнеса не указан.",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "448dce68-b2ab-4544-a27e-a9826486dcad",
+   "note": "Генерация текстов может поддержать продвижение, но сам курс не о привлечении клиентов.",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "8be9c4dc-d301-4af3-9548-0a091b8cf441",
+   "note": "Продвижение товаров и услуг прямо отвечает запросу; бюджет времени не задан.",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "cd330130-ce64-4400-9307-a75187447428",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "eb371f34-34ea-4cb3-991a-cbbea147eda2",
+   "note": "Есть подготовка предложения, запуск продвижения и оценка результата. Ограничение по времени не указано.",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "da3457cb-0580-4ad9-b7f0-8e7af93996f3",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "ab9d595f-4353-4d79-875f-3ab34ccb6bf5",
+   "note": "",
+   "profile_id": "P28",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+   "note": "Банковские правила полезны при старте, но не объясняют последовательность открытия.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "da3457cb-0580-4ad9-b7f0-8e7af93996f3",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9ede4cb3-1b6c-467e-81de-d5dcc2ee2465",
+   "note": "Не выбраны ни онлайн-торговля, ни Яндекс Маркет.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "272095ed-8987-4306-a6a5-4adad2bdcec0",
+   "note": "Конкретный шаг запуска: выбор банка и документов для расчётного счёта.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9766af8e-1923-4313-a4a8-e78a218d4b81",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "448dce68-b2ab-4544-a27e-a9826486dcad",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "ef42f5c8-1c1c-4fc8-995e-3eb484f9b91b",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "c25dc6f4-de0e-4f66-95cc-53b92612da34",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "60929168-f317-4bc1-9d49-07b7b6717910",
+   "note": "Частное условие регистрации; о текущей работе по найму ничего не сказано.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "50760212-8d41-4a7d-92e8-9d29762801a4",
+   "note": "Готовый документ для регистрации ИП.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "d39c24d8-102e-4829-af72-ed57c1bcbff2",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 2,
+   "item_id": "41b2acff-d220-4e81-a90f-706444ce22c2",
+   "note": "Прямой ответ по одному из основных способов начать: документы, регистрация, дальнейшие шаги.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "72b09272-9cce-40e7-b500-92e5d8f4aff7",
+   "note": "Пригодится для приёма оплаты после запуска, но вопрос открытия шире.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1e4351d5-c245-4556-9fb1-38cffc583cf5",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5da52136-3e3b-42fd-85e4-e8aaa3a2b9d5",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "a48c8334-9984-4fbd-bc48-ef9c6ee9413b",
+   "note": "Помогает рассмотреть одну модель старта, но франшиза пока не выбрана.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3fc10c68-3465-4aff-b0c2-6f50def687fc",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "2155a4c8-2293-4b16-b928-cf72f2de72b5",
+   "note": "Подходит при переходе с самозанятости, которой в запросе нет.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+   "note": "",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 1,
+   "item_id": "18af5897-3f59-43e2-9c26-6e0bae1ea358",
+   "note": "Статистика и сложности дают контекст, но не план регистрации.",
+   "profile_id": "P30",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "019dab27-c05c-7648-b77b-7f7b923402ba",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5a5d6364-9ffc-465f-aa4f-3401aeb3e877",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3fc10c68-3465-4aff-b0c2-6f50def687fc",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "329aefef-d5d3-4c98-8a92-e347cbab8283",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "e6fecac8-4454-402b-bf86-3b12cfb41e2d",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "c25dc6f4-de0e-4f66-95cc-53b92612da34",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "d39c24d8-102e-4829-af72-ed57c1bcbff2",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "448dce68-b2ab-4544-a27e-a9826486dcad",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1e4351d5-c245-4556-9fb1-38cffc583cf5",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "da3457cb-0580-4ad9-b7f0-8e7af93996f3",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "edfa1068-c576-4787-9d75-9a55c4e5bf92",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9766af8e-1923-4313-a4a8-e78a218d4b81",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "6f67bc74-7f66-413a-ac2e-da792bdf034a",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "72b09272-9cce-40e7-b500-92e5d8f4aff7",
+   "note": "Материал для бизнеса не отвечает на вопрос о зубной боли.",
+   "profile_id": "P34",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "be9b837d-ba03-4a71-a29c-794afbcbce0f",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "72b09272-9cce-40e7-b500-92e5d8f4aff7",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "da3457cb-0580-4ad9-b7f0-8e7af93996f3",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "5a5d6364-9ffc-465f-aa4f-3401aeb3e877",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1c402043-808d-4604-9f45-0565ed4f79ba",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "3fc10c68-3465-4aff-b0c2-6f50def687fc",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "6f67bc74-7f66-413a-ac2e-da792bdf034a",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "448dce68-b2ab-4544-a27e-a9826486dcad",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "1e4351d5-c245-4556-9fb1-38cffc583cf5",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "d39c24d8-102e-4829-af72-ed57c1bcbff2",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "019dab27-c05c-7648-b77b-7f7b923402ba",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "a8184af0-7007-4bc3-98c1-1ff55c949a97",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "c25dc6f4-de0e-4f66-95cc-53b92612da34",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "edfa1068-c576-4787-9d75-9a55c4e5bf92",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "e6fecac8-4454-402b-bf86-3b12cfb41e2d",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "9766af8e-1923-4313-a4a8-e78a218d4b81",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  },
+  {
+   "grade": 0,
+   "item_id": "329aefef-d5d3-4c98-8a92-e347cbab8283",
+   "note": "Бизнес-материал не содержит прохождения уровня игры.",
+   "profile_id": "P36",
+   "status": "judged"
+  }
+ ],
+ "independent": true,
+ "labeler": "B",
+ "pool_sha256": "652a8151e7e2e2854e4a7aec725d8201fc413fd7a75bef7ead06dbef606523fe",
+ "version": 1
+}
