@@ -183,6 +183,7 @@ def screenshot(browser: str, target: Path) -> bool:
         subprocess.run(
             [browser, "--headless=new", "--disable-gpu", "--hide-scrollbars",
              "--window-size=1440,900", "--virtual-time-budget=8000",
+             "--blink-settings=preferredColorScheme=1",
              f"--screenshot={target}", f"http://127.0.0.1:{port}/"],
             check=True, timeout=120, capture_output=True,
         )  # fmt: skip
@@ -220,12 +221,38 @@ def card(entry: dict, number: int | None = None) -> str:
     )
 
 
+def ru(text: str) -> str:
+    """Russian decimal comma: 0.499 -> 0,499; identifiers such as e5-small stay as they are."""
+    return re.sub(r"(?<=\d)\.(?=\d)", ",", text)
+
+
+def verdict(rows: list[list[str]]) -> str:
+    """One-line takeaway of the held-out table: our nDCG@10 against the baseline's."""
+    if not rows or "nDCG@10" not in rows[0]:
+        return ""
+    col = rows[0].index("nDCG@10")
+    values = {}
+    for row in rows[1:]:
+        key = "base" if "Бейзлайн" in row[0] else "ours" if row[0].startswith("Наша") else ""
+        try:
+            values.setdefault(key, float(row[col]))
+        except (ValueError, IndexError):
+            continue
+    ours, base = values.get("ours"), values.get("base")
+    if ours is None or not base:
+        return ""
+    return ru(
+        f"Ручная релевантность на отложенных профилях: nDCG@10 {ours:.3f} против {base:.3f}"
+        f" у бейзлайна — в {ours / base:.1f} раза выше"
+    )
+
+
 def table(rows: list[list[str]], highlight: int | None = None) -> str:
     head, *body = rows
     out = ["<table><thead><tr>", *(f"<th>{e(c)}</th>" for c in head), "</tr></thead><tbody>"]
     for index, row in enumerate(body):
         cls = ' class="hl"' if index == highlight else ""
-        out += [f"<tr{cls}>", *(f"<td>{e(c)}</td>" for c in row), "</tr>"]
+        out += [f"<tr{cls}>", *(f"<td>{e(ru(c))}</td>" for c in row), "</tr>"]
     return "".join(out + ["</tbody></table>"])
 
 
@@ -246,7 +273,7 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
     final = json.loads(final_report.read_text("utf-8")) if final_report.is_file() else {}
     initial = final.get("metrics", {}).get("holdout", {}).get("initial", {}).get("ndcg10")
     weight_note = (
-        f"Начальные веса дали nDCG@10 {initial:.3f}; настройка немного уступила им. "
+        ru(f"Начальные веса дали nDCG@10 {initial:.3f}; настройка немного уступила им. ")
         if isinstance(initial, (int, float))
         else ""
     )
@@ -428,7 +455,7 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
             "<div class='cols'><div>"
             f"{shot}<p class='sub'>Первый вход: стартовый набор и карточка «Подберём точнее за 3"
             " вопроса»</p></div><div>"
-            f"<p class='sub'>Персона «{e(persona['title'])}»: {e(persona.get('legend', ''))}"
+            f"<p class='sub'>Персона «{e(persona['title'])}». {e(persona.get('legend', ''))}"
             " Её маршрут:</p>"
             f"<div class='stack compact'>{seller_cards}</div></div></div>",
             "Демонстрация",
@@ -438,8 +465,9 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
     slides.append(
         slide(
             "Метрики против бейзлайна",
-            "<div class='cols'><div>"
-            f"<p class='sub'>Следующий курс: {e(cases)} отложенных пользователей, переходы"
+            (f"<p class='verdict'>{e(verdict(manual))}</p>" if verdict(manual) else "")
+            + "<div class='cols'><div>"
+            f"<p class='sub'>Следующий курс, отложенных пользователей: {e(cases)}; переходы"
             " построены по другим</p>"
             + (table(next_course, highlight=0) if next_course else "<p>нет данных</p>")
             + "<p class='sub'>Редакторские подборки платформы, диагностика</p>"
