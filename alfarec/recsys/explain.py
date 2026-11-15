@@ -7,6 +7,7 @@ Params by code:
 - task_match: task; industry_match: industry; stage_fit: stage;
 - continues_history: title (the material from the history);
 - short_format: minutes (optional: a calculator has no recorded time).
+Popularity is aggregate, without a user cohort.
 """
 
 from collections.abc import Callable, Mapping
@@ -22,6 +23,7 @@ from alfarec.recsys.contracts import (
 from alfarec.recsys.taxonomy import Taxonomy
 
 MAX_REASONS = 3
+MAX_REASON_LENGTH = 200
 
 _FREE_STEPS = {
     "quick_answer": ("read", "Читать"),
@@ -75,6 +77,16 @@ def _lower_first(text: str) -> str:
     return text[:1].lower() + text[1:]
 
 
+def _shorten(text: str, limit: int) -> str:
+    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+
+
+def _with_label(template: str, label: str) -> str:
+    # Reserve room for the complete sentence and closing quote, not just the source title.
+    available = MAX_REASON_LENGTH - len(template.format(""))
+    return template.format(_shorten(label, available))
+
+
 def _minutes(value: object) -> int | None:
     if isinstance(value, bool) or not isinstance(value, int | float) or value < 1:
         return None
@@ -87,31 +99,30 @@ def reason_text(reason: Reason, taxonomy: Taxonomy) -> str | None:
     builders: dict[ReasonCode, Callable[[], str | None]] = {
         ReasonCode.TASK_MATCH: lambda: (
             # "about": the material's own task, used when the user named none that matches.
-            (
-                f"Материал по теме «{_lower_first(task)}»"
-                if params.get("about")
-                else f"Подходит под вашу задачу «{_lower_first(task)}»"
+            _with_label(
+                "Материал по теме «{}»" if params.get("about") else "Подходит под вашу задачу «{}»",
+                _lower_first(task),
             )
             if (task := _label(params.get("task"), taxonomy.tasks))
             else "Подходит под вашу задачу"
         ),
         ReasonCode.INDUSTRY_MATCH: lambda: (
-            f"Для сферы «{industry}»"
+            _with_label("Для сферы «{}»", industry)
             if (industry := _label(params.get("industry"), taxonomy.industries))
             else "Для вашей сферы"
         ),
         ReasonCode.STAGE_FIT: lambda: (
-            f"Подходит для этапа «{_lower_first(stage)}»"
+            _with_label("Подходит для этапа «{}»", _lower_first(stage))
             if (stage := _label(params.get("stage"), taxonomy.stages))
             else "Подходит для вашего этапа"
         ),
         ReasonCode.BEGINNER_FRIENDLY: lambda: "Для тех, кто только начинает",
         ReasonCode.CONTINUES_HISTORY: lambda: (
-            f"Продолжает «{title}», который вы уже изучали"
+            _with_label("По теме «{}» из вашей истории", title)
             if (title := _label(params.get("title"), {}))
-            else "Продолжает то, что вы уже изучали"
+            else "По теме материалов из вашей истории"
         ),
-        ReasonCode.POPULAR_WITH_SIMILAR: lambda: "Популярно у предпринимателей с похожими задачами",
+        ReasonCode.POPULAR_WITH_SIMILAR: lambda: "Популярный материал на платформе",
         ReasonCode.SHORT_FORMAT: lambda: (
             f"Займёт {minutes} мин"
             if (minutes := _minutes(params.get("minutes")))
@@ -119,11 +130,12 @@ def reason_text(reason: Reason, taxonomy: Taxonomy) -> str | None:
             if params.get("format") == "template"
             else "Короткий формат: ответ сразу"
         ),
-        ReasonCode.FRESH: lambda: "Свежий материал об изменениях",
+        ReasonCode.FRESH: lambda: "Материал об изменениях в законах",
         ReasonCode.NEXT_LEVEL: lambda: "Следующий шаг после того, что вы уже знаете",
-        ReasonCode.DEEP_DIVE_COURSE: lambda: "Системный курс, чтобы разобраться глубже",
+        ReasonCode.DEEP_DIVE_COURSE: lambda: "Для более глубокого изучения темы",
     }
-    return builders[reason.code]()
+    text = builders[reason.code]()
+    return _shorten(text, MAX_REASON_LENGTH) if text else None
 
 
 def explain_recommendation(recommendation: Recommendation, taxonomy: Taxonomy) -> Recommendation:
@@ -132,6 +144,8 @@ def explain_recommendation(recommendation: Recommendation, taxonomy: Taxonomy) -
     explained: list[Reason] = []
     seen: set[str] = set()
     for reason in ranked:
+        if reason.weight < 0:
+            continue
         text = reason_text(reason, taxonomy)
         if text and text not in seen:
             seen.add(text)

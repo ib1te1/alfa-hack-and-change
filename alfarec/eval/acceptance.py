@@ -11,6 +11,7 @@ import argparse
 import subprocess
 import sys
 import tempfile
+import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -143,17 +144,35 @@ class Checks:
         )
 
     def a07(self) -> Result:
-        run = subprocess.run(
-            [sys.executable, "-m", "pytest", "-q", *LEAK_TESTS],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-        )
+        with tempfile.TemporaryDirectory() as scratch:
+            report = Path(scratch) / "leak-tests.xml"
+            run = subprocess.run(
+                [sys.executable, "-m", "pytest", "-q", f"--junitxml={report}", *LEAK_TESTS],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            passed: bool | None = False
+            if run.returncode == 0 and report.is_file():
+                cases = list(ET.parse(report).iter("testcase"))
+                if len(cases) == len(LEAK_TESTS):
+                    if any(case.find("skipped") is not None for case in cases):
+                        passed = None
+                    else:
+                        passed = all(
+                            case.find("failure") is None and case.find("error") is None
+                            for case in cases
+                        )
         last = (run.stdout.strip().splitlines() or ["нет вывода"])[-1]
         return Result(
             "A07. Платное содержание",
-            run.returncode == 0,
-            f"Автотесты публичных полей и отсутствия текстов уроков: {last}",
+            passed,
+            f"Автотесты публичных полей и отсутствия текстов уроков: {last}"
+            + (
+                "; часть проверок пропущена, полная приёмка не подтверждена"
+                if passed is None
+                else ""
+            ),
         )
 
     def a08(self) -> Result:

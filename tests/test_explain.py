@@ -38,7 +38,7 @@ def wrap(item, reasons=()):
         (
             "continues_history",
             {"title": "Маркетплейсы"},
-            "Продолжает «Маркетплейсы», который вы уже изучали",
+            "По теме «Маркетплейсы» из вашей истории",
         ),
         ("short_format", {"minutes": 8}, "Займёт 8 мин"),
         ("short_format", {}, "Короткий формат: ответ сразу"),
@@ -99,6 +99,120 @@ def test_next_step_by_access():
     assert (next_step_for(paid).kind, next_step_for(paid).label) == ("purchase", "Купить курс")
     assert next_step_for(plus).kind == "subscribe"
     assert next_step_for(by_format("template")).label == "Скачать шаблон"
+
+
+def test_popularity_does_not_claim_a_similar_user_cohort():
+    text = reason_text(Reason(code="popular_with_similar", weight=0.5), TAXONOMY)
+    assert text == "Популярный материал на платформе"
+
+
+def test_freshness_does_not_claim_current_legal_validity():
+    text = reason_text(Reason(code="fresh", weight=0.2), TAXONOMY)
+    assert text == "Материал об изменениях в законах"
+
+
+@pytest.mark.parametrize(
+    "code,key",
+    [
+        ("continues_history", "title"),
+        ("task_match", "task"),
+        ("stage_fit", "stage"),
+        ("industry_match", "industry"),
+    ],
+)
+def test_long_reason_params_produce_valid_serializable_cards(code, key):
+    recommendation = wrap(
+        by_format("guide"),
+        [
+            Reason(code=code, weight=1.0, params={key: "Д" * 200}),
+        ],
+    )
+    explained = explain_recommendation(recommendation, TAXONOMY)
+    validated = Recommendation.model_validate_json(explained.model_dump_json())
+    assert len(validated.reasons) == 1
+    assert len(validated.reasons[0].text) <= 200
+    assert "…" in validated.reasons[0].text
+
+
+def test_negative_contributions_are_not_presented_as_benefits():
+    explained = explain_recommendation(
+        wrap(
+            by_format("guide"),
+            [
+                Reason(code="task_match", weight=-1.0, params={"task": "marketing"}),
+                Reason(code="short_format", weight=0.0, params={"minutes": 5}),
+            ],
+        ),
+        TAXONOMY,
+    )
+    assert [reason.code for reason in explained.reasons] == ["short_format"]
+
+
+@pytest.mark.parametrize(
+    "item_format,kind,label",
+    [
+        ("quick_answer", "read", "Читать"),
+        ("guide", "read", "Читать"),
+        ("template", "download", "Скачать шаблон"),
+        ("tool", "calculate", "Посчитать"),
+        ("course", "start_course", "Начать курс"),
+        ("recording", "watch", "Смотреть запись"),
+        ("podcast", "listen", "Слушать"),
+    ],
+)
+@pytest.mark.parametrize("access", ["free", "paid", "subscription"])
+def test_all_next_steps_preserve_the_source_page(item_format, kind, label, access):
+    item = by_format("guide").model_copy(update={"format": item_format, "access": access})
+    step = next_step_for(item)
+    assert step.url == item.url
+    if access == "subscription":
+        assert (step.kind, step.label) == ("subscribe", "Оформить Курс+")
+    elif access == "paid":
+        assert step.kind == "purchase"
+        assert step.label == ("Купить курс" if item_format == "course" else "Купить")
+    else:
+        assert (step.kind, step.label) == (kind, label)
+
+
+def test_explaining_preserves_the_continue_course_action():
+    item = by_format("course")
+    from alfarec.recsys.contracts import NextStep
+
+    recommendation = wrap(
+        item, [Reason(code="continues_history", weight=1.0, params={"title": item.title})]
+    )
+    recommendation.next_step = NextStep(
+        kind="start_course",
+        label="Продолжить курс",
+        url=item.url,
+    )
+    explained = explain_recommendation(recommendation, TAXONOMY)
+    assert explained.next_step == recommendation.next_step
+
+
+def test_api_can_serve_history_reason_with_max_length_title(tmp_path):
+    from alfarec.recsys.contracts import RecommendationResponse
+
+    recommendation = wrap(
+        by_format("course"),
+        [
+            Reason(code="continues_history", weight=1.0, params={"title": "Я" * 200}),
+        ],
+    )
+
+    class LongTitleRecommender:
+        def recommend(self, profile, history, mode, limit):
+            return RecommendationResponse(more=[recommendation], mode=mode, profile_used=profile)
+
+    services = build_services(
+        DEFAULT_CATALOG_PATH, tmp_path / "events.jsonl", DEFAULT_PERSONAS_PATH
+    )
+    services.recommender = LongTitleRecommender()
+    with TestClient(create_app(services)) as api:
+        answer = api.post("/api/recommendations", json={"profile": {}})
+    assert answer.status_code == 200
+    validated = RecommendationResponse.model_validate(answer.json())
+    assert len(validated.more[0].reasons[0].text) <= 200
 
 
 @pytest.fixture(scope="module")
@@ -163,3 +277,12 @@ def test_fact_reasons_name_the_topic_and_the_template():
     assert reason_text(about, taxonomy).startswith("Материал по теме «")
     template = Reason(code="short_format", weight=0.0, params={"format": "template"})
     assert reason_text(template, taxonomy) == "Готовый шаблон: скачайте и заполните"
+
+
+def test_long_topic_fact_stays_a_fact_and_preserves_its_closing_quote():
+    text = reason_text(
+        Reason(code="task_match", weight=0.0, params={"task": "Д" * 200, "about": True}),
+        TAXONOMY,
+    )
+    assert len(text) <= 200
+    assert text.startswith("Материал по теме «") and text.endswith("…»")
