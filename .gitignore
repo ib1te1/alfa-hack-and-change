@@ -12,3 +12,6 @@ data/
 
 # Built presentation (python presentation/build.py)
 /dist/
+
+# Model weights are fetched by alfarec.pipeline.fetch_encoder, never committed
+artifacts/ml/model/
