@@ -133,6 +133,71 @@ def test_a03_history_excludes_completed_and_continues_courses(ranker):
     assert ids(personal.more) != ids(plain.more)
 
 
+@pytest.mark.parametrize("limit", [1, 5, 10])
+def test_continuing_course_counts_towards_paid_quota(ranker, limit):
+    started = "8be9c4dc-d301-4af3-9548-0a091b8cf441"
+    answer = ranker.recommend(
+        Profile(tasks=["marketing"], time_budget="course"),
+        [event(started, "enroll")],
+        limit=limit,
+    )
+    assert answer.more[0].item.item_id == started
+    assert answer.more[0].next_step.label == "Продолжить курс"
+    assert len(answer.more) <= limit
+    assert sum(e.item.access != "free" for e in answer.more[:5]) <= MAX_PAID_IN_TOP
+
+
+def test_enroll_on_an_article_does_not_create_a_continue_course_action(ranker):
+    article = "4cbddec7-c4ce-4442-87fa-c402f26924fb"
+    answer = ranker.recommend(
+        Profile(tasks=["banking_compliance"], time_budget="course"),
+        [event(article, "enroll")],
+    )
+    assert sum(e.item.access != "free" for e in answer.more[:5]) <= MAX_PAID_IN_TOP
+    assert all(
+        e.next_step.label != "Продолжить курс" for e in answer.route + answer.more + answer.quick
+    )
+
+
+def test_paid_quota_is_preserved_when_only_paid_candidates_remain(ranker):
+    from alfarec.recsys.ranking import Scored
+
+    paid = [item for item in ranker._items.values() if item.access != "free"][:3]
+    prefix = [Scored(paid[0], 1.0)]
+    selected = ranker._rerank([Scored(item, 0.5) for item in paid[1:]], 4, prefix)
+    assert selected == []
+
+
+@pytest.mark.parametrize("task", ["marketing", "marketplaces", "business_start"])
+def test_continuing_route_course_is_shown_exactly_once(ranker, task):
+    profile = Profile(tasks=[task], time_budget="course")
+    plain = ranker.recommend(profile, [])
+    started = next(e.item.item_id for e in plain.route if e.item.format == "course")
+    answer = ranker.recommend(profile, [event(started, "enroll")])
+    shown = ids(answer.route + answer.more + answer.quick)
+    assert shown.count(started) == 1
+    assert len(shown) == len(set(shown))
+    assert answer.more[0].item.item_id == started
+    assert answer.more[0].next_step.label == "Продолжить курс"
+
+
+@pytest.mark.parametrize("kind,value", [("rate", 3.0), ("rate", 1.0), ("dislike", None)])
+def test_nonpositive_history_keeps_out_of_scope_clarification(ranker, kind, value):
+    history = Event(
+        user_id="u",
+        item_id="000ecbf2-ccb2-4305-82e2-f3ed7ce1b22c",
+        type=kind,
+        value=value,
+        ts=NOW,
+    )
+    profile = Profile(free_text="Рассчитать траекторию космического корабля")
+    assert ranker.recommend(profile, []).clarification is not None
+    answer = ranker.recommend(profile, [history])
+    assert answer.clarification is not None
+    assert answer.profile_used.tasks == []
+    assert answer.more
+
+
 def test_known_and_dislike_remove_items_and_raise_level(ranker):
     profile = Profile(tasks=["taxes_reporting"], experience="beginner")
     first = ranker.recommend(profile, [], limit=10)

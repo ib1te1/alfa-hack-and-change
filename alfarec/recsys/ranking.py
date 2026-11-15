@@ -318,21 +318,21 @@ class Ranker:
         scored = self._score(self._candidates(context), context)
         if self._low_confidence(context, understanding):
             return self._clarify(profile, context, "Уточните, что ближе", limit, scored)
-        route = self._route(scored, context)
-        used = {entry.item.item_id for entry in route}
+        continuing = self._continue_course(history, context)
+        prefix = [continuing] if continuing else []
+        used = {entry.item.item_id for entry in prefix}
+        route = self._route([entry for entry in scored if entry.item.item_id not in used], context)
+        used |= {entry.item.item_id for entry in route}
         quick = [
             entry
             for entry in scored
             if entry.item.item_id not in used and self._is_quick(entry.item)
         ][:QUICK_LIMIT]
         used |= {entry.item.item_id for entry in quick}
-        continuing = self._continue_course(history, context)
-        if continuing is not None:
-            used.add(continuing.item.item_id)
         # Quotas apply to the list the user actually sees first.
         rest = [entry for entry in scored if entry.item.item_id not in used]
         size = limit - (continuing is not None)
-        more = ([continuing] if continuing else []) + self._rerank(rest, size)
+        more = prefix + self._rerank(rest, size, prefix)
         return RecommendationResponse(
             route=[self._to_recommendation(entry, context) for entry in route],
             more=[self._to_recommendation(entry, context) for entry in more],
@@ -538,19 +538,30 @@ class Ranker:
         overlap = len(shared) / len(union) if union else 0.0
         return 0.5 * overlap + 0.3 * (a.topic == b.topic) + 0.2 * (left.format == right.format)
 
-    def _rerank(self, scored: list[Scored], size: int) -> list[Scored]:
+    def _rerank(
+        self, scored: list[Scored], size: int, prefix: Sequence[Scored] = ()
+    ) -> list[Scored]:
         """MMR with the paid, topic and format quotas of the top five; nothing is dropped."""
         pool = list(scored)
         if not pool or size < 1:
             return []
         top_score = max(abs(entry.score) for entry in pool) or 1.0
-        selected: list[Scored] = []
-        while pool and len(selected) < size:
+        selected = list(prefix)
+        while pool and len(selected) < size + len(prefix):
             in_top = len(selected) < TOP_K
             allowed = [e for e in pool if not in_top or self._fits_top(e, selected)]
             if not allowed:
                 # Quotas cannot all hold: keep the paid limit, relax topic and format.
-                allowed = [e for e in pool if e.item.access == "free"] or pool
+                paid_limit_reached = (
+                    sum(e.item.access != "free" for e in selected) >= MAX_PAID_IN_TOP
+                )
+                allowed = [
+                    e
+                    for e in pool
+                    if not in_top or not paid_limit_reached or e.item.access == "free"
+                ]
+                if not allowed:
+                    break
             best = max(
                 allowed[: size * 3],
                 key=lambda e: (
@@ -562,7 +573,7 @@ class Ranker:
             )
             selected.append(best)
             pool.remove(best)
-        return selected
+        return selected[len(prefix) :]
 
     def _fits_top(self, entry: Scored, selected: list[Scored]) -> bool:
         paid = sum(s.item.access != "free" for s in selected)
@@ -615,7 +626,10 @@ class Ranker:
         started = [
             e
             for e in sorted(history, key=lambda e: (e.ts, e.item_id), reverse=True)
-            if e.type == "enroll" and e.item_id in self._items and e.item_id not in finished
+            if e.type == "enroll"
+            and e.item_id in self._items
+            and e.item_id not in finished
+            and self._items[e.item_id].format == "course"
         ]
         if not started:
             return None
@@ -632,7 +646,7 @@ class Ranker:
 
     def _low_confidence(self, context: _Context, understanding: Understanding) -> bool:
         """Unclear free text: no task cues, or several equal tasks with weak closeness."""
-        if context.profile.tasks or context.history_weights:
+        if context.profile.tasks or any(weight > 0 for weight in context.history_weights.values()):
             return False
         text = (context.profile.free_text or "").strip()
         if not text:
