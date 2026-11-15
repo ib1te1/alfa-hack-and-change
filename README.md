@@ -91,6 +91,10 @@ python -m alfarec.pipeline.build_transitions
 
 Офлайн-оценка без ручной разметки — `python -m alfarec.eval` (нужны входы `data/handoff/`), результат — [`reports/eval.md`](reports/eval.md). Таксономия и 36 тестовых профилей проверяются командой `python -m alfarec.eval.validate_inputs`. [Инструкция разметки](docs/labeling.md) описывает оценки 0/1/2 и подготовку истории. [План A/B-проверки](docs/ab-test.md) и `python -m alfarec.eval.sample_size` описывают эксперимент после внедрения; он не запускался.
 
+## Презентация
+
+`python presentation/build.py` собирает PDF-презентацию в `dist/alfa-course-recommendations.pdf` (вне git). Метрики берутся из `reports/eval.md`, примеры выдачи — из API на текущем коммите, скриншот страницы — с локального сервера; нужен установленный Edge или Chrome (путь можно передать `--browser`). `--skip-pdf` собирает только HTML.
+
 ## Ограничения
 
 - Ранжирование работает на резервном TF-IDF индексе по названиям и описаниям и на правилах по исходной разметке; эмбеддинги и ML-метки B04 ещё не подключены, веса не подобраны (B06). Если индекс не загрузился, сервис отдаёт бейзлайн и `/api/health` показывает `status: degraded`, `recommender: baseline`.
