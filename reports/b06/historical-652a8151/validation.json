@@ -1,0 +1,57 @@
+{
+ "disagreements": [],
+ "independence_confirmation": "Both participants confirmed independent human ratings on 2026-11-15.",
+ "instruction_confirmation": "Applicability to unchanged public profiles/cards confirmed on 2026-11-15.",
+ "instruction_update_accepted": true,
+ "kappa": 1.0,
+ "metrics_provisional_minimum": {
+  "holdout": {
+   "baseline": {
+    "mrr": 0.05425170068027211,
+    "ndcg10": 0.23659957550087413,
+    "p5": 0.042857142857142864,
+    "profiles": 14,
+    "unjudged": 0.14285714285714285
+   },
+   "ours": {
+    "mrr": 0.5357142857142857,
+    "ndcg10": 0.6753007327052073,
+    "p5": 0.3,
+    "profiles": 14,
+    "unjudged": 0.14285714285714285
+   }
+  },
+  "tune": {
+   "baseline": {
+    "mrr": 0.18333333333333332,
+    "ndcg10": 0.37166877026249523,
+    "p5": 0.17272727272727273,
+    "profiles": 22,
+    "unjudged": 0.22727272727272727
+   },
+   "ours": {
+    "mrr": 0.6314935064935064,
+    "ndcg10": 0.6353498124768272,
+    "p5": 0.34545454545454546,
+    "profiles": 22,
+    "unjudged": 0.5909090909090909
+   }
+  }
+ },
+ "pairs": 666,
+ "pool_sha256": "652a8151e7e2e2854e4a7aec725d8201fc413fd7a75bef7ead06dbef606523fe",
+ "raw_normalized_sha256": {
+  "A": "2f412ede3f2ed9b1265a2f5a299b6a73ea100def1cf3822d844b7efd885c0c99",
+  "B": "869b0232ff914f8cb8a6a75dd1f968296e8f700f5e667c5a8cb2e07e5a7478a8"
+ },
+ "raw_sha256": {
+  "A": "adc1d4af9b83f07006dd4da23deb44add23bd81c6069583a5b44448658c8a6c2",
+  "B": "630571c89243d0477a8dcd69296770d6f694444d7dff6a0970e2b7aff15b64bd"
+ },
+ "shared_pairs": 94,
+ "source_commit": "e6be47b303cd9acc61108b29a9cfb5922e146df2",
+ "statuses": {
+  "judged": 736,
+  "unjudgeable": 24
+ }
+}

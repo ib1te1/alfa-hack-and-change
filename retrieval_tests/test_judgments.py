@@ -126,7 +126,14 @@ def test_metrics_are_reported_per_split():
     assert result["holdout"]["baseline"]["ndcg10"] == pytest.approx(1.0)
 
 
-def test_committed_pool_is_current_and_hides_the_source():
+def test_committed_reference_pool_is_current_and_hides_the_source(monkeypatch):
+    # This is the pre-tuning TF-IDF reference. Final ML lists live in weight_tuning.
+    from alfarec.recsys.ranking import load_ranker
+
+    def reference_ranker(**kwargs):
+        return load_ranker(weights_path=None, encoder_mode="tfidf", **kwargs)
+
+    monkeypatch.setattr(judgments, "load_ranker", reference_ranker)
     pool = json.loads(judgments.POOL_PATH.read_text(encoding="utf-8"))
     rebuilt, lists = judgments.build_pool()
     assert rebuilt["pool_sha256"] == pool["pool_sha256"]
