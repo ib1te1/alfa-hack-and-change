@@ -10,6 +10,7 @@ names the commit, so B13 can attach it to the submitted version.
 import argparse
 import subprocess
 import sys
+import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -122,22 +123,23 @@ class Checks:
         profiles = [{"tasks": [t]} for t in ("marketing", "taxes_reporting", "team_hiring")]
         profiles += [{}, {"free_text": "как выбрать налоговый режим для ИП"}]
         cards = [c for p in profiles for c in self.cards(self.ask(p))]
+        # Spec section 14: every card carries two or three reasons with text.
         bad_reasons = [
-            c for c in cards if not 1 <= len([r for r in c["reasons"] if r.get("text")]) <= 3
+            c for c in cards if not 2 <= len([r for r in c["reasons"] if r.get("text")]) <= 3
         ]
         bad_steps = [
             c
             for c in cards
             if not str((c.get("next_step") or {}).get("url", "")).startswith("https://")
         ]
-        two_plus = sum(len(c["reasons"]) >= 2 for c in cards)
         passed = not bad_reasons and not bad_steps
+        examples = "; ".join(sorted({c["item"]["title"] for c in bad_reasons})[:3])
         return Result(
             "A06. Объяснения и шаг",
             passed,
-            f"{len(cards)} карточек пяти профилей: без 1–3 причин с текстом"
-            f" {len(bad_reasons)}, без ссылки шага {len(bad_steps)}; с двумя и более"
-            f" причинами {two_plus}",
+            f"{len(cards)} карточек пяти профилей: без 2–3 причин с текстом"
+            f" {len(bad_reasons)}{f' (например: {examples})' if examples else ''},"
+            f" без ссылки шага {len(bad_steps)}",
         )
 
     def a07(self) -> Result:
@@ -158,13 +160,25 @@ class Checks:
         profile = {"tasks": ["marketing"], "industries": ["services"]}
         ours = [c["item"]["item_id"] for c in self.cards(self.ask(profile))]
         base = [c["item"]["item_id"] for c in self.cards(self.ask(profile, mode="baseline"))]
-        report = ROOT / "reports" / "eval.md"
-        passed = report.is_file() and bool(base) and ours != base
+        # "Reproduced by a command": run it into a scratch file and compare the tables.
+        with tempfile.TemporaryDirectory() as scratch:
+            fresh = Path(scratch) / "eval.md"
+            run = subprocess.run(
+                [sys.executable, "-m", "alfarec.eval", "--output", str(fresh)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            rebuilt = fresh.read_text(encoding="utf-8") if fresh.is_file() else ""
+        committed = (ROOT / "reports" / "eval.md").read_text(encoding="utf-8")
+        same = stable_lines(rebuilt) == stable_lines(committed) and bool(rebuilt)
+        passed = run.returncode == 0 and same and bool(base) and ours != base
         return Result(
             "A08. Сравнение с бейзлайном",
             passed,
-            f"`reports/eval.md` есть: {report.is_file()} (`python -m alfarec.eval`);"
-            f" режим baseline отвечает ({len(base)} карточек) и отличается от нашего",
+            f"`python -m alfarec.eval` завершился с кодом {run.returncode}, отчёт совпадает с"
+            f" закоммиченным (кроме задержки): {same}; режим baseline отвечает"
+            f" ({len(base)} карточек) и отличается от нашего",
         )
 
     def a09(self) -> Result:
@@ -197,15 +211,19 @@ class Checks:
         # The organisers' dump and anything under data/; tests/fixtures holds a synthetic
         # two-row dump for the reader tests, which is not case data.
         paths = ["data", "*alfa_course_hackathon*"]
-        tracked = subprocess.run(
+        listing = subprocess.run(
             ["git", "ls-files", *paths], cwd=ROOT, capture_output=True, text=True
-        ).stdout.split()
-        history = subprocess.run(
+        )
+        log = subprocess.run(
             ["git", "log", "--all", "--format=%h", "--", *paths],
             cwd=ROOT,
             capture_output=True,
             text=True,
-        ).stdout.split()
+        )
+        if listing.returncode or log.returncode:
+            # Without a repository (a Docker image) an empty listing proves nothing.
+            return Result("A10. Сдаваемый комплект", None, "Нет репозитория git: не проверялось")
+        tracked, history = listing.stdout.split(), log.stdout.split()
         passed = not missing and not tracked and not history
         return Result(
             "A10. Сдаваемый комплект",
@@ -213,6 +231,11 @@ class Checks:
             f"Файлов не хватает: {missing or 'нет'}; дамп в дереве: {len(tracked)},"
             f" в истории: {len(history)}. PDF и доступ жюри проверяются вручную",
         )
+
+
+def stable_lines(report: str) -> list[str]:
+    """Report lines without the latency row, which changes with the machine."""
+    return [line for line in report.splitlines() if "Задержка" not in line]
 
 
 def commit() -> str:

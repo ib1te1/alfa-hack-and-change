@@ -86,7 +86,12 @@ def reason_text(reason: Reason, taxonomy: Taxonomy) -> str | None:
     params = reason.params
     builders: dict[ReasonCode, Callable[[], str | None]] = {
         ReasonCode.TASK_MATCH: lambda: (
-            f"Подходит под вашу задачу «{_lower_first(task)}»"
+            # "about": the material's own task, used when the user named none that matches.
+            (
+                f"Материал по теме «{_lower_first(task)}»"
+                if params.get("about")
+                else f"Подходит под вашу задачу «{_lower_first(task)}»"
+            )
             if (task := _label(params.get("task"), taxonomy.tasks))
             else "Подходит под вашу задачу"
         ),
@@ -110,6 +115,8 @@ def reason_text(reason: Reason, taxonomy: Taxonomy) -> str | None:
         ReasonCode.SHORT_FORMAT: lambda: (
             f"Займёт {minutes} мин"
             if (minutes := _minutes(params.get("minutes")))
+            else "Готовый шаблон: скачайте и заполните"
+            if params.get("format") == "template"
             else "Короткий формат: ответ сразу"
         ),
         ReasonCode.FRESH: lambda: "Свежий материал об изменениях",
