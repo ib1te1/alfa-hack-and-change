@@ -42,7 +42,7 @@ docker compose up --build
 - `alfarec/api/` — FastAPI, схемы ответов и журнал событий.
 - `alfarec/web/` — страница интерфейса: HTML, CSS и JavaScript без сборки.
 - `alfarec/eval/` — тестовые профили и расчёт выборки A/B.
-- `artifacts/` — `catalog.parquet` (1497 материалов: метаданные и описание до 300 символов, без полных текстов) и `personas.json`.
+- `artifacts/` — `catalog.parquet` (1497 материалов: метаданные и описание до 300 символов, без полных текстов), `personas.json` и `course_transitions.json` (счётчики переходов между курсами для ранжирования истории).
 - `reports/` — отчёт о покрытии таксономии.
 
 | Метод | Назначение |
@@ -84,9 +84,10 @@ python -m alfarec.pipeline.build_catalog
 python -m alfarec.pipeline.coverage
 python -m alfarec.pipeline.build_personas
 python -m alfarec.pipeline.export_handoff
+python -m alfarec.pipeline.build_transitions
 ```
 
-Первая команда пишет `artifacts/catalog.parquet` и `data/processed/index_text.parquet` с текстом для эмбеддингов (вне git). Вторая обновляет `reports/taxonomy_coverage.md`, третья — `artifacts/personas.json` по описанию `alfarec/pipeline/personas.yaml`, четвёртая — входы для B04 в `data/handoff/` (вне git) и [отчёт с их хешами](reports/b02_handoff.md). Тесты сверяют закоммиченные артефакты с ожидаемым составом, а при наличии дампа — побайтную воспроизводимость и отсутствие текста уроков.
+Первая команда пишет `artifacts/catalog.parquet` и `data/processed/index_text.parquet` с текстом для эмбеддингов (вне git). Вторая обновляет `reports/taxonomy_coverage.md`, третья — `artifacts/personas.json` по описанию `alfarec/pipeline/personas.yaml`, четвёртая — входы для B04 в `data/handoff/` (вне git) и [отчёт с их хешами](reports/b02_handoff.md), пятая по ним — `artifacts/course_transitions.json`: агрегированные переходы «курс → следующий курс» без пользователей. Тесты сверяют закоммиченные артефакты с ожидаемым составом, а при наличии дампа — побайтную воспроизводимость и отсутствие текста уроков.
 
 Офлайн-оценка без ручной разметки — `python -m alfarec.eval` (нужны входы `data/handoff/`), результат — [`reports/eval.md`](reports/eval.md). Таксономия и 36 тестовых профилей проверяются командой `python -m alfarec.eval.validate_inputs`. [Инструкция разметки](docs/labeling.md) описывает оценки 0/1/2 и подготовку истории. [План A/B-проверки](docs/ab-test.md) и `python -m alfarec.eval.sample_size` описывают эксперимент после внедрения; он не запускался.
 

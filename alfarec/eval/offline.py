@@ -9,10 +9,12 @@ Relevance judgments, ablations and weight tuning are later stages and are not re
 """
 
 import argparse
+import json
 import math
 import statistics
 import sys
 import time
+import zlib
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -24,6 +26,7 @@ import pyarrow.parquet as pq
 from alfarec.eval.profiles import load_profiles
 from alfarec.recsys.contracts import Event, Profile
 from alfarec.recsys.ranking import Ranker, load_ranker
+from alfarec.recsys.sequence import CourseTransitions
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_HANDOFF = ROOT / "data" / "handoff"
@@ -102,6 +105,15 @@ def next_course_cases(rows: Sequence[dict]) -> list[NextCourseCase]:
         history.sort(key=lambda event: (event.ts, event.item_id, event.type))
         cases.append(NextCourseCase(history, last["course_id"], cutoff))
     return cases
+
+
+def split_users(rows: Sequence[dict], tune_share: int = 6) -> tuple[list[dict], list[dict]]:
+    """Stable user split: tune_share in 10 users fit the transitions, the rest are held out."""
+    tune, holdout = [], []
+    for row in rows:
+        bucket = zlib.crc32(row["user_key"].encode("utf-8")) % 10
+        (tune if bucket < tune_share else holdout).append(row)
+    return tune, holdout
 
 
 def evaluate_next_course(ranker: Ranker, rows: Sequence[dict]) -> dict:
@@ -191,7 +203,21 @@ def evaluate_profiles(ranker: Ranker) -> dict:
     return result
 
 
-def render(next_course: dict, editorial: dict, profiles: dict) -> str:
+def evaluate_judged() -> dict | None:
+    """Metrics on the human judgments over the judged lists, or None before they exist."""
+    from alfarec.eval import judgments
+
+    if not (judgments.JUDGMENTS_PATH.exists() and judgments.LISTS_PATH.exists()):
+        return None
+    lists = json.loads(judgments.LISTS_PATH.read_text(encoding="utf-8"))
+    pool = json.loads(judgments.POOL_PATH.read_text(encoding="utf-8"))
+    if lists["pool_sha256"] != pool["pool_sha256"]:
+        raise ValueError("Judged lists do not belong to the current pool")
+    splits = {p["id"]: p["split"] for p in pool["profiles"]}
+    return judgments.evaluate_judgments(lists["lists"], judgments.final_grades(), splits)
+
+
+def render(next_course: dict, editorial: dict, profiles: dict, judged: dict | None = None) -> str:
     f = lambda value: f"{value:.3f}"  # noqa: E731
     lines = [
         "# Офлайн-оценка: этап 1",
@@ -206,16 +232,19 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
     ]
     if next_course.get("users"):
         lines += [
-            f"Пользователей с однозначным последним курсом: {next_course['users']}. Последний по"
-            " дате курс скрыт. Прогноз строится на начало месяца его записи. История содержит"
-            " enroll по дате записи и complete по фактической дате завершения только из более"
-            " ранних месяцев. При неизвестной дате завершения complete не создаётся."
-            " Неоднозначный последний месяц, неизвестные даты записей и повторный целевой курс"
-            " исключены.",
+            "Пользователи стабильно делятся по хешу псевдонима: 60% (`tune`) строят переходы"
+            " «курс → следующий курс» и подбирают их вес, на остальных 40% (`holdout`) считается"
+            f" таблица. Случаев в `holdout` с однозначным последним курсом: {next_course['users']}."
+            " Последний по дате курс скрыт. Прогноз строится на начало месяца его записи."
+            " История содержит enroll по дате записи и complete по фактической дате завершения"
+            " только из более ранних месяцев. При неизвестной дате завершения complete не"
+            " создаётся. Неоднозначный последний месяц, неизвестные даты записей и повторный"
+            " целевой курс исключены.",
             "",
             "| Метод | HitRate@5 | MRR |",
             "|---|---|---|",
-            f"| Наша система (курсы из выдачи, остаток — по популярности) | {f(next_course['ours_hit5'])} | {f(next_course['ours_mrr'])} |",  # noqa: E501
+            f"| Наша система с переходами между курсами | {f(next_course['ours_hit5'])} | {f(next_course['ours_mrr'])} |",  # noqa: E501
+            f"| Наша система без переходов (только содержание) | {f(next_course['content_hit5'])} | {f(next_course['content_mrr'])} |",  # noqa: E501
             f"| Популярность | {f(next_course['popularity_hit5'])} | {f(next_course['popularity_mrr'])} |",  # noqa: E501
             "",
             "Это snapshot-диагностика с историей as-of, а не полный временной backtest."
@@ -223,8 +252,13 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
             " включая период после прогноза. Величина влияния этой утечки агрегатов неизвестна;"
             " для временной оценки нужны исторические снимки всех признаков.",
             "",
-            "Таблица описывает только этот протокол. Вывод о преимуществе метода требует"
-            " отдельной проверки без будущих агрегатов; веса на этих случаях не подбирались.",
+            "Курсы из выдачи идут первыми, недостающие места дополняются по популярности."
+            " Переходы и их априорная популярность считаются только по записям `tune`, поэтому"
+            " скрытые курсы `holdout` в этот признак не попадают. Вес, смесь и сглаживание"
+            " выбирает `python -m alfarec.eval.tune_sequence` внутри `tune`"
+            " ([протокол](sequence_tuning.md)); на `holdout` ничего не подбиралось. Признак"
+            " популярности ранжирования и строка «Популярность» по-прежнему используют полный"
+            " снимок каталога.",
         ]
     else:
         lines += ["Нет подходящих случаев следующего курса; метрики не рассчитаны."]
@@ -272,13 +306,49 @@ def render(next_course: dict, editorial: dict, profiles: dict) -> str:
         "Цифры описывают форму выдачи, а не её релевантность: качество подтверждается только"
         " ручной разметкой. Задержка зависит от машины и в git меняется при каждом прогоне.",
         "",
-        "## Не сделано на этом этапе",
-        "",
-        "- Пул выдач для ручной разметки, оценки 0/1/2, каппа Коэна, nDCG@10, Precision@5 и MRR"
-        " на профилях `holdout`.",
-        "- Абляции (стадия и уровень, история, переранжирование) и подбор весов на `tune`.",
+        *render_judgments(judged),
     ]
     return "\n".join(lines) + "\n"
+
+
+def render_judgments(judged: dict | None) -> list[str]:
+    from alfarec.eval.judgments import VARIANT_LABELS, VARIANTS
+
+    lines = ["## Релевантность по ручной разметке", ""]
+    if not judged:
+        return lines + [
+            "Пул выдач для разметки готов (`python -m alfarec.eval.judgments pool`, форма —"
+            " `artifacts/judgments/form.html`), оценок двух участников ещё нет. nDCG@10,"
+            " Precision@5, MRR и абляции появятся здесь после `python -m alfarec.eval.judgments"
+            " merge`. Веса, кроме переходов между курсами, не подбирались.",
+        ]
+    lines += [
+        "nDCG@10 с выигрышем 2^оценка − 1; Precision@5 и MRR считают релевантной оценку 2."
+        " Неоценённые карточки пропускаются и показаны отдельно, нулём не считаются. Пул —"
+        " наша система, бейзлайн и вариант без истории; остальные абляции оцениваются по"
+        " пересечению с пулом.",
+        "",
+    ]
+    for split, title in (("holdout", "`holdout` — основное сравнение"), ("tune", "`tune`")):
+        rows = judged.get(split, {})
+        if not rows:
+            continue
+        profiles = next(iter(rows.values()))["profiles"]
+        lines += [
+            f"### {title}, профилей: {profiles:.0f}",
+            "",
+            "| Вариант | nDCG@10 | Precision@5 | MRR | Неоценённых в списке |",
+            "|---|---|---|---|---|",
+        ]
+        for variant in VARIANTS:
+            if variant in rows:
+                m = rows[variant]
+                lines.append(
+                    f"| {VARIANT_LABELS[variant]} | {m['ndcg10']:.3f} | {m['p5']:.3f} |"
+                    f" {m['mrr']:.3f} | {m['unjudged']:.1f} |"
+                )
+        lines.append("")
+    return lines
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -291,9 +361,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Handoff files not found in {args.handoff}; run export_handoff", file=sys.stderr)
         return 1
     ranker = load_ranker()
-    next_course = evaluate_next_course(ranker, pq.read_table(needed[0]).to_pylist())
+    tune, holdout = split_users(pq.read_table(needed[0]).to_pylist())
+    # Transitions come from tune users only, so a hidden holdout course never informs them.
+    with_sequence = load_ranker(transitions_path=None, transitions=CourseTransitions.build(tune))
+    content_only = load_ranker(transitions_path=None)
+    next_course = evaluate_next_course(with_sequence, holdout)
+    next_course["content_hit5"], next_course["content_mrr"] = (
+        (m := evaluate_next_course(content_only, holdout)).get("ours_hit5", 0.0),
+        m.get("ours_mrr", 0.0),
+    )
     editorial = evaluate_editorial(ranker, pq.read_table(needed[1]).to_pylist())
     profiles = evaluate_profiles(ranker)
-    args.output.write_text(render(next_course, editorial, profiles), encoding="utf-8", newline="\n")
+    report = render(next_course, editorial, profiles, evaluate_judged())
+    args.output.write_text(report, encoding="utf-8", newline="\n")
     print(f"Report: {args.output}")
     return 0
