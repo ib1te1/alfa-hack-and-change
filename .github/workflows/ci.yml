@@ -78,7 +78,7 @@ jobs:
             docker compose up --build --detach --wait --wait-timeout 90
             if ($LASTEXITCODE -ne 0) { throw 'Docker startup failed' }
             $health = Invoke-RestMethod http://127.0.0.1:8000/api/health
-            if ($health.status -ne 'ok' -or $health.ready -ne $true -or $health.catalog_items -lt 1000) {
+            if ($health.status -ne 'ok' -or $health.recommender -ne 'ranking' -or $health.catalog_items -lt 1000) {
               throw 'Unexpected health response'
             }
             $page = Invoke-WebRequest http://127.0.0.1:8000/

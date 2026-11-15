@@ -41,7 +41,7 @@ def wrap(item, reasons=()):
             "По теме «Маркетплейсы» из вашей истории",
         ),
         ("short_format", {"minutes": 8}, "Займёт 8 мин"),
-        ("short_format", {}, None),
+        ("short_format", {}, "Короткий формат: ответ сразу"),
         ("beginner_friendly", {}, "Для тех, кто только начинает"),
     ],
 )
@@ -74,7 +74,7 @@ def test_card_keeps_three_strongest_distinct_reasons():
     ]
     explained = explain_recommendation(wrap(by_format("guide"), reasons), TAXONOMY)
     assert [reason.code for reason in explained.reasons] == [
-        "task_match", "industry_match", "beginner_friendly",
+        "task_match", "industry_match", "short_format",
     ]  # fmt: skip
     assert all(reason.text for reason in explained.reasons)
 

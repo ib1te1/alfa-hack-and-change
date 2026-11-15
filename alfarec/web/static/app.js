@@ -74,7 +74,7 @@ function renderChips() {
     stage: state.meta.stages, tasks: state.meta.tasks, industries: state.meta.industries,
     experience: state.meta.levels, time_budget: state.meta.time_budgets,
   };
-  for (const box of document.querySelectorAll(".chips")) {
+  for (const box of document.querySelectorAll(".panel .chips[data-field]")) {
     const field = box.dataset.field;
     const single = box.hasAttribute("data-single");
     box.replaceChildren();
@@ -212,7 +212,11 @@ function renderColumn(title, response, interactive) {
   }
   if (response.clarification) column.append(clarification(response.clarification));
   if (response.route.length) {
-    column.append(block("Ваш маршрут", response.route, { route: true, interactive, note: response.route_note }));
+    // With an empty profile the ranker puts the week plan in the route: one short material a day.
+    const emptyProfile = !Object.values(response.profile_used || {}).some((value) => (Array.isArray(value) ? value.length : value));
+    const title = emptyProfile ? "План на неделю" : "Ваш маршрут";
+    const note = emptyProfile ? "По одному короткому материалу в день — чтобы вернуться завтра" : response.route_note;
+    column.append(block(title, response.route, { route: true, interactive, note }));
   }
   if (response.more.length) column.append(block("Ещё по теме", response.more, { interactive }));
   if (response.quick.length) {
