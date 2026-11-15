@@ -36,6 +36,7 @@ from alfarec.recsys.contracts import (
 )
 from alfarec.recsys.explain import next_step_for
 from alfarec.recsys.retrieval import TfidfIndex
+from alfarec.recsys.sequence import DEFAULT_TRANSITIONS_PATH, CourseTransitions
 from alfarec.recsys.taxonomy import Taxonomy, match_key
 
 # Initial hand-set weights (spec 6.3); B06 tunes them on the tune split of the profiles.
@@ -51,6 +52,8 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "popularity": 0.3,
     "fresh": 0.2,
     "offer": 0.3,
+    # Enrolment transitions between courses; tuned on the tune split of next-course cases.
+    "sequence": 16.0,
 }
 CANDIDATES = 300
 ROUTE_MAX = 5
@@ -66,6 +69,8 @@ MAX_SAME_TOPIC_IN_TOP = 2
 MIN_FORMATS_IN_TOP = 2
 CONFIDENT_SEMANTIC = 0.18
 FRESH_DAYS = 365
+# A reading time is stated as a fact reason up to this length.
+FACT_MAX_MIN = 20
 
 EVENT_WEIGHTS = {"complete": 1.0, "enroll": 0.7, "save": 0.6, "view": 0.4, "dislike": -0.7}
 EXCLUDED_EVENTS = {"complete", "known", "dislike"}
@@ -213,7 +218,8 @@ def _item_facts(item: Item, taxonomy: Taxonomy) -> ItemFacts:
         stages.add("idea")
     if labels & GROWTH_LABELS:
         stages |= {"operating", "growth"}
-    if item.item_type == "glossary" or BEGINNER_TITLE.search(item.title):
+    # Terms and calculators need no preparation: they answer one question at once.
+    if item.item_type in {"glossary", "calculator"} or BEGINNER_TITLE.search(item.title):
         level: Level = "beginner"
     elif match_key("С опытом") in raw_industries or ADVANCED_TITLE.search(item.title):
         level = "advanced"
@@ -259,6 +265,8 @@ class _Context:
     semantic_top: float
     neighbours: dict[str, tuple[float, str]]
     empty: bool
+    sequence: dict[str, tuple[float, str]] = field(default_factory=dict)
+    stated_tasks: bool = False
 
 
 class Ranker:
@@ -272,6 +280,8 @@ class Ranker:
         weights: Mapping[str, float] | None = None,
         lexicon: IntentLexicon | None = None,
         now: datetime | None = None,
+        transitions: CourseTransitions | None = None,
+        rerank: bool = True,
     ) -> None:
         if len({item.item_id for item in catalog}) != len(catalog):
             raise ValueError("Catalog item IDs must be unique")
@@ -284,6 +294,9 @@ class Ranker:
         self._index = index
         self._weights = {**DEFAULT_WEIGHTS, **(weights or {})}
         self._lexicon = lexicon or load_intents()
+        self._transitions = transitions
+        # Off only for the B06 ablation: the list then keeps the plain score order.
+        self._rerank_enabled = rerank
         self._baseline = TopicBaseline(catalog, taxonomy)
         self._facts = {
             item_id: _item_facts(item, taxonomy) for item_id, item in self._items.items()
@@ -332,7 +345,8 @@ class Ranker:
         # Quotas apply to the list the user actually sees first.
         rest = [entry for entry in scored if entry.item.item_id not in used]
         size = limit - (continuing is not None)
-        more = prefix + self._rerank(rest, size, prefix)
+        ranked = self._rerank(rest, size, prefix) if self._rerank_enabled else rest[:size]
+        more = prefix + ranked
         return RecommendationResponse(
             route=[self._to_recommendation(entry, context) for entry in route],
             more=[self._to_recommendation(entry, context) for entry in more],
@@ -347,6 +361,7 @@ class Ranker:
         self, profile: Profile, history: Sequence[Event], understanding: Understanding
     ) -> _Context:
         tasks = list(dict.fromkeys([*profile.tasks, *understanding.tasks]))
+        stated_tasks = bool(tasks)
         weights: dict[str, float] = {}
         titles: dict[str, str] = {}
         excluded: set[str] = set()
@@ -392,6 +407,7 @@ class Ranker:
         query = self._query_text(profile, tasks)
         semantic, semantic_top = self._semantic(query)
         neighbours = self._neighbours(weights)
+        sequence = self._sequence(history, excluded | set(weights))
         empty = not (
             tasks or profile.stage or profile.industries or profile.experience
             or profile.time_budget or (profile.free_text and profile.free_text.strip())
@@ -411,6 +427,8 @@ class Ranker:
             semantic_top=semantic_top,
             neighbours=neighbours,
             empty=empty,
+            sequence=sequence,
+            stated_tasks=stated_tasks,
         )
 
     def _query_text(self, profile: Profile, tasks: list[str]) -> str:
@@ -450,6 +468,24 @@ class Ranker:
                     value, title = result.get(hit.item_id, (0.0, ""))
                     result[hit.item_id] = (value + hit.score * weight, title)
         return result
+
+    def _sequence(self, history: Sequence[Event], seen: set[str]) -> dict[str, tuple[float, str]]:
+        """Courses people enrol in after the user's courses (enrolment transitions)."""
+        if self._transitions is None:
+            return {}
+        taken = [
+            e.item_id
+            for e in sorted(history, key=lambda e: (e.ts, e.item_id))
+            if e.type in {"enroll", "complete"}
+            and e.item_id in self._items
+            and self._items[e.item_id].format == "course"
+        ]
+        candidates = {
+            item_id: float(item.popularity or 0)
+            for item_id, item in self._items.items()
+            if item.format == "course" and item_id not in seen and (item.popularity or 0) > 0
+        }
+        return self._transitions.scores(taken, candidates)
 
     # Candidates and scoring ---------------------------------------------------------------
 
@@ -497,6 +533,11 @@ class Ranker:
         features["history"] = max(min(neighbour, 1.0), -1.0)
         if title:
             params["history"] = {"title": title}
+        if item.item_id in context.sequence:
+            # With tasks stated by the user, behaviour only ranks courses within those tasks;
+            # otherwise a popular follow-up course would push the user's own task aside.
+            value = context.sequence[item.item_id][0]
+            features["sequence"] = value * strength if context.stated_tasks else value
         quality = []
         if item.completion_rate is not None:
             # Smoothed toward the catalog-wide mean of about 0.12 for courses.
@@ -816,7 +857,7 @@ class Ranker:
             result.append(Reason(code=ReasonCode.POPULAR_WITH_SIMILAR, weight=0.0))
         if facts.level == "beginner" and context.level in (None, "beginner"):
             result.append(Reason(code=ReasonCode.BEGINNER_FRIENDLY, weight=0.0))
-        if item.duration_min and item.duration_min <= 10:
+        if item.duration_min and item.duration_min <= FACT_MAX_MIN:
             result.append(
                 Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0,
                        params={"minutes": item.duration_min})
@@ -824,12 +865,24 @@ class Ranker:
         elif item.format == "tool":
             # A calculator answers at once; its time is not recorded in the data.
             result.append(Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0))
+        elif item.format == "template":
+            result.append(
+                Reason(code=ReasonCode.SHORT_FORMAT, weight=0.0, params={"format": "template"})
+            )
         labels = {match_key(v) for v in [*item.topics, *(filter(None, [item.subject]))]}
         recent = item.published_at and (self._now - item.published_at) <= timedelta(days=FRESH_DAYS)
         if recent and labels & LAW_CHANGE_LABELS:
             result.append(Reason(code=ReasonCode.FRESH, weight=0.0))
         if item.format == "course" and item.access == "free":
             result.append(Reason(code=ReasonCode.DEEP_DIVE_COURSE, weight=0.0))
+        # Topic-level links (0.5) are enough to name the material's subject truthfully.
+        own = [(s, t) for t, s in facts.tasks.items() if s >= 0.5]
+        if own:
+            # Last resort, worded as the material's topic rather than the user's task.
+            task = max(own)[1]
+            result.append(
+                Reason(code=ReasonCode.TASK_MATCH, weight=0.0, params={"task": task, "about": True})
+            )
         return result
 
     def _reason(
@@ -853,7 +906,7 @@ class Ranker:
             return Reason(
                 code=ReasonCode.CONTINUES_HISTORY, weight=weight, params={"title": params["title"]}
             )
-        if name in {"popularity", "quality"} and (entry.item.popularity or 0) > 0:
+        if name in {"popularity", "quality", "sequence"} and (entry.item.popularity or 0) > 0:
             return Reason(code=ReasonCode.POPULAR_WITH_SIMILAR, weight=weight)
         if name == "format" and entry.item.duration_min and entry.item.duration_min <= 10:
             return Reason(
@@ -875,6 +928,9 @@ def load_ranker(
     index_path: Path = DEFAULT_INDEX_PATH,
     weights: Mapping[str, float] | None = None,
     base_url: str | None = None,
+    transitions_path: Path | None = DEFAULT_TRANSITIONS_PATH,
+    transitions: CourseTransitions | None = None,
+    rerank: bool = True,
 ) -> Ranker:
     """Ranker over the committed catalog and the B04 fallback index, with full index checks."""
     from alfarec.pipeline.build_index import prepare_texts
@@ -894,4 +950,9 @@ def load_ranker(
     )
     if base_url:
         catalog = with_base_url(catalog, base_url)
-    return Ranker(catalog, load_taxonomy(), index, weights=weights)
+    if transitions is None and transitions_path is not None and transitions_path.exists():
+        # Without the file the ranker still works, on content and popularity alone.
+        transitions = CourseTransitions.load(transitions_path)
+    return Ranker(
+        catalog, load_taxonomy(), index, weights=weights, transitions=transitions, rerank=rerank
+    )
