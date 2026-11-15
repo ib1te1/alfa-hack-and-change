@@ -101,7 +101,7 @@ python -m alfarec.pipeline.build_transitions
 
 ## Презентация
 
-`python presentation/build.py` собирает PDF-презентацию в `dist/alfa-course-recommendations.pdf` (вне git). Метрики берутся из `reports/eval.md`, примеры выдачи — из API на текущем коммите, скриншот страницы — с локального сервера; нужен установленный Edge или Chrome (путь можно передать `--browser`). `--skip-pdf` собирает только HTML.
+`python presentation/build.py` собирает PDF-презентацию в `dist/alfa-course-recommendations.pdf` (вне git). Метрики берутся из `reports/eval.md` и `reports/b04_ml.md`, примеры выдачи — из API на текущем коммите в том режиме поиска, который загрузил локальный сервис (для сдаваемого PDF сначала установить упакованную модель, см. раздел о `ENCODER`), скриншот страницы — с локального сервера; нужен установленный Edge или Chrome (путь можно передать `--browser`). `--skip-pdf` собирает только HTML.
 
 ## Ограничения
 
