@@ -121,7 +121,7 @@ def load_manual(path: Path, sample: dict) -> dict[str, dict]:
         raise ValueError("Answers were made for another sample")
     expected = {item["item_id"] for item in sample["items"]}
     answers = {a["item_id"]: a for a in payload.get("answers", [])}
-    if set(answers) != expected:
+    if set(answers) != expected or len(answers) != len(payload.get("answers", [])):
         raise ValueError(f"Expected answers for all {len(expected)} items")
     for item_id, a in answers.items():
         if a["level"] is not None and a["level"] not in sample["levels"]:
@@ -155,12 +155,18 @@ def parquet_labels(path: Path) -> dict[str, dict]:
     import pyarrow.parquet as pq
 
     rows = pq.read_table(path).to_pylist()
+    if len({row["item_id"] for row in rows}) != len(rows):
+        raise ValueError("Duplicate predicted item IDs")
     return {
         r["item_id"]: {
             "stages": list(r.get("stages") or []),
             "level": r.get("level"),
             "tasks": list(r.get("tasks") or []),
             "label_source": r.get("label_source") or "unknown",
+            **{
+                f"{field}_source": r.get(f"{field}_source") or r.get("label_source") or "unknown"
+                for field in ("stages", "level", "tasks")
+            },
         }
         for r in rows
     }
@@ -208,6 +214,9 @@ def score_command(answers_path: Path, labels_path: Path) -> int:
     sample = json.loads(SAMPLE_PATH.read_text(encoding="utf-8"))
     manual = load_manual(answers_path, sample)
     labels = parquet_labels(labels_path) if labels_path.exists() else rule_labels()
+    expected = {item.item_id for item in load_catalog()}
+    if set(labels) != expected or not set(manual) <= set(labels):
+        raise ValueError("Predictions must cover the full current catalog and manual sample")
     origin = labels_path.name if labels_path.exists() else "текущие правила ранжирования"
     by_source: dict[str, dict[str, dict]] = defaultdict(dict)
     for item_id in manual:
@@ -229,6 +238,22 @@ def score_command(answers_path: Path, labels_path: Path) -> int:
             lines.append(
                 f"| {source} | {field} | {m['n']} | {m['accuracy']:.3f} | {m['macro_f1']:.3f} |"
             )
+    for field in ("stages", "level", "tasks"):
+        sources = sorted(
+            {labels[i].get(f"{field}_source", labels[i]["label_source"]) for i in manual}
+        )
+        for source in sources:
+            subset = {
+                i: labels[i]
+                for i in manual
+                if labels[i].get(f"{field}_source", labels[i]["label_source"]) == source
+            }
+            m = field_scores(manual, subset, sample).get(field)
+            if m:
+                lines.append(
+                    f"| {field}:{source} | {field} | {m['n']} | "
+                    f"{m['accuracy']:.3f} | {m['macro_f1']:.3f} |"
+                )
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     print(f"Report: {REPORT_PATH}")
     return 0

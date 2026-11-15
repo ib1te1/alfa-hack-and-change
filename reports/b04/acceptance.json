@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-15",
+  "image_manifest": "sha256:82a5d6ce00c87beaa2e3bbe4e6c71e1aea30191a1f7830cf8c0cc5b88a162d30",
+  "network_mode": "none",
+  "torch": "2.11.0+cpu",
+  "cuda_available": false,
+  "health": {
+    "status": "ok",
+    "encoder": "dense",
+    "recommender": "ranking",
+    "catalog_items": 1497
+  },
+  "cold_more": 8,
+  "route": 3,
+  "known_excluded": true,
+  "paid_quota": true,
+  "missing_weights_encoder": "tfidf",
+  "dense_acceptance": [
+    "A02",
+    "A03",
+    "A04",
+    "A05"
+  ],
+  "tests_passed": 404,
+  "tests_skipped": 5,
+  "git_guards_passed": 29,
+  "browser": [
+    "cold_start",
+    "marketing_route",
+    "explanations_and_actions"
+  ],
+  "limitation": "same machine; not B10 second-machine acceptance"
+}

@@ -5,13 +5,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt \
+ARG WITH_ENCODER=1
+COPY requirements.txt requirements-encoder.txt ./
+RUN if [ "$WITH_ENCODER" = "1" ]; then \
+    pip install --no-cache-dir --no-deps --index-url https://download.pytorch.org/whl/cpu torch==2.11.0+cpu \
+    && pip install --no-cache-dir -r requirements-encoder.txt; \
+    else pip install --no-cache-dir -r requirements.txt; fi \
     && useradd --create-home --uid 10001 app \
     && mkdir -p /app/data/events && chown app /app/data/events
 
 COPY alfarec/ ./alfarec/
 COPY artifacts/ ./artifacts/
+RUN if [ "$WITH_ENCODER" = "1" ]; then python -m alfarec.pipeline.fetch_encoder; fi
 USER app
 EXPOSE 8000
 

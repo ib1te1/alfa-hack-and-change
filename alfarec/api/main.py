@@ -150,7 +150,7 @@ def create_app(services: Services | None = None) -> FastAPI:
             ready=state.recommender is not None,
             artifacts_loaded=bool(state.catalog),
             catalog_items=len(state.catalog),
-            encoder="tfidf" if ranking else "unavailable",
+            encoder=state.recommender._index.mode if ranking else "unavailable",
             recommender=state.recommender_kind,
         )
 
