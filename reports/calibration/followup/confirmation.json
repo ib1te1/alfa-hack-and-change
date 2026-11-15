@@ -1,0 +1,25 @@
+{
+  "packet_sha256": "f1948269b5984ffd0f85894f5c21257a90ae9957b2118c5528b6d5b504ea8b88",
+  "records": [
+    {
+      "rater": "A",
+      "source": "reports/calibration/followup/b03-calibration-A.json",
+      "source_sha256": "c9ffd971c6ede063d9aa0c45bc25e32660044d6b9beb1204ce7f42c9d9b6b524",
+      "validated_copy": "reports/calibration/followup/confirmed/b03-calibration-A.json",
+      "changed_field": "independent",
+      "original_value": false,
+      "confirmed_value": true,
+      "basis": "15 ноября 2026 года участник команды явно подтвердил: два человека заполняли независимо. Исходный файл не изменён."
+    },
+    {
+      "rater": "B",
+      "source": "reports/calibration/followup/b03-calibration-B.json",
+      "source_sha256": "ea0ea5a2be3ac43638352e170a675ff8727a02747b9a143134c246d5afcbb680",
+      "validated_copy": "reports/calibration/followup/confirmed/b03-calibration-B.json",
+      "changed_field": "independent",
+      "original_value": false,
+      "confirmed_value": true,
+      "basis": "15 ноября 2026 года участник команды явно подтвердил: два человека заполняли независимо. Исходный файл не изменён."
+    }
+  ]
+}
