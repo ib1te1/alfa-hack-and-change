@@ -608,6 +608,15 @@ class Ranker:
             return []
         top_score = max(abs(entry.score) for entry in pool) or 1.0
         selected = list(prefix)
+        similarity_state: dict[str, tuple[int, float]] = {}
+
+        def strongest_overlap(entry: Scored) -> float:
+            count, value = similarity_state.get(entry.item.item_id, (0, 0.0))
+            for previous in selected[count:]:
+                value = max(value, self._similarity(entry.item, previous.item))
+            similarity_state[entry.item.item_id] = (len(selected), value)
+            return value
+
         while pool and len(selected) < size + len(prefix):
             in_top = len(selected) < TOP_K
             allowed = [e for e in pool if not in_top or self._fits_top(e, selected)]
@@ -628,7 +637,7 @@ class Ranker:
                 key=lambda e: (
                     MMR_LAMBDA * e.score / top_score
                     - (1 - MMR_LAMBDA)
-                    * max((self._similarity(e.item, s.item) for s in selected), default=0.0),
+                    * strongest_overlap(e),
                     e.item.item_id,
                 ),
             )
