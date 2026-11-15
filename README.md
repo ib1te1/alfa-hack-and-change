@@ -88,7 +88,7 @@ python -m alfarec.pipeline.export_handoff
 
 Первая команда пишет `artifacts/catalog.parquet` и `data/processed/index_text.parquet` с текстом для эмбеддингов (вне git). Вторая обновляет `reports/taxonomy_coverage.md`, третья — `artifacts/personas.json` по описанию `alfarec/pipeline/personas.yaml`, четвёртая — входы для B04 в `data/handoff/` (вне git) и [отчёт с их хешами](reports/b02_handoff.md). Тесты сверяют закоммиченные артефакты с ожидаемым составом, а при наличии дампа — побайтную воспроизводимость и отсутствие текста уроков.
 
-Таксономия и 36 тестовых профилей проверяются командой `python -m alfarec.eval.validate_inputs`. [Инструкция разметки](docs/labeling.md) описывает оценки 0/1/2 и подготовку истории. [План A/B-проверки](docs/ab-test.md) и `python -m alfarec.eval.sample_size` описывают эксперимент после внедрения; он не запускался.
+Офлайн-оценка без ручной разметки — `python -m alfarec.eval` (нужны входы `data/handoff/`), результат — [`reports/eval.md`](reports/eval.md). Таксономия и 36 тестовых профилей проверяются командой `python -m alfarec.eval.validate_inputs`. [Инструкция разметки](docs/labeling.md) описывает оценки 0/1/2 и подготовку истории. [План A/B-проверки](docs/ab-test.md) и `python -m alfarec.eval.sample_size` описывают эксперимент после внедрения; он не запускался.
 
 ## Ограничения
 
