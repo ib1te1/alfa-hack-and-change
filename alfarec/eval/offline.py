@@ -264,11 +264,11 @@ def evaluate_judged() -> dict | None:
             if (
                 weights["provenance"]["evaluation_sha256"] != judgments.canonical_sha256(selection)
                 or selection["final_grades_sha256"] != judgments.canonical_sha256(rows)
-                or not judged_sources_match(experiment, selection["winner"])
                 or experiment_hash != experiment["experiment_sha256"]
                 or experiment_hash != selection["experiment_sha256"]
                 or experiment_hash != weights["provenance"]["experiment_sha256"]
                 or loaded != experiment["candidates"][selection["winner"]]
+                or not judged_sources_match(experiment, selection["winner"])
             ):
                 raise ValueError("Final relevance evidence is stale or inconsistent")
             grades = {(r["profile_id"], r["item_id"]): r["grade"] for r in rows}
