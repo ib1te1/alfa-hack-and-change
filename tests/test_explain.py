@@ -59,6 +59,7 @@ def test_every_reason_code_has_wording():
             "stage": "idea",
             "title": "Курс",
             "minutes": 5,
+            "format": "guide",
         }
         assert reason_text(Reason(code=code, weight=1.0, params=params), TAXONOMY)
 
@@ -77,6 +78,48 @@ def test_card_keeps_three_strongest_distinct_reasons():
         "task_match", "industry_match", "short_format",
     ]  # fmt: skip
     assert all(reason.text for reason in explained.reasons)
+
+
+def test_history_reason_keeps_a_place_among_three_stronger_reasons():
+    reasons = [
+        Reason(code="task_match", weight=2.0, params={"task": "marketing"}),
+        Reason(code="industry_match", weight=0.8, params={"industry": "services"}),
+        Reason(code="stage_fit", weight=0.6, params={"stage": "idea"}),
+        Reason(code="short_format", weight=0.25, params={"minutes": 5}),
+        Reason(code="continues_history", weight=0.2, params={"title": "Маркетплейсы"}),
+    ]
+    explained = explain_recommendation(wrap(by_format("guide"), reasons), TAXONOMY)
+    assert [reason.code for reason in explained.reasons] == [
+        "task_match", "industry_match", "continues_history",
+    ]  # fmt: skip
+
+
+def test_negative_history_contribution_is_not_promoted():
+    reasons = [
+        Reason(code="task_match", weight=2.0, params={"task": "marketing"}),
+        Reason(code="industry_match", weight=0.8, params={"industry": "services"}),
+        Reason(code="stage_fit", weight=0.6, params={"stage": "idea"}),
+        Reason(code="continues_history", weight=-0.2, params={"title": "Маркетплейсы"}),
+    ]
+    explained = explain_recommendation(wrap(by_format("guide"), reasons), TAXONOMY)
+    assert "continues_history" not in [reason.code for reason in explained.reasons]
+
+
+@pytest.mark.parametrize(
+    "item_format", ["quick_answer", "guide", "template", "tool", "course", "recording", "podcast"]
+)
+def test_card_with_one_reason_gets_a_fact_about_its_format(item_format):
+    item = next(i for i in CATALOG if i.format == item_format)
+    reasons = [Reason(code="task_match", weight=2.0, params={"task": "marketing"})]
+    explained = explain_recommendation(wrap(item, reasons), TAXONOMY)
+    assert [reason.code for reason in explained.reasons] == ["task_match", "material_format"]
+    assert explained.reasons[1].weight == 0 and explained.reasons[1].text
+
+
+def test_template_fact_is_not_repeated_as_a_second_reason():
+    reasons = [Reason(code="short_format", weight=0.5, params={"format": "template"})]
+    explained = explain_recommendation(wrap(by_format("template"), reasons), TAXONOMY)
+    assert len({reason.text for reason in explained.reasons}) == len(explained.reasons)
 
 
 def test_route_note_follows_step_roles():
@@ -129,7 +172,7 @@ def test_long_reason_params_produce_valid_serializable_cards(code, key):
     )
     explained = explain_recommendation(recommendation, TAXONOMY)
     validated = Recommendation.model_validate_json(explained.model_dump_json())
-    assert len(validated.reasons) == 1
+    assert validated.reasons[0].code == code
     assert len(validated.reasons[0].text) <= 200
     assert "…" in validated.reasons[0].text
 
@@ -145,7 +188,7 @@ def test_negative_contributions_are_not_presented_as_benefits():
         ),
         TAXONOMY,
     )
-    assert [reason.code for reason in explained.reasons] == ["short_format"]
+    assert [reason.code for reason in explained.reasons] == ["short_format", "material_format"]
 
 
 @pytest.mark.parametrize(

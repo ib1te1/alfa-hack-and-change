@@ -113,6 +113,7 @@ class ReasonCode(StrEnum):
     FRESH = "fresh"
     NEXT_LEVEL = "next_level"
     DEEP_DIVE_COURSE = "deep_dive_course"
+    MATERIAL_FORMAT = "material_format"
 
 
 class Reason(Contract):

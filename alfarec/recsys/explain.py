@@ -6,7 +6,9 @@ and no facts that are not in the data. Params may carry taxonomy ids or ready la
 Params by code:
 - task_match: task; industry_match: industry; stage_fit: stage;
 - continues_history: title (the material from the history);
-- short_format: minutes (optional: a calculator has no recorded time).
+- short_format: minutes (optional: a calculator has no recorded time);
+- material_format: format (a fact about the material, added here when fewer than two other
+  reasons can be worded; ranking never produces it and it carries no weight).
 Popularity is aggregate, without a user cohort.
 """
 
@@ -24,6 +26,17 @@ from alfarec.recsys.taxonomy import Taxonomy
 
 MAX_REASONS = 3
 MAX_REASON_LENGTH = 200
+MIN_REASONS = 2
+
+_FORMAT_FACTS = {
+    "quick_answer": "Короткий ответ по теме",
+    "guide": "Подробный разбор темы",
+    "template": "Готовый шаблон: скачайте и заполните",
+    "tool": "Калькулятор: результат сразу",
+    "course": "Курс по теме",
+    "recording": "Запись вебинара: смотрите в удобное время",
+    "podcast": "Выпуск подкаста: можно слушать в дороге",
+}
 
 _FREE_STEPS = {
     "quick_answer": ("read", "Читать"),
@@ -133,25 +146,44 @@ def reason_text(reason: Reason, taxonomy: Taxonomy) -> str | None:
         ReasonCode.FRESH: lambda: "Материал об изменениях в законах",
         ReasonCode.NEXT_LEVEL: lambda: "Следующий шаг после того, что вы уже знаете",
         ReasonCode.DEEP_DIVE_COURSE: lambda: "Для более глубокого изучения темы",
+        ReasonCode.MATERIAL_FORMAT: lambda: _FORMAT_FACTS.get(str(params.get("format"))),
     }
     text = builders[reason.code]()
     return _shorten(text, MAX_REASON_LENGTH) if text else None
 
 
 def explain_recommendation(recommendation: Recommendation, taxonomy: Taxonomy) -> Recommendation:
-    """Keep the strongest reasons that can be worded and attach their texts."""
-    ranked = sorted(recommendation.reasons, key=lambda reason: -reason.weight)
-    explained: list[Reason] = []
+    """Keep the strongest reasons that can be worded and attach their texts.
+
+    A positive history contribution always keeps a place: it is the one reason personal to the
+    user, and with small history weights it would otherwise never reach the top three. A card
+    with fewer than two worded reasons gets a fact about its format. Neither rule touches the
+    order of cards or their scores.
+    """
+    worded: list[Reason] = []
     seen: set[str] = set()
-    for reason in ranked:
+    for reason in sorted(recommendation.reasons, key=lambda reason: -reason.weight):
         if reason.weight < 0:
             continue
         text = reason_text(reason, taxonomy)
         if text and text not in seen:
             seen.add(text)
-            explained.append(reason.model_copy(update={"text": text}))
-        if len(explained) == MAX_REASONS:
-            break
+            worded.append(reason.model_copy(update={"text": text}))
+    explained = worded[:MAX_REASONS]
+    history = next(
+        (r for r in worded if r.code == ReasonCode.CONTINUES_HISTORY and r.weight > 0), None
+    )
+    if history is not None and history not in explained:
+        explained[-1] = history
+    if len(explained) < MIN_REASONS:
+        fact = Reason(
+            code=ReasonCode.MATERIAL_FORMAT,
+            weight=0.0,
+            params={"format": recommendation.item.format},
+        )
+        text = reason_text(fact, taxonomy)
+        if text and text not in seen:
+            explained.append(fact.model_copy(update={"text": text}))
     return recommendation.model_copy(update={"reasons": explained})
 
 
