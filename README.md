@@ -299,4 +299,5 @@ pwsh -NoProfile -File scripts/check-docker.ps1
 | [`docs/labeling.md`](docs/labeling.md), [`docs/ab-test.md`](docs/ab-test.md) | инструкция разметки, план A/B-проверки |
 | [`docs/specs/b01-contracts.md`](docs/specs/b01-contracts.md) | контракты и значения полей |
 | [`docs/specs/2026-11-13-recommender-tz.md`](docs/specs/2026-11-13-recommender-tz.md) | полное ТЗ — целевой продукт; не всё в нём реализовано |
-| [`docs/development.md`](docs/development.md), [`AGENTS.md`](AGENTS.md), [`docs/tasks/README.md`](docs/tasks/README.md) | подготовка клона, правила команды, очередь задач |
+| [`docs/development.md`](docs/development.md), [`docs/development-rules.md`](docs/development-rules.md), [`docs/tasks/README.md`](docs/tasks/README.md) | подготовка клона, правила команды, очередь задач |
+| [`docs/submission.md`](docs/submission.md) | комплект, срок и порядок сдачи |
