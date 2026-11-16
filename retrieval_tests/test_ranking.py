@@ -43,6 +43,13 @@ def ranker():
     return load_ranker()
 
 
+@pytest.fixture(scope="module")
+def lexical_ranker():
+    # History rules do not depend on the encoder, but these tests pick their courses from a plain
+    # answer; the TF-IDF answer is fixed by the committed index, the dense one by the local model.
+    return load_ranker(encoder_mode="tfidf")
+
+
 def ids(entries) -> list[str]:
     return [entry.item.item_id for entry in entries]
 
@@ -129,11 +136,13 @@ def test_task_reasons_name_only_linked_tasks(ranker):
     answer = ranker.recommend(Profile(tasks=["franchising"]), [], limit=20)
     for entry in answer.route + answer.more:
         for reason in entry.reasons:
-            if reason.code == "task_match":
+            # "about" names the material's own task as a fact, not a match with the profile.
+            if reason.code == "task_match" and not reason.params.get("about"):
                 assert reason.params["task"] == "franchising"
 
 
-def test_a03_history_excludes_completed_and_continues_courses(ranker):
+def test_a03_history_excludes_completed_and_continues_courses(lexical_ranker):
+    ranker = lexical_ranker
     profile = Profile(tasks=["marketplaces"], industries=["ecom"], time_budget="course")
     plain = ranker.recommend(profile, [], limit=20)
     done = next(e for e in plain.more + plain.route if e.item.format == "course").item.item_id
@@ -188,7 +197,8 @@ def test_paid_quota_is_preserved_when_only_paid_candidates_remain(ranker):
 
 
 @pytest.mark.parametrize("task", ["marketing", "marketplaces", "business_start"])
-def test_continuing_route_course_is_shown_exactly_once(ranker, task):
+def test_continuing_route_course_is_shown_exactly_once(lexical_ranker, task):
+    ranker = lexical_ranker
     profile = Profile(tasks=[task], time_budget="course")
     plain = ranker.recommend(profile, [])
     started = next(e.item.item_id for e in plain.route if e.item.format == "course")

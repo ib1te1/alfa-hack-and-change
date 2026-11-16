@@ -48,6 +48,16 @@ FORMAT_LABELS = {
     "recording": "Запись вебинара",
     "podcast": "Подкаст",
 }
+PORTRAITS = ["persona-coffee", "persona-seller", "persona-hiring"]
+FORMAT_PLURALS = {
+    "quick_answer": "короткие ответы",
+    "guide": "руководства",
+    "template": "шаблоны",
+    "tool": "калькуляторы",
+    "course": "курсы",
+    "recording": "записи вебинаров",
+    "podcast": "подкасты",
+}
 ACCESS_LABELS = {"free": "бесплатно", "subscription": "по подписке «Курс+»", "paid": "платно"}
 
 e = html.escape
@@ -131,6 +141,11 @@ def examples() -> dict[str, dict]:
         response.raise_for_status()
         return response.json()
 
+    from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH, load_catalog
+
+    formats: dict[str, int] = {}
+    for item in load_catalog(DEFAULT_CATALOG_PATH):
+        formats[item.format] = formats.get(item.format, 0) + 1
     services = {"tasks": ["marketing"], "industries": ["services"]}
     seller = personas["persona-seller"]
     outside = {"free_text": "Открыть автосервис в Казахстане"}
@@ -140,6 +155,8 @@ def examples() -> dict[str, dict]:
         "services_baseline": ask(services, mode="baseline"),
         "seller": ask(seller.get("profile", {}), seller["user_id"]),
         "seller_persona": seller,
+        "personas": [personas[i] for i in PORTRAITS if i in personas],
+        "formats": formats,
         "outside": ask(outside),
         "cold": ask({}),
     }
@@ -204,16 +221,26 @@ def print_pdf(browser: str, source: Path, target: Path) -> None:
 # Rendering ------------------------------------------------------------------------------------
 
 
-def card(entry: dict, number: int | None = None) -> str:
+def card(entry: dict, number: int | None = None, show: int = 2) -> str:
+    """A recommendation card; a history reason always stays among the shown ones."""
     item = entry["item"]
-    reasons = [r["text"] for r in entry.get("reasons", []) if r.get("text")][:2]
+    worded = [r for r in entry.get("reasons", []) if r.get("text")]
+    reasons = worded[:show]
+    history = next((r for r in worded if r.get("code") == "continues_history"), None)
+    if history is not None and history not in reasons and reasons:
+        reasons[-1] = history
     meta = [FORMAT_LABELS.get(item["format"], item["format"])]
     if item.get("duration_min"):
         meta.append(f"{item['duration_min']} мин")
     meta.append(ACCESS_LABELS.get(item["access"], item["access"]))
     step = entry.get("next_step") or {}
     badge = f'<span class="num">{number}</span>' if number else ""
-    why = "".join(f"<li>{e(text)}</li>" for text in reasons)
+    why = "".join(
+        f"<li class='hist'>{e(r['text'])}</li>"
+        if r.get("code") == "continues_history"
+        else f"<li>{e(r['text'])}</li>"
+        for r in reasons
+    )
     return (
         f'<div class="card">{badge}<div class="meta">{e(" · ".join(meta))}</div>'
         f'<div class="title">{e(item["title"])}</div><ul class="why">{why}</ul>'
@@ -244,6 +271,51 @@ def verdict(rows: list[list[str]]) -> str:
     return ru(
         f"Ручная релевантность на отложенных профилях: nDCG@10 {ours:.3f} против {base:.3f}"
         f" у бейзлайна — в {ours / base:.1f} раза выше"
+    )
+
+
+def cell(rows: list[list[str]], row_start: str, column: str) -> float | None:
+    """Number in the first body row starting with row_start, under the given header."""
+    if not rows or column not in rows[0]:
+        return None
+    index = rows[0].index(column)
+    for row in rows[1:]:
+        if row[0].startswith(row_start):
+            try:
+                return float(row[index])
+            except (ValueError, IndexError):
+                return None
+    return None
+
+
+def kpi(value: str, label: str) -> str:
+    return (
+        f"<div class='kpi'><div class='value'>{e(value)}</div>"
+        f"<div class='label'>{e(label)}</div></div>"
+    )
+
+
+def bars(values: list[tuple[str, float]], unit: str = "") -> str:
+    """Horizontal bars scaled to the largest value, labels on the left."""
+    top = max((v for _, v in values), default=0) or 1
+    rows = "".join(
+        f"<div class='bar'><span class='name'>{e(name)}</span>"
+        f"<span class='track'><span class='fill' style='width:{100 * v / top:.1f}%'></span></span>"
+        f"<span class='val'>{e(ru(f'{v:g}' if unit else str(int(v))))}{e(unit)}</span></div>"
+        for name, v in values
+    )
+    return f"<div class='bars'>{rows}</div>"
+
+
+def steps(items: list[tuple[str, str]]) -> str:
+    """A left-to-right process strip: (title, caption) per step."""
+    return (
+        "<div class='steps'>"
+        + "".join(
+            f"<div class='stepbox'><b>{e(title)}</b><span>{caption}</span></div>"
+            for title, caption in items
+        )
+        + "</div>"
     )
 
 
@@ -296,6 +368,20 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
                 return row[2].split("/")[0].strip()
         return "нет данных"
 
+    ours_ndcg, base_ndcg = cell(manual, "Наша", "nDCG@10"), cell(manual, "Бейзлайн", "nDCG@10")
+    ours_mrr = cell(next_course, "Наша система с переходами", "MRR")
+    pop_mrr = cell(next_course, "Популярность", "MRR")
+    kpis = []
+    if ours_ndcg is not None and base_ndcg:
+        label = f"nDCG@10 на отложенных профилях: {ours_ndcg:.3f}, бейзлайн — {base_ndcg:.3f}"
+        kpis.append(kpi(ru(f"×{ours_ndcg / base_ndcg:.1f}"), ru(label)))
+    if ours_mrr is not None and pop_mrr:
+        label = f"MRR следующего курса на отложенных пользователях; популярность — {pop_mrr:.3f}"
+        kpis.append(kpi(ru(f"{ours_mrr:.3f}"), ru(label)))
+    total = sum(data.get("formats", {}).values())
+    if total:
+        kpis.append(kpi(f"{total}", f"материалов {len(data['formats'])} форматов в каталоге"))
+    kpis.append(kpi("1 команда", "запуск на CPU без ключей, СУБД и сети после сборки"))
     slides.append(
         '<section class="slide title-slide">'
         '<div class="kicker">Альфа-Хакатон · трек 1 · персональные рекомендации</div>'
@@ -303,6 +389,7 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
         "<p class='lead'>Предприниматель за минуту и без анкеты получает короткий маршрут из"
         " материалов «Альфа-Курса» под свою задачу, стадию и опыт — с объяснением, почему"
         " каждый материал подходит и что сделать дальше.</p>"
+        f"<div class='kpis'>{''.join(kpis)}</div>"
         f"<div class='repo'>Репозиторий: <a href='{REPO_URL}'>{REPO_URL}</a>"
         + (f" · коммит <code>{e(commit)}</code>" if commit else "")
         + "</div>"
@@ -326,14 +413,33 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
                 ]
             )
             + "</div><div class='quote'>«Что мне прочитать, скачать и пройти, чтобы решить"
-            " мою задачу — и в каком порядке?»</div></div>",
+            " мою задачу — и в каком порядке?»</div></div>"
+            + (
+                "<p class='sub gap'>Демо-персоны в сервисе — от идеи до роста:</p>"
+                "<div class='trio'>"
+                + "".join(
+                    f"<div class='persona'><b>{e(x['title'])}</b><span>{e(x.get('legend', ''))}"
+                    "</span></div>"
+                    for x in data.get("personas", [])
+                )
+                + "</div>"
+                if data.get("personas")
+                else ""
+            ),
             "Зачем",
         )
+    )
+    format_bars = bars(
+        [
+            (FORMAT_PLURALS.get(name, name), count)
+            for name, count in sorted(data.get("formats", {}).items(), key=lambda x: -x[1])
+        ]
     )
     slides.append(
         slide(
             "Что увидели в данных",
-            bullets(
+            "<div class='cols wide-left'><div>"
+            + bullets(
                 [
                     "Дамп PostgreSQL на 62 таблицы читаем напрямую из Python, без СУБД.",
                     "Стадия бизнеса, уровень и детальная задача почти не размечены: три широких"
@@ -344,7 +450,10 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
                     " также» — используем для честной проверки, а не как вход.",
                     "Платные уроки лежат в дампе целиком — в артефакты они не попадают.",
                 ]
-            ),
+            )
+            + "</div><div><p class='sub'>Каталог после сборки, материалов по форматам</p>"
+            + format_bars
+            + "</div></div>",
             "Данные",
         )
     )
@@ -355,7 +464,19 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
             "<p class='sub'>Профиль: задача «Продвижение и маркетинг», сфера «Услуги». Ответ"
             " API на этом коммите:</p>"
             f"<div class='route'>{route_cards}</div>"
-            f"<p class='note'>{e(note)}</p>",
+            f"<p class='note'>{e(note)}</p>"
+            + (
+                "<div class='contrast'><p class='sub'>Бейзлайн «подборка по теме» для того же"
+                " профиля — лента без порядка и ролей:</p><ol class='plain'>"
+                + "".join(
+                    f"<li>{e(x['item']['title'])} <span class='muted'>·"
+                    f" {e(FORMAT_LABELS.get(x['item']['format'], x['item']['format']))}</span></li>"
+                    for x in (base.get("route", []) + base.get("more", []))[:3]
+                )
+                + "</ol></div>"
+                if base.get("route") or base.get("more")
+                else ""
+            ),
             "Продукт",
         )
     )
@@ -411,21 +532,35 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
     slides.append(
         slide(
             "Ранжирование и объяснения",
-            "<div class='cols'><div>"
+            steps(
+                [
+                    ("Кандидаты", "запрос, задачи профиля, соседи истории, курсы"),
+                    ("Скоринг", "12 интерпретируемых признаков, веса из B06"),
+                    ("Переранжирование", "MMR и квоты на формат, тему и платное"),
+                    ("Объяснение", "вклад признака → код причины → «Почему вам»"),
+                ]
+            )
+            + "<div class='cols'><div>"
             + bullets(
                 [
-                    "Кандидаты: близкие по запросу, материалы задач профиля, соседи истории,"
-                    " курсы.",
-                    "Линейный скоринг из 12 интерпретируемых признаков: задача, близость, стадия,"
-                    " уровень, сфера, формат, история, переходы, качество, популярность,"
-                    " свежесть, уместность платного.",
-                    "Переранжирование: MMR, в первых пяти не больше одного платного и двух одной"
-                    " темы, не меньше двух форматов.",
-                    "Каждый вклад признака → код причины → фраза «Почему вам».",
+                    "Признаки: задача, близость к запросу, стадия, уровень, сфера, формат,"
+                    " история, переходы между курсами, качество, популярность, свежесть,"
+                    " уместность платного.",
+                    "История: пройденное не предлагается, соседи и частые переходы поднимают"
+                    " продолжение.",
+                    "Квоты первых пяти: не больше одного платного и двух одной темы, не меньше"
+                    " двух форматов.",
+                    "В объяснение попадают только положительные вклады; вклад истории"
+                    " показывается всегда.",
                 ]
             )
             + "</div><div>"
-            + (card(services["more"][0]) if services.get("more") else "")
+            + (
+                "<p class='sub'>Карточка из ответа API на этом коммите, три причины"
+                "</p>" + card(services["more"][0], show=3)
+                if services.get("more")
+                else ""
+            )
             + "</div></div>",
             "Алгоритм",
         )
@@ -506,8 +641,15 @@ def render(data: dict, tables: dict, ml: dict, cases: str, has_shot: bool) -> st
                     " хешу пользователя, 50/50, анализ intention-to-treat.",
                     "Пример объёма: при конверсии 1% и росте до 1,2% нужно 42 693 пользователя"
                     " на группу.",
-                    "Порядок: офлайн-оценка → A/A и журналы → пилот 10% → A/B → раскатка с"
-                    " ограничителями (жалобы, отписки, скорость).",
+                ]
+            )
+            + steps(
+                [
+                    ("Офлайн", "ручная разметка, следующий курс — сделано"),
+                    ("A/A и журналы", "проверка назначения и событий"),
+                    ("Пилот 10%", "скорость, жалобы, отписки"),
+                    ("A/B 50/50", "покупки курса и «Курс+» за 28 дней"),
+                    ("Раскатка", "с ограничителями и откатом"),
                 ]
             ),
             "docs/ab-test.md",

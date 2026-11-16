@@ -1,4 +1,4 @@
-from presentation.build import holdout_table, markdown_tables, render, ru, verdict
+from presentation.build import card, holdout_table, markdown_tables, render, ru, verdict
 
 
 def test_render_shows_holdout_metrics_and_removes_unmeasured_claims():
@@ -50,3 +50,19 @@ def test_numbers_use_decimal_comma_without_touching_identifiers():
 def test_verdict_is_empty_without_a_baseline_row():
     assert verdict([["Вариант", "nDCG@10"], ["Наша система", "0.499"]]) == ""
     assert verdict([]) == ""
+
+
+def test_card_keeps_the_history_reason_among_the_shown_two():
+    entry = {
+        "item": {"title": "Курс", "format": "course", "access": "free"},
+        "reasons": [
+            {"code": "task_match", "text": "Подходит под вашу задачу"},
+            {"code": "industry_match", "text": "Для сферы «Услуги»"},
+            {"code": "continues_history", "text": "По теме «Маркетплейсы» из вашей истории"},
+        ],
+        "next_step": {"label": "Начать курс"},
+    }
+    html = card(entry)
+    assert "Подходит под вашу задачу" in html
+    assert "<li class='hist'>По теме «Маркетплейсы» из вашей истории</li>" in html
+    assert "Для сферы" not in html

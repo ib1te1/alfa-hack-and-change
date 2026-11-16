@@ -25,7 +25,7 @@ def test_report_rejects_modified_weights_even_with_unchanged_provenance(tmp_path
         offline.evaluate_judged()
 
 
-def test_selected_weight_file_is_bound_to_complete_evaluation_and_final_grades():
+def test_selected_weight_file_is_bound_to_complete_evaluation_and_final_grades(monkeypatch):
     root = Path(__file__).resolve().parents[1]
     weights = json.loads((root / "artifacts/weights.json").read_text("utf-8"))
     folder = root / "artifacts/weight_tuning"
@@ -37,8 +37,54 @@ def test_selected_weight_file_is_bound_to_complete_evaluation_and_final_grades()
     assert weights["weights"] == t.candidates()[selection["winner"]]
     from alfarec.eval.offline import evaluate_judged
 
+    # This test checks the frozen evidence's integrity, independently of a local encoder.
+    # Explanation-only source changes and list replay are covered below and in dense acceptance.
+    pinned = json.loads((folder / "experiment.json").read_text("utf-8"))["sources"]
+    monkeypatch.setattr(t, "sources", lambda _: pinned)
     reported = evaluate_judged()
     assert reported["holdout"]["ours"]["ndcg10"] == selection["holdout"]["ours"]["ndcg10"]
+
+
+@pytest.mark.parametrize("changed", ["ranking_code", "ml_manifest", "profile_code"])
+def test_judged_sources_reject_ranking_changes_without_loading_encoder(monkeypatch, changed):
+    from alfarec.eval import offline
+
+    pinned = {changed: "old"}
+    monkeypatch.setattr(t, "sources", lambda _: {changed: "new"})
+    # No profiles or candidates are needed: invalid sources must fail before model loading.
+    assert not offline.judged_sources_match({"sources": pinned, "encoder": "dense"}, "winner")
+
+
+@pytest.mark.parametrize("mismatch", [None, "baseline", "initial", "winner"])
+def test_explanation_changes_require_exact_judged_lists(monkeypatch, mismatch):
+    from alfarec.eval import offline
+
+    source = "alfarec/recsys/explain.py"
+    monkeypatch.setattr(t, "sources", lambda _: {source: "new"})
+    data = {
+        "sources": {source: "old"},
+        "encoder": "dense",
+        "histories": {"P01": []},
+        "lists": {"P01": {name: [name, "second"] for name in ("baseline", "initial", "winner")}},
+        "candidates": {name: {"name": name} for name in ("initial", "winner")},
+    }
+    monkeypatch.setattr(offline, "load_ranker", lambda **_: SimpleNamespace())
+    monkeypatch.setattr(
+        offline, "load_profiles", lambda: SimpleNamespace(profiles=[SimpleNamespace(id="P01")])
+    )
+    replayed = []
+
+    def top_list(ranker, case, history, mode):
+        assert case.id == "P01" and history == []
+        name = "baseline" if mode == "baseline" else ranker._weights["name"]
+        replayed.append(name)
+        items = data["lists"][case.id][name]
+        return list(reversed(items)) if name == mismatch else items
+
+    monkeypatch.setattr(t.j, "top_list", top_list)
+    assert offline.judged_sources_match(data, "winner") is (mismatch is None)
+    if mismatch is None:
+        assert set(replayed) == {"baseline", "initial", "winner"}
 
 
 @pytest.mark.parametrize("folder", ["historical-652a8151", "supplement-9ebd99c2"])

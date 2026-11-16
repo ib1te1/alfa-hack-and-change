@@ -15,6 +15,7 @@ const REASON_TEXTS = {
   fresh: () => "Свежий материал",
   next_level: () => "Следующий шаг по уровню",
   deep_dive_course: () => "Системный курс по теме",
+  material_format: () => "Подходящий формат материала",
 };
 const STORAGE = { user: "alfarec.user", skip: "alfarec.onboarding-skipped" };
 

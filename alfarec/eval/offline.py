@@ -32,6 +32,9 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_HANDOFF = ROOT / "data" / "handoff"
 DEFAULT_REPORT = ROOT / "reports" / "eval.md"
 K = 10
+# Files that only word reasons and next steps. Labelers never saw reasons and scores do not read
+# them, so a change here keeps the B06 evidence valid when the judged lists are reproduced exactly.
+EXPLANATION_SOURCES = frozenset({"alfarec/recsys/explain.py", "alfarec/recsys/contracts.py"})
 
 
 def hit_rate(ranked: Sequence[str], relevant: set[str], k: int) -> float:
@@ -207,6 +210,38 @@ def evaluate_profiles(ranker: Ranker) -> dict:
     return result
 
 
+def judged_sources_match(experiment: dict, winner: str) -> bool:
+    """Pinned inputs of the B06 experiment still hold for the current tree.
+
+    Equal hashes pass at once. If only explanation files differ, the baseline, initial and
+    selected lists of every profile are rebuilt with the stored histories and must match the
+    judged lists item for item; any other difference fails.
+    """
+    import copy
+
+    from alfarec.eval import judgments
+    from alfarec.eval.tune_weights import sources
+
+    pinned, current = experiment["sources"], sources(experiment["encoder"])
+    if pinned == current:
+        return True
+    changed = {key for key in pinned.keys() | current.keys() if pinned.get(key) != current.get(key)}
+    if not changed <= EXPLANATION_SOURCES:
+        return False
+    ranker = load_ranker(encoder_mode=experiment["encoder"], weights_path=None)
+    for case in load_profiles().profiles:
+        judged = experiment["lists"][case.id]
+        history = [Event.model_validate(event) for event in experiment["histories"][case.id]]
+        if judgments.top_list(ranker, case, history, "baseline") != judged["baseline"]:
+            return False
+        for name in {"initial", winner} & judged.keys():
+            candidate = copy.copy(ranker)
+            candidate._weights = dict(experiment["candidates"][name])  # noqa: SLF001
+            if judgments.top_list(candidate, case, history, "ours") != judged[name]:
+                return False
+    return True
+
+
 def evaluate_judged() -> dict | None:
     """Metrics on the human judgments over the judged lists, or None before they exist."""
     from alfarec.eval import judgments
@@ -215,7 +250,7 @@ def evaluate_judged() -> dict | None:
     if (folder / "selection.json").exists():
         selection = json.loads((folder / "selection.json").read_text("utf-8"))
         if selection.get("status") == "complete":
-            from alfarec.eval.tune_weights import score, sources
+            from alfarec.eval.tune_weights import score
             from alfarec.recsys.catalog import DEFAULT_CATALOG_PATH
             from alfarec.recsys.weights import load_weights
 
@@ -229,11 +264,11 @@ def evaluate_judged() -> dict | None:
             if (
                 weights["provenance"]["evaluation_sha256"] != judgments.canonical_sha256(selection)
                 or selection["final_grades_sha256"] != judgments.canonical_sha256(rows)
-                or experiment["sources"] != sources(experiment["encoder"])
                 or experiment_hash != experiment["experiment_sha256"]
                 or experiment_hash != selection["experiment_sha256"]
                 or experiment_hash != weights["provenance"]["experiment_sha256"]
                 or loaded != experiment["candidates"][selection["winner"]]
+                or not judged_sources_match(experiment, selection["winner"])
             ):
                 raise ValueError("Final relevance evidence is stale or inconsistent")
             grades = {(r["profile_id"], r["item_id"]): r["grade"] for r in rows}

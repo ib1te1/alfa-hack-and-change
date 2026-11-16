@@ -135,7 +135,7 @@ Recommendation: item, score, reasons[{code, weight, params}], next_step{kind, la
 Response:       route[], more[], quick[], clarification?{question, options[]}, mode (ours|baseline), profile_used
 ```
 
-Любое поле профиля может отсутствовать. Коды причин фиксированы списком (например `task_match`, `stage_fit`, `beginner_friendly`, `industry_match`, `continues_history`, `popular_with_similar`, `short_format`, `fresh`, `next_level`, `deep_dive_course`). Ранжирование отдаёт коды и параметры, тексты собирает `explain.py`.
+Любое поле профиля может отсутствовать. Коды причин фиксированы списком (например `task_match`, `stage_fit`, `beginner_friendly`, `industry_match`, `continues_history`, `popular_with_similar`, `short_format`, `fresh`, `next_level`, `deep_dive_course`, `material_format`). Ранжирование отдаёт коды и параметры, тексты собирает `explain.py`.
 
 ### 5.4 Таксономия профиля
 

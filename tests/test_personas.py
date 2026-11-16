@@ -73,7 +73,10 @@ def test_generation_is_seeded_and_hides_platform_user_ids(catalog, tmp_path: Pat
         assert types.index("enroll") < types.index("complete")
 
 
-def test_history_changes_the_answer_and_stays_in_memory(tmp_path: Path):
+def test_history_changes_the_answer_and_stays_in_memory(tmp_path: Path, monkeypatch):
+    # The completed course must appear in the anonymous answer; that holds for the committed
+    # TF-IDF index, while the dense answer depends on the locally installed model.
+    monkeypatch.setenv("ENCODER", "tfidf")
     events = tmp_path / "events.jsonl"
     services = build_services(DEFAULT_CATALOG_PATH, events, DEFAULT_PERSONAS_PATH)
     seller = next(persona for persona in services.personas if persona.id == "seller")
