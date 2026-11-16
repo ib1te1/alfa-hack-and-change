@@ -165,13 +165,6 @@ function Visit([string] $Id) {
 }
 foreach ($id in $tasks.Keys) { Visit $id }
 }
-$settings = Join-Path $Root '.claude/settings.json'
-if (Test-Path -LiteralPath $settings) {
-    try {
-        $config = [IO.File]::ReadAllText($settings) | ConvertFrom-Json
-        if ($config.attribution.commit -cne '' -or $config.attribution.pr -cne '' -or $config.attribution.sessionUrl -cne $false) { Problem 'Project attribution must disable commit, PR and session URL attribution' }
-    } catch { Problem 'Invalid project settings JSON' }
-} elseif (-not $fixtureMode) { Problem 'Missing project settings: .claude/settings.json' }
 if ($problems.Count) {
     foreach ($problem in $problems) { Write-Host "ERROR $problem" }
     Write-Host "Checks failed: $($problems.Count) error(s)."

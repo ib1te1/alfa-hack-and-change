@@ -77,7 +77,6 @@ function Invoke-FixtureGit([string] $At, [string[]] $Arguments) {
 }
 function Production-Fixture {
     $root = Fixture
-    Write-File (Join-Path $root '.claude/settings.json') '{"attribution":{"commit":"","pr":"","sessionUrl":false}}'
     New-Item -ItemType Directory -Path (Join-Path $root 'scripts') | Out-Null
     Copy-Item -LiteralPath (Join-Path $repo 'scripts/check.ps1') -Destination (Join-Path $root 'scripts/check.ps1')
     $null = Invoke-FixtureGit $root @('init', '-q')
@@ -89,22 +88,7 @@ function Check-Production([string] $Root, [bool] $Success, [string] $Diagnostic 
     if (($LASTEXITCODE -eq 0) -ne $Success) { throw "Unexpected production exit ${LASTEXITCODE}: $output" }
     if ($Diagnostic -and ($output -join "`n") -notmatch $Diagnostic) { throw "Missing diagnostic '$Diagnostic': $output" }
 }
-Assert-Test 'production accepts valid tracked documents and project settings' { Check-Production (Production-Fixture) $true }
-Assert-Test 'production requires project settings even after deletion' {
-    $root = Production-Fixture
-    Remove-Item -LiteralPath (Join-Path $root '.claude/settings.json')
-    Check-Production $root $false 'Missing project settings'
-}
-Assert-Test 'production rejects malformed project settings JSON' {
-    $root = Production-Fixture
-    Write-File (Join-Path $root '.claude/settings.json') '{'
-    Check-Production $root $false 'Invalid project settings JSON'
-}
-Assert-Test 'production rejects enabled project attribution' {
-    $root = Production-Fixture
-    Write-File (Join-Path $root '.claude/settings.json') '{"attribution":{"commit":"enabled","pr":"","sessionUrl":false}}'
-    Check-Production $root $false 'Project attribution'
-}
+Assert-Test 'production accepts valid tracked documents' { Check-Production (Production-Fixture) $true }
 Assert-Test 'production rejects tracked Markdown symlinks before reading' {
     $root = Production-Fixture
     $target = Join-Path $run ('harmless-' + [guid]::NewGuid().ToString('N') + '.md')
